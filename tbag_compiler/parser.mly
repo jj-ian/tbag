@@ -10,11 +10,10 @@ decls:
 	| decls fdecl { fst $1, ($2 :: snd $1) }
 
 fdecl:
-   FUNC ID WITH formals_opt LBRACE /*vdecl_list*/ stmt_list RBRACE
+   FUNC ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list stmt_list*/ RBRACE
      { { fname = $2;
 	 formals = $4;
-	 locals = List.rev $6;
-	 body = List.rev $7 } }
+	 } }
 
 /*
 fdecl:
