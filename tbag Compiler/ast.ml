@@ -1,5 +1,5 @@
 type func_decl = {
-		freturn: string;
+		(*freturn: string;*)
         fname : string;
         formals : string list;
         locals: string list;
