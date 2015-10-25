@@ -1,8 +1,14 @@
 %{ open Ast %}
+%token LPAREN RPAREN LBRACE RBRACE COMMA FUNC
+%token <string> ID
+%token EOF
+
+%start program
+%type <Ast.program> program
 
 %%
 
-prog:
+program:
 	decls EOF {$1}
 
 decls:
