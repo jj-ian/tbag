@@ -1,3 +1,7 @@
+
+type prog =
+        | ID of string
+
 type func_decl = {
 		(*freturn: string;*)
         fname : string;
