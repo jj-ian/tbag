@@ -1,3 +1,14 @@
+type expr =
+    Literal of int
+  | Id of string
+(*  | Binop of expr * op * expr *)
+  | Assign of string * expr
+ (* | Call of string * expr list
+  | Noexpr *)
+
+type stmt =
+   Expr of expr
+
 type room_decl = {
         rname: string;
 }
@@ -7,7 +18,7 @@ type func_decl = {
         fname : string;
         formals : string list;
         (*locals: string list;*)
-        (*body : stmt list;*)
+        body : stmt list;
 }
 
 (*
@@ -28,16 +39,7 @@ type stmt =
   | While of expr * stmt
 *)
 
-type expr =
-    Literal of int
-  | Id of string
-(*  | Binop of expr * op * expr *)
-  | Assign of string * expr
- (* | Call of string * expr list
-  | Noexpr *)
 
-type stmt =
-   Expr of expr
 
 
 

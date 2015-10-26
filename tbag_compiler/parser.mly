@@ -31,7 +31,7 @@ fdecl:
 	 } }
 
 rdecl:
-   ROOM ID LBRACE RBRACE
+   ROOM ID LBRACE /*assignments*/ RBRACE
      { { rname = $2;
        } }
 
