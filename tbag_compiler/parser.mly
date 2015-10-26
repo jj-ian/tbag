@@ -21,6 +21,11 @@ fdecl:
 	 formals = $4;
 	 } }
 
+rdecl:
+   ROOM ID LBRACE RBRACE
+     { { rname = $2;
+       } }
+
 /*
 fdecl:
    ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
