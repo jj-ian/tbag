@@ -24,9 +24,10 @@ decls:
 
 
 fdecl:
-   FUNC ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list stmt_list*/ RBRACE
+   FUNC ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list*/ stmt_list RBRACE
      { { fname = $2;
 	 formals = $4;
+   body = List.rev $7
 	 } }
 
 rdecl:
@@ -50,6 +51,9 @@ formal_list:
     ID                   { [$1] }
   | formal_list COMMA ID { $3 :: $1 }
 
+stmt_list:
+    /* nothing */  { [] }
+  | stmt_list stmt { $2 :: $1 }
 
 stmt:
     expr SEMI { Expr($1) }
@@ -59,12 +63,13 @@ expr:
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
 
+/*
 vdecl_list:
-    /* nothing */    { [] }
+     nothing     { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   INT ID SEMI { $2 }
+   INT ID SEMI { $2 }*/
 
 
 
