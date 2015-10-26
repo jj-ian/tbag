@@ -7,7 +7,7 @@ type func_decl = {
         fname : string;
         formals : string list;
         locals: string list;
-        body : stmt list;
+        (*body : stmt list;*)
 }
 
 let string_of_fdecl fdecl =
