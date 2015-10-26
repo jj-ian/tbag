@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -f scanner.ml parser.ml 
+rm -f scanner.ml parser.ml parser.mli 
