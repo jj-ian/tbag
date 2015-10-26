@@ -1,0 +1,6 @@
+tbag_compiler/*.cmi
+tbag_compiler/*.cmo
+tbag_compiler/parser.ml
+tbag_compiler/parser.mli
+tbag_compiler/scanner.ml
+tbag_compiler/tbaginterpreter.ml
