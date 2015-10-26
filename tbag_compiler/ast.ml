@@ -1,7 +1,4 @@
 
-type prog =
-        | ID of string
-
 type room_decl = {
         rname: string;
 }
