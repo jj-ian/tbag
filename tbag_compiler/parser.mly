@@ -1,5 +1,5 @@
 %{ open Ast %}
-%token LPAREN RPAREN LBRACE RBRACE COMMA FUNC
+%token LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
 %token <string> ID
 %token EOF
 
@@ -14,12 +14,18 @@ program:
 decls:
 	/* nothing */ { [], [] }
 	| decls fdecl { fst $1, ($2 :: snd $1) }
+        | decls rdecl { fst $1, ($2 :: snd $1) }
 
 fdecl:
    FUNC ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list stmt_list*/ RBRACE
      { { fname = $2;
 	 formals = $4;
 	 } }
+
+rdecl:
+   ROOM ID LBRACE RBRACE
+     { { rname = $2;
+       } }
 
 /*
 fdecl:
