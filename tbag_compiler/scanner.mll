@@ -2,6 +2,7 @@
 
 rule token = parse
         "func"                  { FUNC }
+        | "room"                { ROOM }
         | '('                   { LPAREN }
         | ')'                   { RPAREN }
         | '{'                   { LBRACE }
