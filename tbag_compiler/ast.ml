@@ -1,7 +1,3 @@
-
-type prog =
-        | ID of string
-
 type room_decl = {
         rname: string;
 }
@@ -32,10 +28,24 @@ type stmt =
   | While of expr * stmt
 *)
 
+type expr =
+    Literal of int
+  | Id of string
+(*  | Binop of expr * op * expr *)
+  | Assign of string * expr
+ (* | Call of string * expr list
+  | Noexpr *)
+
 type stmt =
-    Block of stmt list
-  | Expr of expr
-  | Return of expr
-  | If of expr * stmt * stmt
-  | For of expr * expr * expr * stmt
-  | While of expr * stmt
+   Expr of expr
+
+
+
+(*
+type expr =
+    Literal of int
+  | Id of string
+  | Binop of expr * op * expr
+  | Assign of string * expr
+  | Call of string * expr list
+  | Noexpr *)
