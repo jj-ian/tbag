@@ -2,30 +2,30 @@
 
 rule token = parse
          [' ' '\t' '\r' '\n'] { token lexbuf }          (* Whitespce *)
-        | "/*"                  { comment lexbuf } 
-        | "func"                  { FUNC }
-        | "room"                { ROOM }
-        | '('                   { LPAREN }
-        | ')'                   { RPAREN }
-        | '{'                   { LBRACE }
-        | '}'                   { RBRACE }
-        | '+'                   { PLUS }        (* operators*)
-        | '-'                   { MINUS }       
-        | '*'                   { TIMES }
-        | '/'                   { DIVIDE } 
-        | "=="                  { EQ }
-        | "!="                  { NEQ }
-        | '<'                   { LT }
-        | "<="                  { LEQ }
-        | '>'                   { GT }
-        | ">="                  { GEQ }
-        | '='                   { ASSIGN }  
+        | "/*"                                  { comment lexbuf } 
+        | "func"                                { FUNC }
+        | "room"                                { ROOM }
+        | '('                                   { LPAREN }
+        | ')'                                   { RPAREN }
+        | '{'                                   { LBRACE }
+        | '}'                                   { RBRACE }
+        | '+'                                   { PLUS }        (* operators*)
+        | '-'                                   { MINUS }       
+        | '*'                                   { TIMES }
+        | '/'                                   { DIVIDE } 
+        | "=="                                  { EQ }
+        | "!="                                  { NEQ }
+        | '<'                                   { LT }
+        | "<="                                  { LEQ }
+        | '>'                                   { GT }
+        | ">="                                  { GEQ }
+        | '='                                   { ASSIGN }  
         | ';'					{ SEMI }
         | "int"					{ INT }         (* types  *)
-        (*| "string"                              { STRLIT } what???*)
-        | ['0'-'9']+                    as lxm { LITERAL(int_of_string lxm) }
+        (*| "string"                            { STRLIT } what???*)
+        | ['0'-'9']+                            as lxm { LITERAL(int_of_string lxm) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
-        | eof                           { EOF }
+        | eof                                   { EOF }
 
         and comment = parse 
         "*/" { token lexbuf }   (* End of comment *)
