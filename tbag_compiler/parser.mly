@@ -19,13 +19,13 @@
 %%
 
 program:
-	decls EOF {$1}
+        decls EOF {$1}
 
 decls:
 	/* nothing */ { [], [] }
 	| decls fdecl { fst $1, ($2 :: snd $1) }
-  | decls rdecl { fst $1, ($2 :: snd $1) }
-  /*| decls vdecl { ($2 :: fst $1), snd $1 }*/
+        | decls rdecl { fst $1, ($2 :: snd $1) }
+        /*| decls vdecl { ($2 :: fst $1), snd $1 }*/
 
 
 fdecl:
@@ -49,32 +49,32 @@ fdecl:
 	 body = List.rev $7 } }
 */
 formals_opt:
-    /* nothing */ { [] }
-  | formal_list   { List.rev $1 }
+        /* nothing */ { [] }
+        | formal_list   { List.rev $1 }
 
 formal_list:
-    ID                   { [$1] }
-  | formal_list COMMA ID { $3 :: $1 }
+        ID                   { [$1] }
+        | formal_list COMMA ID { $3 :: $1 }
 
 stmt_list:
-    /* nothing */  { [] }
-  | stmt_list stmt { $2 :: $1 }
+        /* nothing */  { [] }
+        | stmt_list stmt { $2 :: $1 }
 
 stmt:
-    expr SEMI { Expr($1) }
+        expr SEMI { Expr($1) }
 
 expr:
-    LITERAL          { Literal($1) }
-  | ID               { Id($1) }
-  | ID ASSIGN expr   { Assign($1, $3) }
+        LITERAL          { Literal($1) }
+        | ID               { Id($1) }
+        | ID ASSIGN expr   { Assign($1, $3) }
 
 /*
 vdecl_list:
-     nothing     { [] }
-  | vdecl_list vdecl { $2 :: $1 }
+        nothing     { [] }
+        | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   INT ID SEMI { $2 }*/
+        INT ID SEMI { $2 }*/
 
 
 
