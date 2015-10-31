@@ -1,8 +1,11 @@
+type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater
+
 type expr =
     Literal of int
   | Id of string
 (*  | Binop of expr * op * expr *)
   | Assign of string * expr
+  | Binop of expr * op * expr
  (* | Call of string * expr list
   | Noexpr *)
 
