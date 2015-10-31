@@ -9,6 +9,16 @@ rule token = parse
         | ')'                   { RPAREN }
         | '{'                   { LBRACE }
         | '}'                   { RBRACE }
+        | '+'                   { PLUS }        (* operators*)
+        | '-'                   { MINUS }       
+        | '*'                   { TIMES }
+        | '/'                   { DIVIDE } 
+        | "=="                  { EQ }
+        | "!="                  { NEQ }
+        | '<'                   { LT }
+        | "<="                  { LEQ }
+        | '>'                   { GT }
+        | ">="                  { GEQ }
         | '='                   { ASSIGN }  
         | ';'					{ SEMI }
         | "int"					{ INT }         (* types  *)
