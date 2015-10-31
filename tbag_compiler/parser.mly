@@ -1,12 +1,17 @@
 %{ open Ast %}
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
-%token ASSIGN
+%token ASSIGN EQ NEQ LT LEQ GT GEQ 
+%token PLUS MINUS TIMES DIVIDE
 %token INT
 %token <int> LITERAL
 %token <string> ID
 %token EOF
 
 %right ASSIGN
+%left EQ NEQ
+%left LT GT LEQ GEQ
+%left PLUS MINUS
+%left TIMES DIVIDE
 
 %start program
 %type <Ast.program> program
