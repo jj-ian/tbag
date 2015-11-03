@@ -6,5 +6,5 @@ set -o pipefail
 set -o nounset
 # set -o xtrace
 
-rm -f scanner.ml parser.ml parser.mli ast.cmo ast.cmi tbagInterpreter.cmo tbagInterpreter.cmi
+rm -f scanner.ml parser.ml parser.mli *.cmo *.cmi scanner a.out
 
