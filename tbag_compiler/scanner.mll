@@ -31,13 +31,21 @@ rule token = parse
         "*/" { token lexbuf }   (* End of comment *)
         | _ { comment lexbuf }  (* eat everything else *)
 
+
 {
+    
 let _ =
 let lexbuf = Lexing.from_channel stdin in
-match token lexbuf with
-(* |FLOATINGPOINT(fp) -> print_endline (string_of_float fp ^ " is a valid floating point number") *)
- | FUNC -> print_endline ("funky")
- (*| BADFLOAT -> print_endline "not valid floating point number"*)
- | EOF -> print_endline "wwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
+try
+    while true do
+        match token lexbuf with
+         | FUNC -> print_string ("FUNC ")
+         | ROOM -> print_string ("ROOM ")
+         | LPAREN -> print_string ("LPAREN ")
+         | EQ -> print_string ("EQUALS ")
+         | LT -> print_string ("LESS THAN ")
+         | EOF -> print_endline "wwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
+    done
+ with _-> exit 0
 
 }

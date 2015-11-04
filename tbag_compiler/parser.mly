@@ -19,13 +19,15 @@
 %%
 
 program:
-        decls EOF {$1}
+        /*decls EOF {$1}*/
+        rdecl fdecl EOF {$1, $2}
 
+/*
 decls:
-	/* nothing */ { [], [] }
+	 { [], [] }
 	| decls fdecl { fst $1, ($2 :: snd $1) }
         | decls rdecl { fst $1, ($2 :: snd $1) }
-        /*| decls vdecl { ($2 :: fst $1), snd $1 }*/
+        | decls vdecl { ($2 :: fst $1), snd $1 }*/
 
 
 fdecl:

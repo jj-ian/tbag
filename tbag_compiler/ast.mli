@@ -1,5 +1,6 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater
 
+
 type expr =
     Literal of int
   | Id of string
@@ -23,6 +24,9 @@ type func_decl = {
         (*locals: string list;*)
         body : stmt list;
 }
+
+type program = room_decl * func_decl
+
 
 (*
 let string_of_fdecl fdecl =
