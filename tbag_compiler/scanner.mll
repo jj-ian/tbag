@@ -42,6 +42,8 @@ try
          | FUNC -> print_string ("FUNC ")
          | ROOM -> print_string ("ROOM ")
          | LPAREN -> print_string ("LPAREN ")
+         | EQ -> print_string ("EQUALS ")
+         | LT -> print_string ("LESS THAN ")
          | EOF -> print_endline "wwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
     done
  with _-> exit 0
