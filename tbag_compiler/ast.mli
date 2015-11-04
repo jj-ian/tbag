@@ -12,6 +12,7 @@ type expr =
 
 type stmt =
    Expr of expr
+   | If of expr * stmt list * stmt
 
 type room_decl = {
         rname: string;

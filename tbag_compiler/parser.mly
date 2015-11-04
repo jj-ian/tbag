@@ -1,6 +1,6 @@
 %{ open Ast %}
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
-%token ASSIGN EQ NEQ LT LEQ GT GEQ 
+%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM 
+%token ASSIGN EQ NEQ LT LEQ GT GEQ IF ELSE (*WHILE*) 
 %token PLUS MINUS TIMES DIVIDE
 %token INT
 %token <int> LITERAL
@@ -64,6 +64,10 @@ stmt_list:
 
 stmt:
         expr SEMI { Expr($1) }
+        | IF LPAREN expr RPAREN LBRACE stmt_list SEMI RBRACE ELSE LBRACE
+        stmt_list SEMI
+        RBRACE { If($3,
+        Block(List.rev $6), Block(List.rev $11)) }
 
 expr:
         LITERAL          { Literal($1) }
