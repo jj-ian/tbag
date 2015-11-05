@@ -64,10 +64,10 @@ stmt_list:
 
 stmt:
         expr SEMI { Expr($1) }
-        | IF LPAREN expr RPAREN LBRACE stmt_list SEMI RBRACE ELSE LBRACE
-        stmt_list SEMI
+        | IF LPAREN expr RPAREN LBRACE stmt_list RBRACE ELSE LBRACE
+        stmt_list
         RBRACE { If($3,
-        Block(List.rev $6), Block(List.rev $11)) }
+        Block(List.rev $6), Block(List.rev $10)) }
 
 expr:
         LITERAL          { Literal($1) }
