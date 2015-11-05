@@ -11,7 +11,9 @@ type expr =
   | Noexpr *)
 
 type stmt =
-   Expr of expr
+   Block of stmt list
+   | Expr of expr
+   | If of expr * stmt * stmt
 
 type room_decl = {
         rname: string;
