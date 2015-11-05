@@ -25,6 +25,7 @@ rule token = parse
         | "if"                                  { IF }
         | "else"                                { ELSE }
         | "while"                               { WHILE }
+        | "return"                              { RETURN }
         (*| "string"                            { STRLIT } what???*)
         | ['0'-'9']+                            as lxm { LITERAL(int_of_string lxm) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
