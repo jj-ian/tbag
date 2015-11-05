@@ -14,6 +14,7 @@ type stmt =
    Block of stmt list
    | Expr of expr
    | If of expr * stmt * stmt
+   | While of expr * stmt
 
 type room_decl = {
         rname: string;

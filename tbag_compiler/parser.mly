@@ -2,7 +2,7 @@
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
-%token IF ELSE /*WHILE*/
+%token IF ELSE WHILE
 %token INT
 %token <int> LITERAL
 %token <string> ID
@@ -67,6 +67,7 @@ stmt:
         expr SEMI { Expr($1) }
         | LBRACE stmt_list RBRACE { Block(List.rev $2) }
         | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
+        | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
 
 expr:
         LITERAL          { Literal($1) }
