@@ -38,7 +38,7 @@ fdecl:
                 body = List.rev $7      } }
 
 rdecl_list:
-        /* nothing */           { [] }
+        rdecl rdecl             { [$1; $2] }
         | rdecl_list rdecl      { $2 :: $1 }
 
 rdecl:
