@@ -46,8 +46,21 @@ try
          | FUNC -> print_string ("FUNC ")
          | ROOM -> print_string ("ROOM ")
          | LPAREN -> print_string ("LPAREN ")
-         | EQ -> print_string ("EQUALS ")
-         | LT -> print_string ("LESS THAN ")
+         | RPAREN -> print_string ("RPAREN ")
+         | LBRACE -> print_string ("LBRACE ")
+         | RBRACE -> print_string ("RBRACE ")
+         | PLUS -> print_string ("PLUS ")
+         | MINUS -> print_string ("MINUS ")
+         | TIMES -> print_string ("TIMES ")
+         | DIVIDE -> print_string ("DIVIDE ")
+         | EQ -> print_string ("EQ ")
+         | NEQ -> print_string ("NEQ ")
+         | LT -> print_string ("LT ")
+         | LEQ -> print_string ("LEQ ")
+         | GT -> print_string ("GT ")
+         | GEQ -> print_string ("GEQ ")
+         | LITERAL _ -> print_string("LITERAL ")
+         (*| lxm -> print_string ("LITERAL ")*)
          | EOF -> print_endline "wwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
     done
  with _-> exit 0
