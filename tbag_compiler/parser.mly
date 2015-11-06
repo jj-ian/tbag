@@ -21,7 +21,7 @@
 
 program:
         /*decls EOF {$1}*/
-        rdecl fdecl EOF {$1, $2}
+        rdecl_list fdecl EOF {$1, $2}
 
 /*
 decls:
@@ -37,10 +37,14 @@ fdecl:
 	        formals = $4;
                 body = List.rev $7      } }
 
+rdecl_list:
+        rdecl rdecl             { [$1; $2] }
+        | rdecl_list rdecl      { $2 :: $1 }
+
 rdecl:
-   ROOM ID LBRACE /*assignments*/ RBRACE
-     { { rname = $2;
-       } }
+        ROOM ID LBRACE stmt_list RBRACE
+        { {     rname = $2;
+                body = List.rev $4      } }
 
 /*
 fdecl:
