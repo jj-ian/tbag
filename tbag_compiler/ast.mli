@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater
+type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
 
 type expr =
@@ -11,7 +11,11 @@ type expr =
   | Noexpr *)
 
 type stmt =
-   Expr of expr
+   Block of stmt list
+   | Expr of expr
+   | Return of expr
+   | If of expr * stmt * stmt
+   | While of expr * stmt
 
 type room_decl = {
         rname: string;

@@ -1,7 +1,8 @@
 %{ open Ast %}
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
-%token ASSIGN EQ NEQ LT LEQ GT GEQ 
+%token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
+%token IF ELSE WHILE RETURN
 %token INT
 %token <int> LITERAL
 %token <string> ID
@@ -62,12 +63,26 @@ stmt_list:
         | stmt_list stmt        { $2 :: $1 }
 
 stmt:
-        expr SEMI       { Expr($1) }
+        expr SEMI { Expr($1) }
+        | RETURN expr SEMI { Return($2) }
+        | LBRACE stmt_list RBRACE { Block(List.rev $2) }
+        | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
+        | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
 
 expr:
         LITERAL                 { Literal($1) }
         | ID                    { Id($1) }
-        | ID ASSIGN expr        { Assign($1, $3) }
+        | expr PLUS expr        { Binop($1, Add, $3) }
+        | expr MINUS expr       { Binop($1, Sub, $3) }
+        | expr TIMES expr       { Binop($1, Mult, $3) }
+        | expr DIVIDE expr      { Binop($1, Div, $3) }
+        | expr EQ expr          { Binop($1, Equal, $3) }
+        | expr NEQ expr         { Binop($1, Neq, $3) }
+        | expr LT expr          { Binop($1, Less, $3) }
+        | expr LEQ expr         { Binop($1, Leq, $3) }
+        | expr GT expr          { Binop($1, Greater, $3) }
+        | expr GEQ expr         { Binop($1, Geq, $3) }
+        | ID ASSIGN expr   { Assign($1, $3) }
 
 /*
 vdecl_list:
