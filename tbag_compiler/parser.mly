@@ -35,11 +35,12 @@ decls:
 the_type:
         INT { Int }
         | STRING { String }
+
 fdecl:
-        FUNC ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list*/ stmt_list RBRACE
-        { {     fname = $2;
-	        formals = $4;
-                body = List.rev $7      } }
+        FUNC the_type ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list*/ stmt_list RBRACE
+        { {     fname = $3;
+	        formals = $5;
+                body = List.rev $8      } }
 
 rdecl_list:
         rdecl rdecl             { [$1; $2] }

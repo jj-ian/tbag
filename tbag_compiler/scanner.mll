@@ -22,13 +22,14 @@ rule token = parse
         | '='                                   { ASSIGN }  
         | ';'					{ SEMI }
         | "int"					{ INT }         (* types  *)
+        | "string"              { STRING }
         | "if"                                  { IF }
         | "else"                                { ELSE }
         | "while"                               { WHILE }
         | "return"                              { RETURN }
         (*| "string"                            { STRLIT } what???*)
-        | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) }
-        | '''('\\'_|[^'''])*''' as str {STRING_LITERAL(str)}
+        | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) } (* string literal *)
+        | '''('\\'_|[^'''])*''' as str { STRING_LITERAL(str) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
         | eof                                   { EOF }
 
@@ -60,10 +61,16 @@ try
          | LEQ -> print_string ("LEQ ")
          | GT -> print_string ("GT ")
          | GEQ -> print_string ("GEQ ")
+         | ASSIGN -> print_string ("ASSIGN ")
+         | SEMI -> print_string ("SEMI ")
+         | INT -> print_string ("INT ")
+         | STRING -> print_string ("STRING ")
          | INT_LITERAL _ -> print_string("INT_LITERAL ")
-         | STRING_LITERAL _ -> print_string("STRING_LITERAL")
+         | STRING_LITERAL _ -> print_string("STRING_LITERAL ")
+         | ID _ -> print_string("ID ")
          (*| lxm -> print_string ("LITERAL ")*)
-         | EOF -> print_endline "wwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
+         | EOF -> print_endline "\nwwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
+         | _ -> print_string("||syntax error|| ")
     done
  with _-> exit 0
 
