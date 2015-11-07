@@ -33,12 +33,13 @@ fdecl_list:
     | fdecl_list fdecl { $2 :: $1 }
 
 fdecl:
-        FUNC data_type ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list*/ stmt_list RBRACE
+        FUNC data_type ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
         { { 
             freturntype = $2;    
             fname = $3;
 	        formals = $5;
-            body = List.rev $8      
+            locals = $8;
+            body = List.rev $9      
             } }
 
 formals_opt:
@@ -49,6 +50,13 @@ formal_list:
     data_type ID { [Argument($1, $2)] }
     | formal_list COMMA data_type ID { Argument($3, $4) :: $1 }
 
+vdecl_list:
+    /* nothing */ { [] }
+    | vdecl_list vdecl { $2 :: $1 }
+
+vdecl:
+    data_type ID SEMI { $2 }
+
 rdecl_list:
         rdecl rdecl             { [$1; $2] }
         | rdecl_list rdecl      { $2 :: $1 }
@@ -58,15 +66,6 @@ rdecl:
         ROOM ID LBRACE stmt_list RBRACE
         { {     rname = $2;
                 body = List.rev $4      } }
-
-/*
-fdecl:
-   ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { fname = $1;
-	 formals = $3;
-	 locals = List.rev $6;
-	 body = List.rev $7 } }
-*/
 
 stmt_list:
         /* nothing */           { [] }
@@ -94,14 +93,6 @@ expr:
         | expr GT expr          { Binop($1, Greater, $3) }
         | expr GEQ expr         { Binop($1, Geq, $3) }
         | ID ASSIGN expr   { Assign($1, $3) }
-
-/*
-vdecl_list:
-        nothing                 { [] }
-        | vdecl_list vdecl      { $2 :: $1 }
-
-vdecl:
-        INT ID SEMI             { $2 }*/
 
 
 

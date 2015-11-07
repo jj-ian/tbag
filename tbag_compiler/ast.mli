@@ -33,7 +33,7 @@ type func_decl = {
 		    freturntype: variable_type;
         fname : string;
         formals : argument_decl list; (* formal arguments *)
-        (*locals: string list;*)
+        locals: string list; (* locally defined variables *)
         body : stmt list;
 }
 
@@ -48,25 +48,3 @@ let string_of_fdecl fdecl =
   "}\n"
   *)
 
-(*
-type stmt =
-    Block of stmt list
-  | Expr of expr
-  | Return of expr
-  | If of expr * stmt * stmt
-  | For of expr * expr * expr * stmt
-  | While of expr * stmt
-*)
-
-
-
-
-
-(*
-type expr =
-    Literal of int
-  | Id of string
-  | Binop of expr * op * expr
-  | Assign of string * expr
-  | Call of string * expr list
-  | Noexpr *)
