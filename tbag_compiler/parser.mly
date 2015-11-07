@@ -3,8 +3,9 @@
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
-%token INT
-%token <int> LITERAL
+%token INT STRING
+%token <int> INT_LITERAL
+%token <string> STRING_LITERAL
 %token <string> ID
 %token EOF
 
@@ -31,6 +32,9 @@ decls:
         | decls vdecl { ($2 :: fst $1), snd $1 }*/
 
 
+the_type:
+        INT { Int }
+        | STRING { String }
 fdecl:
         FUNC ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list*/ stmt_list RBRACE
         { {     fname = $2;
@@ -75,7 +79,7 @@ stmt:
         | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
 
 expr:
-        LITERAL                 { Literal($1) }
+        INT_LITERAL                 { IntLiteral($1) }
         | ID                    { Id($1) }
         | expr PLUS expr        { Binop($1, Add, $3) }
         | expr MINUS expr       { Binop($1, Sub, $3) }
