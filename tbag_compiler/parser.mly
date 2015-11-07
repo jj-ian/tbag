@@ -20,27 +20,34 @@
 
 %%
 
+
 program:
-        /*decls EOF {$1}*/
-        rdecl_list fdecl EOF {$1, $2}
+        rdecl_list fdecl_list EOF {$1, $2}
 
-/*
-decls:
-	 { [], [] }
-	| decls fdecl { fst $1, ($2 :: snd $1) }
-        | decls rdecl { fst $1, ($2 :: snd $1) }
-        | decls vdecl { ($2 :: fst $1), snd $1 }*/
-
-
-the_type:
+data_type:
         INT { Int }
         | STRING { String }
 
+fdecl_list:
+    /* nothing */ {[]}
+    | fdecl_list fdecl { $2 :: $1 }
+
 fdecl:
-        FUNC the_type ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list*/ stmt_list RBRACE
-        { {     fname = $3;
+        FUNC data_type ID LPAREN formals_opt RPAREN LBRACE /*vdecl_list*/ stmt_list RBRACE
+        { { 
+            freturntype = $2;    
+            fname = $3;
 	        formals = $5;
-                body = List.rev $8      } }
+            body = List.rev $8      
+            } }
+
+formals_opt:
+    /* nothing */ { [] }
+    | formal_list { List.rev $1 }
+
+formal_list:
+    data_type ID { [Argument($1, $2)] }
+    | formal_list COMMA data_type ID { Argument($3, $4) :: $1 }
 
 rdecl_list:
         rdecl rdecl             { [$1; $2] }
@@ -60,13 +67,6 @@ fdecl:
 	 locals = List.rev $6;
 	 body = List.rev $7 } }
 */
-formals_opt:
-        /* nothing */ { [] }
-        | formal_list   { List.rev $1 }
-
-formal_list:
-        ID                      { [$1] }
-        | formal_list COMMA ID  { $3 :: $1 }
 
 stmt_list:
         /* nothing */           { [] }
@@ -81,6 +81,7 @@ stmt:
 
 expr:
         INT_LITERAL                 { IntLiteral($1) }
+        | STRING_LITERAL        { StrLiteral($1) }
         | ID                    { Id($1) }
         | expr PLUS expr        { Binop($1, Add, $3) }
         | expr MINUS expr       { Binop($1, Sub, $3) }

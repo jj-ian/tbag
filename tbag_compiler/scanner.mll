@@ -65,10 +65,15 @@ try
          | SEMI -> print_string ("SEMI ")
          | INT -> print_string ("INT ")
          | STRING -> print_string ("STRING ")
+
+         | IF -> print_string ("IF ")
+         | ELSE -> print_string ("ELSE ")
+         | WHILE -> print_string ("WHILE ")
+         | RETURN -> print_string ("RETURN ")
+
          | INT_LITERAL _ -> print_string("INT_LITERAL ")
          | STRING_LITERAL _ -> print_string("STRING_LITERAL ")
          | ID _ -> print_string("ID ")
-         (*| lxm -> print_string ("LITERAL ")*)
          | EOF -> print_endline "\nwwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
          | _ -> print_string("||syntax error|| ")
     done

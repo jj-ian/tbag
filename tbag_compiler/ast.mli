@@ -1,8 +1,11 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
-type variable_types =
+type variable_type =
   Int
   | String
+
+type argument_decl =
+  Argument of variable_type * string
 
 type expr =
     IntLiteral of int
@@ -27,14 +30,14 @@ type room_decl = {
 }
        
 type func_decl = {
-		(*freturn: string;*)
+		    freturntype: variable_type;
         fname : string;
-        formals : string list;
+        formals : argument_decl list; (* formal arguments *)
         (*locals: string list;*)
         body : stmt list;
 }
 
-type program = room_decl list * func_decl
+type program = room_decl list * func_decl list
 
 
 (*
