@@ -1,8 +1,12 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
+type variable_types =
+  Int
+  | String
 
 type expr =
-    Literal of int
+    IntLiteral of int
+  |  StrLiteral of string
   | Id of string
 (*  | Binop of expr * op * expr *)
   | Assign of string * expr

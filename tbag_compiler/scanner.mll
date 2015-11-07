@@ -27,7 +27,7 @@ rule token = parse
         | "while"                               { WHILE }
         | "return"                              { RETURN }
         (*| "string"                            { STRLIT } what???*)
-        | ['0'-'9']+                            as lxm { LITERAL(int_of_string lxm) }
+        | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
         | eof                                   { EOF }
 
@@ -59,7 +59,7 @@ try
          | LEQ -> print_string ("LEQ ")
          | GT -> print_string ("GT ")
          | GEQ -> print_string ("GEQ ")
-         | LITERAL _ -> print_string("LITERAL ")
+         | INT_LITERAL _ -> print_string("INT_LITERAL ")
          (*| lxm -> print_string ("LITERAL ")*)
          | EOF -> print_endline "wwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
     done
