@@ -19,6 +19,7 @@ type stmt =
 
 type room_decl = {
         rname: string;
+        body: stmt list;
 }
        
 type func_decl = {
@@ -29,7 +30,7 @@ type func_decl = {
         body : stmt list;
 }
 
-type program = room_decl * func_decl
+type program = room_decl list * func_decl
 
 
 (*

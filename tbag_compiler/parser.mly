@@ -41,6 +41,7 @@ rdecl_list:
         rdecl rdecl             { [$1; $2] }
         | rdecl_list rdecl      { $2 :: $1 }
 
+
 rdecl:
         ROOM ID LBRACE stmt_list RBRACE
         { {     rname = $2;
