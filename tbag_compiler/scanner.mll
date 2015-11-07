@@ -28,6 +28,7 @@ rule token = parse
         | "return"                              { RETURN }
         (*| "string"                            { STRLIT } what???*)
         | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) }
+        | '''('\\'_|[^'''])*''' as str {STRING_LITERAL(str)}
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
         | eof                                   { EOF }
 
@@ -60,6 +61,7 @@ try
          | GT -> print_string ("GT ")
          | GEQ -> print_string ("GEQ ")
          | INT_LITERAL _ -> print_string("INT_LITERAL ")
+         | STRING_LITERAL _ -> print_string("STRING_LITERAL")
          (*| lxm -> print_string ("LITERAL ")*)
          | EOF -> print_endline "wwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
     done
