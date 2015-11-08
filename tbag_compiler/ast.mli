@@ -3,6 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 type variable_type =
   Int
   | String
+  | Array of variable_type
 
 type argument_decl =
   Argument of variable_type * string
@@ -13,6 +14,7 @@ type expr =
   | Id of string
 (*  | Binop of expr * op * expr *)
   | Assign of string * expr
+  | ArrayAssign of string * int * expr
   | Binop of expr * op * expr
  (* | Call of string * expr list
   | Noexpr *)
@@ -40,6 +42,11 @@ type func_decl = {
         locals: string list; (* locally defined variables *)
         body : stmt list;
 }
+
+(* let type_of_string = function
+    | "int" -> Int
+    | "string" -> String
+ *)
 
 type program = room_decl list * adj_decl list * func_decl list
 

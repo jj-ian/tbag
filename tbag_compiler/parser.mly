@@ -1,5 +1,5 @@
 %{ open Ast %}
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM ADJ
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA FUNC ROOM ADJ
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -27,6 +27,9 @@ program:
 data_type:
         INT { Int }
         | STRING { String }
+        /* | data_type LBRACK RBRACK { Array( type_of_string $1) } */
+        | INT LBRACK RBRACK { Array(Int) }
+        | STRING LBRACK RBRACK { Array(String) }
 
 fdecl_list:
     /* nothing */ {[]}
@@ -103,6 +106,5 @@ expr:
         | expr GT expr          { Binop($1, Greater, $3) }
         | expr GEQ expr         { Binop($1, Geq, $3) }
         | ID ASSIGN expr   { Assign($1, $3) }
-
-
+        | ID LBRACK INT_LITERAL RBRACK ASSIGN expr { ArrayAssign($1, $3, $6) }
 
