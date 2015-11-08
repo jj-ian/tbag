@@ -6,6 +6,8 @@ rule token = parse
         | "func"                                { FUNC }
         | "room"                                { ROOM }
         | "adj"                                 { ADJ }
+        | "npc"                                 { NPC }
+        | "item"                                { ITEM }
         | '('                                   { LPAREN }
         | ')'                                   { RPAREN }
         | '{'                                   { LBRACE }
@@ -52,6 +54,8 @@ try
          | FUNC -> print_string ("FUNC ")
          | ROOM -> print_string ("ROOM ")
          | ADJ -> print_string ("ADJ ")         
+         | NPC -> print_string ("NPC ")
+         | ITEM -> print_string ("ITEM ")
          | LPAREN -> print_string ("LPAREN ")
          | RPAREN -> print_string ("RPAREN ")
          | LBRACE -> print_string ("LBRACE ")

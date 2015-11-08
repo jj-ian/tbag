@@ -48,7 +48,21 @@ type func_decl = {
     | "string" -> String
  *)
 
-type program = room_decl list * adj_decl list * func_decl list
+
+type npc_decl = {
+    nname: string;
+    nbody: stmt list;
+}
+
+type item_decl = {
+    iname: string;
+    ibody: stmt list;
+}
+
+type simple_program = room_decl list * adj_decl list * func_decl list
+
+type complex_program = room_decl list * adj_decl list * npc_decl list * 
+item_decl list * func_decl list
 
 
 (*

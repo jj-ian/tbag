@@ -1,5 +1,6 @@
 %{ open Ast %}
-%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA FUNC ROOM ADJ
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
+%token FUNC ROOM ADJ ITEM NPC
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -15,14 +16,21 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-%start program
-%type <Ast.program> program
+%start simple_program
+%type <Ast.simple_program> simple_program
+
+%start complex_program
+%type <Ast.complex_program> complex_program
 
 %%
 
 
-program:
+simple_program:
         rdecl_list adecl_list fdecl_list EOF {$1, $2, $3}
+
+complex_program:
+        rdecl_list adecl_list ndecl_list idecl_list fdecl_list EOF {$1, $2, $3,
+        $4, $5}
 
 data_type:
         INT { Int }
@@ -79,6 +87,24 @@ adecl:
 
 adj_list:
         ID COMMA ID { [$1; $3] }
+
+ndecl_list:
+    /* nothing */ { [] }
+    | ndecl_list ndecl { $2 :: $1 }
+
+ndecl:
+    NPC ID LBRACE stmt_list RBRACE
+    {{        nname = $2;
+              nbody = List.rev $4       }}
+
+idecl_list:
+    /* nothing */ { [] }
+    | idecl_list idecl { $2 :: $1 }
+
+idecl:
+    ITEM ID LBRACE stmt_list RBRACE
+    {{        iname = $2;
+              ibody = List.rev $4       }}
 
 stmt_list:
         /* nothing */           { [] }
