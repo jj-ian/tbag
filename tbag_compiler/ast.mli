@@ -28,6 +28,10 @@ type room_decl = {
         rname: string;
         body: stmt list;
 }
+
+type adj_decl = {
+        body: string list;
+}
        
 type func_decl = {
 		    freturntype: variable_type;
@@ -37,7 +41,7 @@ type func_decl = {
         body : stmt list;
 }
 
-type program = room_decl list * func_decl list
+type program = room_decl list * adj_decl list * func_decl list
 
 
 (*

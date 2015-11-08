@@ -1,5 +1,5 @@
 %{ open Ast %}
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
+%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM ADJ
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -22,7 +22,7 @@
 
 
 program:
-        rdecl_list fdecl_list EOF {$1, $2}
+        rdecl_list adecl_list fdecl_list EOF {$1, $2, $3}
 
 data_type:
         INT { Int }
@@ -61,11 +61,21 @@ rdecl_list:
         rdecl rdecl             { [$1; $2] }
         | rdecl_list rdecl      { $2 :: $1 }
 
-
 rdecl:
         ROOM ID LBRACE stmt_list RBRACE
         { {     rname = $2;
                 body = List.rev $4      } }
+
+adecl_list:
+        adecl                   { [$1] }
+        | adecl_list adecl      { $2 :: $1 }
+
+adecl:
+        ADJ LBRACE adj_list RBRACE SEMI
+        { {     body = List.rev $3      } }
+
+adj_list:
+        ID COMMA ID { [$1; $3] }
 
 stmt_list:
         /* nothing */           { [] }
