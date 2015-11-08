@@ -47,9 +47,10 @@ type item_decl = {
     ibody: stmt list;
 }
 
-type program = room_decl list * (*option*) npc_decl list * (*option*) item_decl list
+type complex_program = room_decl list * npc_decl list * item_decl list
 * func_decl list
 
+type simple_program = room_decl list * func_decl list
 
 (*
 let string_of_fdecl fdecl =

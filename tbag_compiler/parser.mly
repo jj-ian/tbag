@@ -15,19 +15,19 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-%start program
-%type <Ast.program> program
+%start simple_program
+%type <Ast.simple_program> simple_program
+
+%start complex_program
+%type <Ast.complex_program> complex_program
 
 %%
 
 
-program:
-    /*
+simple_program:
         rdecl_list fdecl_list EOF {$1, $2}
-        | rdecl_list ndecl_list fdecl_list EOF {$1, $2, $3}
-        | rdecl_list idecl_list fdecl_list EOF {$1, $2, $3}
-        | rdecl_list ndecl_list idecl_list fdecl_list EOF {$1, $2, $3, $4}
-*/
+
+complex_program:
         rdecl_list ndecl_list idecl_list fdecl_list EOF {$1, $2, $3, $4}
 
 data_type:
