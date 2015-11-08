@@ -28,8 +28,8 @@ data_type:
         INT { Int }
         | STRING { String }
         /* | data_type LBRACK RBRACK { Array( type_of_string $1) } */
-        | INT LBRACK RBRACK { Array(Int) }
-        | STRING LBRACK RBRACK { Array(String) }
+        | INT LBRACK int_opt RBRACK { Array(Int, $3) }
+        | STRING LBRACK int_opt RBRACK { Array(String, $3) }
 
 fdecl_list:
     /* nothing */ {[]}
@@ -91,8 +91,11 @@ stmt:
         | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
         | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
 
+int_opt:
+        INT_LITERAL             { $1 }
+
 expr:
-        INT_LITERAL                 { IntLiteral($1) }
+        INT_LITERAL             { IntLiteral($1) }
         | STRING_LITERAL        { StrLiteral($1) }
         | ID                    { Id($1) }
         | expr PLUS expr        { Binop($1, Add, $3) }
@@ -107,4 +110,5 @@ expr:
         | expr GEQ expr         { Binop($1, Geq, $3) }
         | ID ASSIGN expr   { Assign($1, $3) }
         | ID LBRACK INT_LITERAL RBRACK ASSIGN expr { ArrayAssign($1, $3, $6) }
+        | ID LBRACK INT_LITERAL RBRACK { ArrayAccess($1, $3) }
 

@@ -3,7 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 type variable_type =
   Int
   | String
-  | Array of variable_type
+  | Array of variable_type * int
 
 type argument_decl =
   Argument of variable_type * string
@@ -15,6 +15,7 @@ type expr =
 (*  | Binop of expr * op * expr *)
   | Assign of string * expr
   | ArrayAssign of string * int * expr
+  | ArrayAccess of string * int
   | Binop of expr * op * expr
  (* | Call of string * expr list
   | Noexpr *)
