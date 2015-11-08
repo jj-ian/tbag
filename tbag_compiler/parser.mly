@@ -1,5 +1,5 @@
 %{ open Ast %}
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
+%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM ITEM NPC
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -22,7 +22,13 @@
 
 
 program:
+    /*
         rdecl_list fdecl_list EOF {$1, $2}
+        | rdecl_list ndecl_list fdecl_list EOF {$1, $2, $3}
+        | rdecl_list idecl_list fdecl_list EOF {$1, $2, $3}
+        | rdecl_list ndecl_list idecl_list fdecl_list EOF {$1, $2, $3, $4}
+*/
+        rdecl_list ndecl_list idecl_list fdecl_list EOF {$1, $2, $3, $4}
 
 data_type:
         INT { Int }
@@ -66,6 +72,24 @@ rdecl:
         ROOM ID LBRACE stmt_list RBRACE
         { {     rname = $2;
                 body = List.rev $4      } }
+
+ndecl_list:
+    /* nothing */ { [] }
+    | ndecl_list ndecl { $2 :: $1 }
+
+ndecl:
+    NPC ID LBRACE stmt_list RBRACE
+    {{        nname = $2;
+              nbody = List.rev $4       }}
+
+idecl_list:
+    /* nothing */ { [] }
+    | idecl_list idecl { $2 :: $1 }
+
+idecl:
+    ITEM ID LBRACE stmt_list RBRACE
+    {{        iname = $2;
+              ibody = List.rev $4       }}
 
 stmt_list:
         /* nothing */           { [] }

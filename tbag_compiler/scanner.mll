@@ -5,6 +5,8 @@ rule token = parse
         | "/*"                                  { comment lexbuf } 
         | "func"                                { FUNC }
         | "room"                                { ROOM }
+        | "npc"                                 { NPC }
+        | "item"                                { ITEM }
         | '('                                   { LPAREN }
         | ')'                                   { RPAREN }
         | '{'                                   { LBRACE }
@@ -48,6 +50,8 @@ try
         match token lexbuf with
          | FUNC -> print_string ("FUNC ")
          | ROOM -> print_string ("ROOM ")
+         | NPC -> print_string ("NPC ")
+         | ITEM -> print_string ("ITEM ")
          | LPAREN -> print_string ("LPAREN ")
          | RPAREN -> print_string ("RPAREN ")
          | LBRACE -> print_string ("LBRACE ")

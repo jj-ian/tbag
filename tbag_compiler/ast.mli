@@ -37,7 +37,18 @@ type func_decl = {
         body : stmt list;
 }
 
-type program = room_decl list * func_decl list
+type npc_decl = {
+    nname: string;
+    nbody: stmt list;
+}
+
+type item_decl = {
+    iname: string;
+    ibody: stmt list;
+}
+
+type program = room_decl list * (*option*) npc_decl list * (*option*) item_decl list
+* func_decl list
 
 
 (*
