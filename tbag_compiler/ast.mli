@@ -4,6 +4,7 @@ type dollar = Dollar
 type variable_type =
   Int
   | String
+  | Array of variable_type * int
 
 type argument_decl =
   Argument of variable_type * string
@@ -12,9 +13,11 @@ type expr =
     IntLiteral of int
   |  StrLiteral of string
   | Id of string
-  | ArrAccess of string * expr (* foo${2} *)
-  | Assign of string * expr (* foo = 4 *)
-  | Binop of expr * op * expr (* x == y *)
+(*  | Binop of expr * op * expr *)
+  | Assign of string * expr
+  | ArrayAssign of string * int * expr
+  | ArrayAccess of string * int
+  | Binop of expr * op * expr
  (* | Call of string * expr list
   | Noexpr *)
 
@@ -29,6 +32,10 @@ type room_decl = {
         rname: string;
         body: stmt list;
 }
+
+type adj_decl = {
+        body: string list;
+}
        
 type func_decl = {
 		    freturntype: variable_type;
@@ -38,7 +45,26 @@ type func_decl = {
         body : stmt list;
 }
 
-type program = room_decl list * func_decl list
+(* let type_of_string = function
+    | "int" -> Int
+    | "string" -> String
+ *)
+
+
+type npc_decl = {
+    nname: string;
+    nbody: stmt list;
+}
+
+type item_decl = {
+    iname: string;
+    ibody: stmt list;
+}
+
+type simple_program = room_decl list * adj_decl list * func_decl list
+
+type complex_program = room_decl list * adj_decl list * npc_decl list * 
+item_decl list * func_decl list
 
 
 (*

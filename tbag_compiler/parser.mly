@@ -1,5 +1,6 @@
 %{ open Ast %}
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM DOLLAR_SIGN
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
+%token FUNC ROOM ADJ ITEM NPC
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -15,18 +16,28 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-%start program
-%type <Ast.program> program
+%start simple_program
+%type <Ast.simple_program> simple_program
+
+%start complex_program
+%type <Ast.complex_program> complex_program
 
 %%
 
 
-program:
-        rdecl_list fdecl_list EOF {$1, $2}
+simple_program:
+        rdecl_list adecl_list fdecl_list EOF {$1, $2, $3}
+
+complex_program:
+        rdecl_list adecl_list ndecl_list idecl_list fdecl_list EOF {$1, $2, $3,
+        $4, $5}
 
 data_type:
         INT { Int }
         | STRING { String }
+        /* | data_type LBRACK RBRACK { Array( type_of_string $1) } */
+        | INT LBRACK int_opt RBRACK { Array(Int, $3) }
+        | STRING LBRACK int_opt RBRACK { Array(String, $3) }
 
 fdecl_list:
     /* nothing */ {[]}
@@ -61,11 +72,39 @@ rdecl_list:
         rdecl rdecl             { [$1; $2] }
         | rdecl_list rdecl      { $2 :: $1 }
 
-
 rdecl:
         ROOM ID LBRACE stmt_list RBRACE
         { {     rname = $2;
                 body = List.rev $4      } }
+
+adecl_list:
+        adecl                   { [$1] }
+        | adecl_list adecl      { $2 :: $1 }
+
+adecl:
+        ADJ LBRACE adj_list RBRACE SEMI
+        { {     body = List.rev $3      } }
+
+adj_list:
+        ID COMMA ID { [$1; $3] }
+
+ndecl_list:
+    /* nothing */ { [] }
+    | ndecl_list ndecl { $2 :: $1 }
+
+ndecl:
+    NPC ID LBRACE stmt_list RBRACE
+    {{        nname = $2;
+              nbody = List.rev $4       }}
+
+idecl_list:
+    /* nothing */ { [] }
+    | idecl_list idecl { $2 :: $1 }
+
+idecl:
+    ITEM ID LBRACE stmt_list RBRACE
+    {{        iname = $2;
+              ibody = List.rev $4       }}
 
 stmt_list:
         /* nothing */           { [] }
@@ -78,8 +117,11 @@ stmt:
         | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
         | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
 
+int_opt:
+        INT_LITERAL             { $1 }
+
 expr:
-        INT_LITERAL                 { IntLiteral($1) }
+        INT_LITERAL             { IntLiteral($1) }
         | STRING_LITERAL        { StrLiteral($1) }
         | ID                    { Id($1) }
         | ID LBRACE expr RBRACE { ArrAccess($1, $3) } 
@@ -94,6 +136,6 @@ expr:
         | expr GT expr          { Binop($1, Greater, $3) }
         | expr GEQ expr         { Binop($1, Geq, $3) }
         | ID ASSIGN expr   { Assign($1, $3) }
-
-
+        | ID LBRACK INT_LITERAL RBRACK ASSIGN expr { ArrayAssign($1, $3, $6) }
+        | ID LBRACK INT_LITERAL RBRACK { ArrayAccess($1, $3) }
 

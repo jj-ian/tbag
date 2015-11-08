@@ -5,10 +5,15 @@ rule token = parse
         | "/*"                                  { comment lexbuf } 
         | "func"                                { FUNC }
         | "room"                                { ROOM }
+        | "adj"                                 { ADJ }
+        | "npc"                                 { NPC }
+        | "item"                                { ITEM }
         | '('                                   { LPAREN }
         | ')'                                   { RPAREN }
         | '{'                                   { LBRACE }
         | '}'                                   { RBRACE }
+        | '['                                   { LBRACK }
+        | ']'                                   { RBRACK }
         | ','                                   { COMMA }
         | '+'                                   { PLUS }        (* operators*)
         | '-'                                   { MINUS }       
@@ -48,10 +53,15 @@ try
         match token lexbuf with
          | FUNC -> print_string ("FUNC ")
          | ROOM -> print_string ("ROOM ")
+         | ADJ -> print_string ("ADJ ")         
+         | NPC -> print_string ("NPC ")
+         | ITEM -> print_string ("ITEM ")
          | LPAREN -> print_string ("LPAREN ")
          | RPAREN -> print_string ("RPAREN ")
          | LBRACE -> print_string ("LBRACE ")
          | RBRACE -> print_string ("RBRACE ")
+         | LBRACK -> print_string ("LBRACK ")
+         | RBRACK -> print_string ("RBRACK ")         
          | COMMA -> print_string ("COMMA ") 
          | PLUS -> print_string ("PLUS ")
          | MINUS -> print_string ("MINUS ")
@@ -77,7 +87,7 @@ try
          | INT_LITERAL _ -> print_string("INT_LITERAL ")
          | STRING_LITERAL _ -> print_string("STRING_LITERAL ")
          | ID _ -> print_string("ID ")
-         | EOF -> print_endline "\nwwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
+         | EOF -> print_endline "\nwwwwwww\nd 0 0 b\n|  j  |\n| \\_/ |\n \\___/"
          | _ -> print_string("||put this token in the token printer|| ") (* this happens when there's some rule matched by the scanner above that isn't printed out here. add the rule to the pattern match here *)
     done
  with _-> exit 0
