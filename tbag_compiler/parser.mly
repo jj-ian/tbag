@@ -1,5 +1,5 @@
 %{ open Ast %}
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM
+%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA FUNC ROOM DOLLAR_SIGN
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -82,6 +82,7 @@ expr:
         INT_LITERAL                 { IntLiteral($1) }
         | STRING_LITERAL        { StrLiteral($1) }
         | ID                    { Id($1) }
+        | ID LBRACE expr RBRACE { ArrAccess($1, $3) } 
         | expr PLUS expr        { Binop($1, Add, $3) }
         | expr MINUS expr       { Binop($1, Sub, $3) }
         | expr TIMES expr       { Binop($1, Mult, $3) }

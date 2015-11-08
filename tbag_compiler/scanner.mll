@@ -20,15 +20,15 @@ rule token = parse
         | "<="                                  { LEQ }
         | '>'                                   { GT }
         | ">="                                  { GEQ }
-        | '='                                   { ASSIGN }  
+        | '='                                   { ASSIGN }
+        | '$'                                   { DOLLAR_SIGN }  
         | ';'					{ SEMI }
         | "int"					{ INT }         (* types  *)
-        | "string"              { STRING }
+        | "string"                              { STRING }
         | "if"                                  { IF }
         | "else"                                { ELSE }
         | "while"                               { WHILE }
         | "return"                              { RETURN }
-        (*| "string"                            { STRLIT } what???*)
         | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) } (* string literal *)
         | '''('\\'_|[^'''])*''' as str { STRING_LITERAL(str) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
@@ -65,6 +65,7 @@ try
          | GEQ -> print_string ("GEQ ")
          | ASSIGN -> print_string ("ASSIGN ")
          | SEMI -> print_string ("SEMI ")
+         | DOLLAR_SIGN -> print_string ("DOLLAR_SIGN ")
          | INT -> print_string ("INT ")
          | STRING -> print_string ("STRING ")
 

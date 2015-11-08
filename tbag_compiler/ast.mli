@@ -1,4 +1,5 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
+type dollar = Dollar
 
 type variable_type =
   Int
@@ -11,9 +12,9 @@ type expr =
     IntLiteral of int
   |  StrLiteral of string
   | Id of string
-(*  | Binop of expr * op * expr *)
-  | Assign of string * expr
-  | Binop of expr * op * expr
+  | ArrAccess of string * expr (* foo${2} *)
+  | Assign of string * expr (* foo = 4 *)
+  | Binop of expr * op * expr (* x == y *)
  (* | Call of string * expr list
   | Noexpr *)
 
