@@ -26,7 +26,6 @@ rule token = parse
         | '>'                                   { GT }
         | ">="                                  { GEQ }
         | '='                                   { ASSIGN }
-        | '$'                                   { DOLLAR_SIGN }  
         | ';'					{ SEMI }
         | "int"					{ INT }         (* types  *)
         | "string"                              { STRING }
@@ -75,7 +74,6 @@ try
          | GEQ -> print_string ("GEQ ")
          | ASSIGN -> print_string ("ASSIGN ")
          | SEMI -> print_string ("SEMI ")
-         | DOLLAR_SIGN -> print_string ("DOLLAR_SIGN ")
          | INT -> print_string ("INT ")
          | STRING -> print_string ("STRING ")
 
