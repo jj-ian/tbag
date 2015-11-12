@@ -42,18 +42,18 @@ let translate (functions) =
 *)
 
 let rec expression = function
-  StrLiteral(str) ­-> str
-  | IntLiteral(i) ­-> string_of_int i
+  StrLiteral(str) -> str
+  | IntLiteral(i) -> string_of_int i
   | Call(fname, arg) -> ((if fname = "print" 
                         then "System.out.println" 
-                        else fname) ^ "(" ^ (expression args) ^ ")")
+                        else fname) ^ "(" ^ (expression arg) ^ ")")
 
 let rec statements = function
   Expr(expr) -> ((expression expr) ^ ";\n")
 
 let func_decl f =
   if f.fname = "main" then
-    ("public static void main(String[] args) {\n" ^
+    ("public static void main(String[] args) {\n"
       ^ (statements f.body)    
       ^ "}")
 

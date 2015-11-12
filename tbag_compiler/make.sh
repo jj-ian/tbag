@@ -16,4 +16,6 @@ ocamlc -c parser.ml # compile the parser
 #ocamlc -c calc.ml # compile the interpreter
 #ocamlc -o calc parser.cmo scanner.cmo calc.cmo
 ocamlc -c compile.ml
-ocamlc -o tbag tbag.ml
+ocamlc -c tbag.ml
+
+ocamlc -o tbag scanner.cmo parser.cmo
