@@ -49,6 +49,7 @@ let data_type = function
 let rec expression = function
   StrLiteral(str) -> str
   | IntLiteral(i) -> string_of_int i
+  | Id(id) -> id
   | Call(fname, arg) ->
       let rec expr_list = function
         [] -> ""
