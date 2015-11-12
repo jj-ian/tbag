@@ -52,21 +52,42 @@ let rec expression = function
                         then "System.out.println" 
                         else fname) ^ "(" ^ expr_list arg ^ ")")
 
-
 let rec statement = function
   Expr(expr) -> ((expression expr) ^ ";\n")
+  | Return(expr) -> ("return " ^ expression expr ^ ";")
 
 let rec statement_list = function
   [] -> ""
-  | hd::tl -> 
-    ((statement hd) ^ (statement_list tl))  
+  | hd::tl -> ((statement hd) ^ (statement_list tl))  
+
+let data_type = function
+  String -> "String"
+  | Int -> "int"
+  | Void -> "void"
+
+let formal = function
+  Argument(datatype, id) -> ((data_type datatype) ^ " " ^ id)
+
+let rec formals_list = function
+  [] -> ""
+  | [solo] -> formal solo
+  | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
 let func_decl f =
   if f.fname = "main" then
     ("public static void main(String[] args) {\n"
       ^ (statement_list f.body)    
-      ^ "\t}")
-  else ("")
+      ^ "\t}\n")
+  else ("\tpublic static " ^ 
+        (data_type f.freturntype) ^ 
+        " " 
+        ^ f.fname
+        ^ "("
+        ^ (formals_list f.formals) 
+        ^ "){"
+        ^ (statement_list f.body)
+        ^ "}\n"
+  )
 
 let rec func_decl_list = function
   [] -> ""
@@ -77,7 +98,6 @@ let print_java p =
   ("public class hello_world { \n\n\t" 
     ^ (func_decl_list p)
     ^ "\n}")
-
 
 let translate (program) = 
   print_java program

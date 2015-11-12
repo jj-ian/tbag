@@ -1,6 +1,6 @@
 default: compiler
 
-hello_world: tbagger
+hello_world: compiler
 	./run.sh hello_world.tbag hello_world.java
  
 compiler: scanner parser compile tbagger

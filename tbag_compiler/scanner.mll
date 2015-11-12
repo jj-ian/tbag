@@ -26,15 +26,16 @@ rule token = parse
         | '>'                                   { GT }
         | ">="                                  { GEQ }
         | '='                                   { ASSIGN }
-        | ';'					{ SEMI }
-        | "int"					{ INT }         (* types  *)
+        | ';'					                { SEMI }
+        | "int"					                { INT }         (* types  *)
         | "string"                              { STRING }
+        | "void"                                { VOID }
         | "if"                                  { IF }
         | "else"                                { ELSE }
         | "while"                               { WHILE }
         | "return"                              { RETURN }
         | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) } (* string literal *)
-        | '"'('\\'_|[^'''])*'"' as str { STRING_LITERAL(str) }
+        | '"'('\\'_|[^'''])*'"'                 as str { STRING_LITERAL(str) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
         | eof                                   { EOF }
 
