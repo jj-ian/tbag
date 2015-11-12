@@ -20,12 +20,13 @@
 %start basic_program
 %type <Ast.basic_program> basic_program
 
+/*
 %start simple_program
 %type <Ast.simple_program> simple_program
 
 %start complex_program
 %type <Ast.complex_program> complex_program
-
+*/
 %%
 
 basic_program:
