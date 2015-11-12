@@ -1,8 +1,15 @@
-func int give1(){
-	return 1;
+/* 
+this
+is 
+a
+comment
+*/
+
+func int give1(int a, int b){
+	return a; 
 }
 
 func void main(){
 	print("hello world");
-	print(give1());
+	print(give1(1,2));
 }

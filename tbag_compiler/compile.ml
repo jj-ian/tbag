@@ -41,29 +41,33 @@ let translate (functions) =
 
 *)
 
-let rec expression = function
-  StrLiteral(str) -> str
-  | IntLiteral(i) -> string_of_int i
-  | Call(fname, arg) ->
-      let expr_list = function
-        [] -> ""
-        | e::[] -> (expression e)
-      in ((if fname = "print" 
-                        then "System.out.println" 
-                        else fname) ^ "(" ^ expr_list arg ^ ")")
-
-let rec statement = function
-  Expr(expr) -> ((expression expr) ^ ";\n")
-  | Return(expr) -> ("return " ^ expression expr ^ ";")
-
-let rec statement_list = function
-  [] -> ""
-  | hd::tl -> ((statement hd) ^ (statement_list tl))  
-
 let data_type = function
   String -> "String"
   | Int -> "int"
   | Void -> "void"
+
+let rec expression = function
+  StrLiteral(str) -> str
+  | IntLiteral(i) -> string_of_int i
+  | Call(fname, arg) ->
+      let rec expr_list = function
+        [] -> ""
+        | [solo] -> (expression solo)
+        | hd::tl -> ((expression hd) ^ "," ^ (expr_list tl))
+      in ((if fname = "print" 
+                        then "System.out.println" 
+                        else fname) ^ "(" ^ expr_list arg ^ ")")
+
+let expression_with_semi (expr) = 
+  ((expression expr) ^ ";\n")
+
+let rec statement = function
+  Expr(expr) -> (expression_with_semi expr)
+  | Return(expr) -> ("return " ^ expression_with_semi expr)
+
+let rec statement_list = function
+  [] -> ""
+  | hd::tl -> ((statement hd) ^ (statement_list tl))  
 
 let formal = function
   Argument(datatype, id) -> ((data_type datatype) ^ " " ^ id)
