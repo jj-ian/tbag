@@ -13,7 +13,7 @@ compile:
 	ocamlc -c compile.ml
 
 scanner: 
-	ocamlc -o scanner scanner.ml 
+	ocamllex scanner.mll; ocamlc -o scanner scanner.ml 
 
 parser: ast
 	ocamlyacc parser.mly; ocamlc -c parser.mli; ocamlc -c parser.ml
