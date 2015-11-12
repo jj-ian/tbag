@@ -61,6 +61,14 @@ formal_list:
     data_type ID { [Argument($1, $2)] }
     | formal_list COMMA data_type ID { Argument($3, $4) :: $1 }
 
+actuals_opt:
+    /* nothing */ { [] }
+    | actuals_list { List.rev $1 }
+
+actuals_list:
+    expr                        { [$1] }
+    | actuals_list COMMA expr   { $3 :: $1 }
+
 vdecl_list:
     /* nothing */ { [] }
     | vdecl_list vdecl { $2 :: $1 }
@@ -137,4 +145,5 @@ expr:
         | ID ASSIGN expr   { Assign($1, $3) }
         | ID LBRACK INT_LITERAL RBRACK ASSIGN expr { ArrayAssign($1, $3, $6) }
         | ID LBRACK INT_LITERAL RBRACK { ArrayAccess($1, $3) }
+        | ID LPAREN actuals_opt RPAREN      { Call ($1, $3) }
 

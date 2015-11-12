@@ -18,6 +18,7 @@ type expr =
   | ArrayAssign of string * int * expr
   | ArrayAccess of string * int
   | Binop of expr * op * expr
+  | Call of string * expr list (* foo(1, 25) *)
  (* | Call of string * expr list
   | Noexpr *)
 
