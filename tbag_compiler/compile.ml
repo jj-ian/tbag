@@ -74,7 +74,7 @@ let rec func_decl_list = function
     ((func_decl hd) ^ (func_decl_list tl))
 
 let print_java p =
-  ("public class tbag { \n\n\t" 
+  ("public class hello_world { \n\n\t" 
     ^ (func_decl_list p)
     ^ "\n}")
 

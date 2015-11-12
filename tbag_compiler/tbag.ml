@@ -1,6 +1,6 @@
 open Printf
 
-let file = "Tbag.java"
+let file = "hello_world.java"
 
 let _ = 
         let lexbuf = Lexing.from_channel stdin in
