@@ -57,19 +57,19 @@ let rec expression = function
 let rec statements = function
   Expr(expr) -> ((expression expr) ^ ";\n")
 
-let func_decl f =
+let func_decls f =
   if f.fname = "main" then
     ("public static void main(String[] args) {\n"
       (* ^ (statements f.body) *)    
-      ^ "}")
+      ^ "\n}")
   else ("")
 
 let print_java p =
   print_string ("public class Tbag { \n\n\t" 
-(*                 ^ (func_decl p)
- *)                ^ "}")
+                ^ (func_decls p)
+                ^ "\n}")
 
 
 let translate (program) = 
-  print_java program
+  print_java (List.hd program)
 
