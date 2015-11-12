@@ -1,5 +1,5 @@
 #!/bin/bash
 
-./tbag < hello_world.tbag
-javac hello_world.java
+./tbag < $1
+javac $2
 java hello_world
