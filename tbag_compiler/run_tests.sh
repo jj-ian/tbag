@@ -52,8 +52,7 @@ Check() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
                              s/.tbag//'`
-    #reffile=`echo $1 | sed 's/.out$//'`
-    reffile="tests/HelloWorld"
+    reffile=`echo $1 | sed 's/.tbag$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     echo "basename: " $basename
@@ -66,9 +65,11 @@ Check() {
 
     generatedfiles=""
 
-    generatedfiles="$generatedfiles ${basename}.java.out" &&
-    Run "$TBAG" "<" $1 ">" ${basename}.java.out &&
-    Compare ${basename}.java.out ${reffile}.java ${basename}.diff
+    generatedfiles="$generatedfiles ${basename}.java" &&
+    Run "$TBAG" "<" $1 #">" ${basename}.java.out &&
+    #Compare ${basename}.java.out ${reffile}.java ${basename}.diff
+    Compare ${basename}.java ${reffile}.java ${basename}.diff
+
 
     # Report the status and clean up the generated files
     if [ $error -eq 0 ] ; then
@@ -101,14 +102,14 @@ then
     files=$@
 else
     #files="tests/fail-*.mc tests/test-*.mc"
-    files="tests/HelloWorld.tbag"
+    files="tests/hello_world.tbag"
 fi
 
 for file in $files
 do
     echo $file
     case $file in
-	*HelloWorld*)
+	*hello_world*)
 	    Check $file 2>> $globallog
 	    ;;
 #	*fail-*)
