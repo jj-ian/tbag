@@ -41,12 +41,18 @@ let translate (functions) =
 
 *)
 
+
+
 let rec expression = function
   StrLiteral(str) -> str
   | IntLiteral(i) -> string_of_int i
-  | Call(fname, arg) -> ((if fname = "print" 
+  | Call(fname, arg) ->
+      let expr_list = function
+        [] -> ""
+        | e::[] -> (expression e)
+      in ((if fname = "print" 
                         then "System.out.println" 
-                        else fname) ^ "(" ^ (expression arg) ^ ")")
+                        else fname) ^ "(" ^ expr_list arg ^ ")")
 
 let rec statements = function
   Expr(expr) -> ((expression expr) ^ ";\n")
