@@ -1,0 +1,2 @@
+#!/bin/sh
+cat tests/HelloWorld.java > tests/HelloWorld.java.out
