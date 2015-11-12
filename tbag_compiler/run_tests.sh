@@ -65,13 +65,14 @@ Check() {
 
     generatedfiles=""
 
-    generatedfiles="$generatedfiles ${basename}.java" &&
-    Run "$TBAG" "<" $1 #">" ${basename}.java.out &&
-    #Compare ${basename}.java.out ${reffile}.java ${basename}.diff
-    Compare ${basename}.java ${reffile}.java ${basename}.diff
+    generatedfiles="$generatedfiles ${basename}.java.out" &&
+    Run "$TBAG" "<" $1 ">" ${basename}.java.out &&
+    Compare ${basename}.java.out ${reffile}.java ${basename}.diff
+    #Compare ${basename}.java ${reffile}.java ${basename}.diff
 
 
     # Report the status and clean up the generated files
+    echo "generared files" $generatedfiles
     if [ $error -eq 0 ] ; then
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
@@ -102,14 +103,14 @@ then
     files=$@
 else
     #files="tests/fail-*.mc tests/test-*.mc"
-    files="tests/hello_world.tbag"
+    files="tests/test-*.tbag"
 fi
 
 for file in $files
 do
     echo $file
     case $file in
-	*hello_world*)
+	*test-*)
 	    Check $file 2>> $globallog
 	    ;;
 #	*fail-*)
