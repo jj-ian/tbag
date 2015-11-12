@@ -5,7 +5,7 @@
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
-%token INT STRING
+%token INT STRING VOID
 %token <int> INT_LITERAL
 %token <string> STRING_LITERAL
 %token <string> ID
@@ -43,6 +43,7 @@ data_type:
         INT { Int }
         | STRING { String }
         /* | data_type LBRACK RBRACK { Array( type_of_string $1) } */
+        | VOID { Void }
         | INT LBRACK int_opt RBRACK { Array(Int, $3) }
         | STRING LBRACK int_opt RBRACK { Array(String, $3) }
 

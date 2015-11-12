@@ -3,6 +3,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 type variable_type =
   Int
   | String
+  | Void
   | Array of variable_type * int
 
 type argument_decl =
