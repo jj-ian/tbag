@@ -1,18 +1,18 @@
-default: tbagger
+default: compiler
 
 hello_world: tbagger
 	./run.sh hello_world.tbag hello_world.java
-
-tbagger: compiler
-	ocamlc -c tbag.ml; 
-
-compiler: scanner parser compile
+ 
+compiler: scanner parser compile tbagger
 	ocamlc -o tbag scanner.cmo parser.cmo compile.cmo tbag.cmo
+
+tbagger:
+	ocamlc -c tbag.ml;
 
 compile: 
 	ocamlc -c compile.ml
 
-scanner: 
+scanner: parser
 	ocamllex scanner.mll; ocamlc -o scanner scanner.ml 
 
 parser: ast
