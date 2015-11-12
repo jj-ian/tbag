@@ -1,0 +1,8 @@
+func int give1(){
+	return 1;
+}
+
+func void main(){
+	print("hello world");
+	print(give1());
+}

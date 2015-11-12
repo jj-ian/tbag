@@ -1,9 +1,9 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
-type dollar = Dollar
 
 type variable_type =
   Int
   | String
+  | Void
   | Array of variable_type * int
 
 type argument_decl =
@@ -18,6 +18,7 @@ type expr =
   | ArrayAssign of string * int * expr
   | ArrayAccess of string * int
   | Binop of expr * op * expr
+  | Call of string * expr list (* foo(1, 25) *)
  (* | Call of string * expr list
   | Noexpr *)
 
@@ -60,6 +61,8 @@ type item_decl = {
     iname: string;
     ibody: stmt list;
 }
+
+type basic_program = func_decl list
 
 type simple_program = room_decl list * adj_decl list * func_decl list
 

@@ -1,3 +1,5 @@
+
+
 #!/bin/bash
 
 set -x
@@ -5,6 +7,8 @@ set -o errexit #script quits on error
 set -o pipefail
 set -o nounset
 # set -o xtrace
+
+
 
 ocamllex scanner.mll
 ocamlyacc parser.mly
@@ -15,4 +19,7 @@ ocamlc -o scanner scanner.ml # temp --compile scanner and name executable scanne
 ocamlc -c parser.ml # compile the parser
 #ocamlc -c calc.ml # compile the interpreter
 #ocamlc -o calc parser.cmo scanner.cmo calc.cmo
-ocamlc -c microc.ml
+ocamlc -c compile.ml
+ocamlc -c tbag.ml
+
+ocamlc -o tbag scanner.cmo parser.cmo compile.cmo tbag.cmo

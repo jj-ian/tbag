@@ -26,24 +26,23 @@ rule token = parse
         | '>'                                   { GT }
         | ">="                                  { GEQ }
         | '='                                   { ASSIGN }
-        | '$'                                   { DOLLAR_SIGN }  
-        | ';'					{ SEMI }
-        | "int"					{ INT }         (* types  *)
+        | ';'					                { SEMI }
+        | "int"					                { INT }         (* types  *)
         | "string"                              { STRING }
+        | "void"                                { VOID }
         | "if"                                  { IF }
         | "else"                                { ELSE }
         | "while"                               { WHILE }
         | "return"                              { RETURN }
         | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) } (* string literal *)
-        | '''('\\'_|[^'''])*''' as str { STRING_LITERAL(str) }
+        | '"'('\\'_|[^'''])*'"'                 as str { STRING_LITERAL(str) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
         | eof                                   { EOF }
 
         and comment = parse 
         "*/" { token lexbuf }   (* End of comment *)
         | _ { comment lexbuf }  (* eat everything else *)
-
-
+(*
 {
     
 let _ =
@@ -75,7 +74,6 @@ try
          | GEQ -> print_string ("GEQ ")
          | ASSIGN -> print_string ("ASSIGN ")
          | SEMI -> print_string ("SEMI ")
-         | DOLLAR_SIGN -> print_string ("DOLLAR_SIGN ")
          | INT -> print_string ("INT ")
          | STRING -> print_string ("STRING ")
 
@@ -93,3 +91,4 @@ try
  with _-> exit 0
 
 }
+*)
