@@ -26,7 +26,7 @@
 
 %start complex_program
 %type <Ast.complex_program> complex_program
-*/
+*/  
 %%
 
 basic_program:
