@@ -20,3 +20,7 @@ parser: ast
 
 ast:
 	ocamlc -c ast.mli
+
+.PHONY: clean
+clean:
+	rm -f scanner.ml parser.ml parser.mli *.cmo *.cmi scanner a.out *.cmx scannertraced* *.o *.class tbag *.java
