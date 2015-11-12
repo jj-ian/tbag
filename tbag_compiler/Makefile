@@ -1,6 +1,6 @@
-default: runner
+default: tbagger
 
-runner: tbagger
+hello_world: tbagger
 	./run.sh hello_world.tbag hello_world.java
 
 tbagger: compiler
