@@ -1,4 +1,7 @@
-default: tbagger
+default: runner
+
+runner: tbagger
+	./run.sh hello_world.tbag hello_world.java
 
 tbagger: compiler
 	ocamlc -c tbag.ml; 
