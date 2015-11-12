@@ -51,6 +51,12 @@ let operator = function
   | Sub -> "-"
   | Mult -> "*"
   | Div -> "/"
+  | Equal -> "=="
+  | Neq -> "!="
+  | Less -> "<"
+  | Leq -> "<="
+  | Greater -> ">"
+  | Geq -> ">="
 
 let rec expression = function
   StrLiteral(str) -> str
