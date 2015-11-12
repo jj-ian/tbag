@@ -44,7 +44,9 @@ let translate (functions) =
 let rec expression = function
   StrLiteral(str) ­-> str
   | IntLiteral(i) ­-> string_of_int i
-  | Call(fname, arg) -> fname ^ (expression arg)
+  | Call(fname, arg) -> ((if fname = "print" 
+                        then "System.out.println" 
+                        else fname) ^ "(" ^ (expression args) ^ ")")
 
 let rec statements = function
   Expr(expr) -> ((expression expr) ^ ";\n")
