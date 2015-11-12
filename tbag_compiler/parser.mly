@@ -154,4 +154,5 @@ expr:
         | ID LBRACK INT_LITERAL RBRACK ASSIGN expr { ArrayAssign($1, $3, $6) }
         | ID LBRACK INT_LITERAL RBRACK { ArrayAccess($1, $3) }
         | ID LPAREN actuals_opt RPAREN      { Call ($1, $3) }
+        | LPAREN expr RPAREN { $2 }
 
