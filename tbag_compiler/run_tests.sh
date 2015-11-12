@@ -32,7 +32,6 @@ SignalError() {
 Compare() {
     generatedfiles="$generatedfiles $3"
     echo diff -b $1 $2 ">" $3 1>&2
-    echo diff -b $1 $2 ">" $3 1> "tests/DIFFFILESDFKJHSKDJFHDFKJAHV"
     diff -b "$1" "$2" > "$3" 2>&1 || {
 	SignalError "$1 differs"
 	echo "FAILED $1 differs from $2" 1>&2
@@ -54,7 +53,7 @@ Check() {
     basename=`echo $1 | sed 's/.*\\///
                              s/.tbag//'`
     #reffile=`echo $1 | sed 's/.out$//'`
-    reffile="HelloWorld"
+    reffile="tests/HelloWorld"
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     echo "basename: " $basename
@@ -72,7 +71,6 @@ Check() {
     Compare ${basename}.java.out ${reffile}.java ${basename}.diff
 
     # Report the status and clean up the generated files
-
     if [ $error -eq 0 ] ; then
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
