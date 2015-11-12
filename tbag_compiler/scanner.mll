@@ -34,7 +34,7 @@ rule token = parse
         | "while"                               { WHILE }
         | "return"                              { RETURN }
         | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) } (* string literal *)
-        | '''('\\'_|[^'''])*''' as str { STRING_LITERAL(str) }
+        | '"'('\\'_|[^'''])*'"' as str { STRING_LITERAL(str) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
         | eof                                   { EOF }
 

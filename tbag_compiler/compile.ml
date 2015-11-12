@@ -41,8 +41,6 @@ let translate (functions) =
 
 *)
 
-
-
 let rec expression = function
   StrLiteral(str) -> str
   | IntLiteral(i) -> string_of_int i
@@ -54,22 +52,33 @@ let rec expression = function
                         then "System.out.println" 
                         else fname) ^ "(" ^ expr_list arg ^ ")")
 
-let rec statements = function
+
+let rec statement = function
   Expr(expr) -> ((expression expr) ^ ";\n")
 
-let func_decls f =
+let rec statement_list = function
+  [] -> ""
+  | hd::tl -> 
+    ((statement hd) ^ (statement_list tl))  
+
+let func_decl f =
   if f.fname = "main" then
     ("public static void main(String[] args) {\n"
-      (* ^ (statements f.body) *)    
-      ^ "\n}")
+      ^ (statement_list f.body)    
+      ^ "\t}")
   else ("")
 
+let rec func_decl_list = function
+  [] -> ""
+  | hd::tl -> 
+    ((func_decl hd) ^ (func_decl_list tl))
+
 let print_java p =
-  print_string ("public class Tbag { \n\n\t" 
-                ^ (func_decls p)
-                ^ "\n}")
+  ("public class tbag { \n\n\t" 
+    ^ (func_decl_list p)
+    ^ "\n}")
 
 
 let translate (program) = 
-  print_java (List.hd program)
+  print_java program
 
