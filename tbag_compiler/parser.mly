@@ -1,4 +1,5 @@
 %{ open Ast %}
+
 %token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
 %token FUNC ROOM ADJ ITEM NPC
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
@@ -16,6 +17,9 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 
+%start basic_program
+%type <Ast.basic_program> basic_program
+
 %start simple_program
 %type <Ast.simple_program> simple_program
 
@@ -24,6 +28,8 @@
 
 %%
 
+basic_program:
+    fdecl_list EOF { $1 }
 
 simple_program:
         rdecl_list adecl_list fdecl_list EOF {$1, $2, $3}

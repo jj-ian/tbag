@@ -1,5 +1,4 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
-type dollar = Dollar
 
 type variable_type =
   Int
@@ -61,6 +60,8 @@ type item_decl = {
     iname: string;
     ibody: stmt list;
 }
+
+type basic_program = func_decl list
 
 type simple_program = room_decl list * adj_decl list * func_decl list
 
