@@ -41,7 +41,7 @@ rule token = parse
         and comment = parse 
         "*/" { token lexbuf }   (* End of comment *)
         | _ { comment lexbuf }  (* eat everything else *)
-
+(*
 {
     
 let _ =
@@ -90,3 +90,4 @@ try
  with _-> exit 0
 
 }
+*)

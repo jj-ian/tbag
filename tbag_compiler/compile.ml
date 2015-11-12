@@ -60,13 +60,14 @@ let rec statements = function
 let func_decl f =
   if f.fname = "main" then
     ("public static void main(String[] args) {\n"
-      ^ (statements f.body)    
+      (* ^ (statements f.body) *)    
       ^ "}")
+  else ("")
 
 let print_java p =
   print_string ("public class Tbag { \n\n\t" 
-                ^ (func_decl p)
-                ^ "}")
+(*                 ^ (func_decl p)
+ *)                ^ "}")
 
 
 let translate (program) = 
