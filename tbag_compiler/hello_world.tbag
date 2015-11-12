@@ -5,11 +5,11 @@ a
 comment
 */
 
-func int give_first(int a, int b){
-	return a; 
+func int add(int a, int b){
+	return a+b; 
 }
 
 func void main(){
 	print("hello world");
-	print(give_first(1,2));
+	print(add(1,2));
 }

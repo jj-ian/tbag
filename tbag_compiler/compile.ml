@@ -46,10 +46,17 @@ let data_type = function
   | Int -> "int"
   | Void -> "void"
 
+let operator = function
+  Add -> "+"
+  | Sub -> "-"
+  | Mult -> "*"
+  | Div -> "/"
+
 let rec expression = function
   StrLiteral(str) -> str
   | IntLiteral(i) -> string_of_int i
   | Id(id) -> id
+  | Binop(expr1, op, expr2) -> ((expression expr1) ^ (operator op) ^ (expression expr2))
   | Call(fname, arg) ->
       let rec expr_list = function
         [] -> ""
