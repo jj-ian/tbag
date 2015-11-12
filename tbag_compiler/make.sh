@@ -18,4 +18,4 @@ ocamlc -c parser.ml # compile the parser
 ocamlc -c compile.ml
 ocamlc -c tbag.ml
 
-ocamlc -o tbag scanner.cmo parser.cmo
+ocamlc -o tbag scanner.cmo parser.cmo compile.cmo tbag.cmo
