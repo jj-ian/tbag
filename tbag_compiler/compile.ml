@@ -40,7 +40,7 @@ let rec statement = function
 
 let rec statement_list = function
   [] -> ""
-  | hd::tl -> ((statement hd) ^ (statement_list tl))  
+  | hd::tl -> ("\t\t" ^ (statement hd) ^ (statement_list tl))  
 
 let formal = function
   Argument(datatype, id) -> ((data_type datatype) ^ " " ^ id)
@@ -50,31 +50,36 @@ let rec formals_list = function
   | [solo] -> formal solo
   | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
+let room_decl r =
+        ("Room " ^ r.rname ^ " = new Room();\n")
+
 let func_decl f =
   if f.fname = "main" then
     ("public static void main(String[] args) {\n"
       ^ (statement_list f.body)    
       ^ "\t}\n")
-  else ("\tpublic static " ^ 
+  else ("public static " ^ 
         (data_type f.freturntype) ^ 
         " " 
         ^ f.fname
         ^ "("
         ^ (formals_list f.formals) 
-        ^ "){"
+        ^ "){\n"
         ^ (statement_list f.body)
-        ^ "}\n"
+        ^ "\n\t}\n"
   )
 
-let rec func_decl_list = function
-  [] -> ""
-  | hd::tl -> 
-    ((func_decl hd) ^ (func_decl_list tl))
+let rec room_decl_list = function
+        []              -> ""
+        | hd::tl        -> ((room_decl hd) ^ "\n\t" ^ (room_decl_list tl))
 
-let print_java p =
-  ("public class hello_world { \n\n\t" 
-    ^ (func_decl_list p)
-    ^ "\n}")
+let rec func_decl_list = function
+        []              -> ""
+        | hd::tl        -> ((func_decl hd) ^ "\n\t" ^ (func_decl_list tl))
+
+let print_java (rooms, functions) =
+        ("public class hello_world { \n\n\t" ^ "public class Room {\n\n\t}\n\n\t" ^
+  (room_decl_list rooms)  ^ "\n\n\t" ^ (func_decl_list functions) ^ "\n}")
 
 let translate (program) = 
   print_java program

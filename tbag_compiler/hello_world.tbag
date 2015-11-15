@@ -5,6 +5,10 @@ a
 comment
 */
 
+room myRoom { }
+
+room myRoom1 { }
+
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;
 }

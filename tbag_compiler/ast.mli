@@ -64,7 +64,7 @@ type item_decl = {
 
 type basic_program = func_decl list
 
-type simple_program = room_decl list * adj_decl list * func_decl list
+type simple_program = room_decl list * func_decl list
 
 type complex_program = room_decl list * adj_decl list * npc_decl list * 
 item_decl list * func_decl list
