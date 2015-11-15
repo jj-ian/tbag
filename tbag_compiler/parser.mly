@@ -43,49 +43,49 @@ complex_program:
         $4, $5}
 
 data_type:
-        INT { Int }
-        | STRING { String }
+        INT             { Int }
+        | STRING        { String }
         /* | data_type LBRACK RBRACK { Array( type_of_string $1) } */
-        | VOID { Void }
-        | INT LBRACK int_opt RBRACK { Array(Int, $3) }
-        | STRING LBRACK int_opt RBRACK { Array(String, $3) }
+        | VOID          { Void }
+        | INT LBRACK int_opt RBRACK     { Array(Int, $3) }
+        | STRING LBRACK int_opt RBRACK  { Array(String, $3) }
 
 fdecl_list:
-    /* nothing */ {[]}
-    | fdecl_list fdecl { $2 :: $1 }
+        /* nothing */           {[]}
+        | fdecl_list fdecl      { $2 :: $1 }
 
 fdecl:
         FUNC data_type ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
         { { 
-            freturntype = $2;    
-            fname = $3;
+                freturntype = $2;    
+                fname = $3;
 	        formals = $5;
-            locals = $8;
-            body = List.rev $9      
+                locals = $8;
+                body = List.rev $9      
             } }
 
 formals_opt:
-    /* nothing */ { [] }
-    | formal_list { List.rev $1 }
+        /* nothing */   { [] }
+        | formal_list   { List.rev $1 }
 
 formal_list:
-    data_type ID { [Argument($1, $2)] }
-    | formal_list COMMA data_type ID { Argument($3, $4) :: $1 }
+        data_type ID            { [Argument($1, $2)] }
+        | formal_list COMMA data_type ID        { Argument($3, $4) :: $1 }
 
 actuals_opt:
-    /* nothing */ { [] }
-    | actuals_list { List.rev $1 }
+        /* nothing */   { [] }
+        | actuals_list  { List.rev $1 }
 
 actuals_list:
-    expr                        { [$1] }
-    | actuals_list COMMA expr   { $3 :: $1 }
+        expr                        { [$1] }
+        | actuals_list COMMA expr   { $3 :: $1 }
 
 vdecl_list:
-    /* nothing */ { [] }
-    | vdecl_list vdecl { $2 :: $1 }
+        /* nothing */           { [] }
+        | vdecl_list vdecl      { $2 :: $1 }
 
 vdecl:
-    data_type ID SEMI { $2 }
+        data_type ID SEMI { $2 }
 
 rdecl_list:
         rdecl rdecl             { [$1; $2] }
@@ -108,22 +108,22 @@ adj_list:
         ID COMMA ID { [$1; $3] }
 
 ndecl_list:
-    /* nothing */ { [] }
-    | ndecl_list ndecl { $2 :: $1 }
+        /* nothing */           { [] }
+        | ndecl_list ndecl      { $2 :: $1 }
 
 ndecl:
-    NPC ID LBRACE stmt_list RBRACE
-    {{        nname = $2;
-              nbody = List.rev $4       }}
+        NPC ID LBRACE stmt_list RBRACE
+        {{      nname = $2;
+                nbody = List.rev $4       }}
 
 idecl_list:
-    /* nothing */ { [] }
-    | idecl_list idecl { $2 :: $1 }
+        /* nothing */ { [] }
+        | idecl_list idecl { $2 :: $1 }
 
 idecl:
-    ITEM ID LBRACE stmt_list RBRACE
-    {{        iname = $2;
-              ibody = List.rev $4       }}
+        ITEM ID LBRACE stmt_list RBRACE
+        {{      iname = $2;
+                ibody = List.rev $4       }}
 
 stmt_list:
         /* nothing */           { [] }
