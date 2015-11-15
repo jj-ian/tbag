@@ -27,9 +27,9 @@ let rec expression = function
         [] -> ""
         | [solo] -> (expression solo)
         | hd::tl -> ((expression hd) ^ "," ^ (expr_list tl))
-        in ((if fname = "print" 
-                        then "System.out.println" 
-                        else fname) ^ "(" ^ expr_list arg ^ ")")
+        in (
+                (if fname = "print" then "System.out.println" else fname)
+                ^ "(" ^ expr_list arg ^ ")")
 
 let expression_with_semi (expr) = 
         ((expression expr) ^ ";\n")
@@ -55,19 +55,11 @@ let room_decl r =
 
 let func_decl f =
         if f.fname = "main" then
-        ("public static void main(String[] args) {\n"
-      ^ (statement_list f.body)    
-      ^ "\t}\n")
-  else  ("public static " ^ 
-        (data_type f.freturntype) ^ 
-        " " 
-        ^ f.fname
-        ^ "("
-        ^ (formals_list f.formals) 
-        ^ "){\n"
-        ^ (statement_list f.body)
-        ^ "\n\t}\n"
-  )
+                ("public static void main(String[] args) {\n" ^ (statement_list f.body)    
+                ^ "\t}\n")
+        else
+                ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
+                ^ (formals_list f.formals) ^ "){\n" ^ (statement_list f.body) ^ "\n\t}\n")
 
 let rec room_decl_list = function
         []              -> ""
@@ -79,7 +71,7 @@ let rec func_decl_list = function
 
 let print_java (rooms, functions) =
         ("public class hello_world { \n\n\t" ^ "public class Room {\n\n\t}\n\n\t" ^
-  (room_decl_list rooms)  ^ "\n\n\t" ^ (func_decl_list functions) ^ "\n}")
+        (room_decl_list rooms)  ^ "\n\n\t" ^ (func_decl_list functions) ^ "\n}")
 
 let translate (program) = 
         print_java program
