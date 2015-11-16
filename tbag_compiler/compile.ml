@@ -70,7 +70,7 @@ let rec func_decl_list = function
         | hd::tl        -> ((func_decl hd) ^ "\n\t" ^ (func_decl_list tl))
 
 let print_java (rooms, functions) =
-        ("public class hello_world { \n\n\t" ^ "public class Room {\n\n\t}\n\n\t" ^
+        ("public class hello_world { \n\n\t" ^ "public class Room {\n\t\tString msg;\n\t}\n\n\t" ^
         (room_decl_list rooms)  ^ "\n\n\t" ^ (func_decl_list functions) ^ "\n}")
 
 let translate (program) = 
