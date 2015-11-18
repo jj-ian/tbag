@@ -1,19 +1,8 @@
-/* 
-this
-is 
-a
-comment
-*/
-
-room myRoom { }
-
-room myRoom1 { }
-
-func int add(int a, int b){
-	return (a+b*a-b/a)+a;
+func int give1(){
+	return 1;
 }
 
 func void main(){
 	print("hello world");
-	print(add(1,2));
+	print(give1());
 }

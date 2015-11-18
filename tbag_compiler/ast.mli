@@ -1,33 +1,33 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
 
 type variable_type =
-        Int
-        | String
-        | Void
-        | Array of variable_type * int
+  Int
+  | String
+  | Void
+  | Array of variable_type * int
 
 type argument_decl =
-        Argument of variable_type * string
+  Argument of variable_type * string
 
 type expr =
-        IntLiteral of int
-        |  StrLiteral of string
-        | Id of string
-        (*  | Binop of expr * op * expr *)
-        | Assign of string * expr
-        | ArrayAssign of string * int * expr
-        | ArrayAccess of string * int
-        | Binop of expr * op * expr
-        | Call of string * expr list (* foo(1, 25) *)
-        (* | Call of string * expr list
-        | Noexpr *)
+    IntLiteral of int
+  |  StrLiteral of string
+  | Id of string
+(*  | Binop of expr * op * expr *)
+  | Assign of string * expr
+  | ArrayAssign of string * int * expr
+  | ArrayAccess of string * int
+  | Binop of expr * op * expr
+  | Call of string * expr list (* foo(1, 25) *)
+ (* | Call of string * expr list
+  | Noexpr *)
 
 type stmt =
-        Block of stmt list
-        | Expr of expr
-        | Return of expr
-        | If of expr * stmt * stmt
-        | While of expr * stmt
+   Block of stmt list
+   | Expr of expr
+   | Return of expr
+   | If of expr * stmt * stmt
+   | While of expr * stmt
 
 type room_decl = {
         rname: string;
@@ -39,7 +39,7 @@ type adj_decl = {
 }
        
 type func_decl = {
-        freturntype: variable_type;
+		    freturntype: variable_type;
         fname : string;
         formals : argument_decl list; (* formal arguments *)
         locals: string list; (* locally defined variables *)
@@ -53,20 +53,21 @@ type func_decl = {
 
 
 type npc_decl = {
-        nname: string;
-        nbody: stmt list;
+    nname: string;
+    nbody: stmt list;
 }
 
 type item_decl = {
-        iname: string;
-        ibody: stmt list;
+    iname: string;
+    ibody: stmt list;
 }
 
 type basic_program = func_decl list
 
-type simple_program = room_decl list * func_decl list
+type simple_program = room_decl list * adj_decl list * func_decl list
 
-type complex_program = room_decl list * adj_decl list * npc_decl list * item_decl list * func_decl list
+type complex_program = room_decl list * adj_decl list * npc_decl list * 
+item_decl list * func_decl list
 
 
 (*
