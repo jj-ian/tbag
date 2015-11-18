@@ -1,13 +1,15 @@
 package tbagJavaTarget;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 public class Room {
 	private String name;
 	private String welcomeMessage;
-	private HashSet<Room> adjacentRooms;
+	public Collection<Room> adjacentRooms;
 	
 	public Room(String name, String welcomeMessage) {
+		adjacentRooms = new HashSet<Room>();
 		this.name = name;
 		this.welcomeMessage = welcomeMessage;
 	}
@@ -17,7 +19,7 @@ public class Room {
 		return name;
 	}
 	
-	public String welcomeMessage() {
+	public String getWelcomeMessage() {
 		return welcomeMessage;
 	}
 	
