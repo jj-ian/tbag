@@ -23,8 +23,11 @@ public class Room {
 		return welcomeMessage;
 	}
 	
+	// adding connections is 2-way
 	public void addAdjacentRoom(Room otherRoom) {
 		adjacentRooms.add(otherRoom);
+		otherRoom.adjacentRooms.add(this);
+		
 	}
 	
 	

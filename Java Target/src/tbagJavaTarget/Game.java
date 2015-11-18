@@ -37,13 +37,21 @@ public class Game {
 		
 		// handles setup and initialization, room objects get created
 		
-		Room home = new Room("Home", "You wake up in your bed.");
+		Room bedroom = new Room("Bedroom", "You wake up in your bed.");
 		Room outside = new Room("Outside", "Congrats! You made it outside.");
+		Room kitchen = new Room("Kitchen", "Cool! Looks like this is the kitchen.");
+		Room bathroom = new Room("Bathroom", "Nice bathroom!");
+		Room mall = new Room("Mall", "You made it to the mall! Woo!");
 		
-		home.addAdjacentRoom(outside);
-		outside.addAdjacentRoom(home);
+		bedroom.addAdjacentRoom(kitchen);
+		bedroom.addAdjacentRoom(outside);
+		bedroom.addAdjacentRoom(bathroom);
 		
-		return new Game(home);
+		bathroom.addAdjacentRoom(kitchen);
+		
+		outside.addAdjacentRoom(mall);
+		
+		return new Game(bedroom);
 	}
 	
 	// gameplay happens here
@@ -60,6 +68,7 @@ public class Game {
 			for (Room adjacentRoom : currentRoom.adjacentRooms) {
 				System.out.println(adjacentCounter + " : " + adjacentRoom.getName());
 				this.inputRoomMap.put(new Integer(adjacentCounter), adjacentRoom);
+				adjacentCounter++;
 			}
 			
 			//TODO check for input type errors
