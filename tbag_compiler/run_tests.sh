@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TBAG="./tbag"
+TBAG="./java_tbag.sh"
 
 # Set time limit for all operations
 ulimit -t 30
@@ -62,9 +62,9 @@ Check() {
 
     generatedfiles=""
 
-    generatedfiles="$generatedfiles ${basename}.java.out" &&
-    Run "$TBAG" "<" $1 ">" ${basename}.java.out &&
-    Compare ${basename}.java.out ${reffile}.java ${basename}.diff
+    generatedfiles="$generatedfiles ${basename}.out" &&
+    Run "$TBAG" $1 ">" ${basename}.out &&
+    Compare ${basename}.out ${reffile}.out ${basename}.diff
 
 
     # Report the status and clean up the generated files
@@ -97,17 +97,17 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    #files="tests/fail-*.mc tests/test-*.mc"
-    files="tests/test-*.tbag"
+    #files="tests/fail_*.mc tests/test_*.mc"
+    files="tests/test_*.tbag"
 fi
 
 for file in $files
 do
     case $file in
-	*test-*)
+	*test_*)
 	    Check $file 2>> $globallog
 	    ;;
-#	*fail-*)
+#	*fail_*)
 #	    CheckFail $file 2>> $globallog
 #	    ;;
 	*)
