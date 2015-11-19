@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
+open Ast
 
 type variable_type =
         Int
@@ -9,9 +9,11 @@ type variable_type =
 type argument_decl =
         Argument of variable_type * string
 
+type expression = expr * variable_type
+
 type expr =
         IntLiteral of int
-        | StrLiteral of string
+        |  StrLiteral of string
         | Id of string
         (*  | Binop of expr * op * expr *)
         | Assign of string * expr
@@ -22,9 +24,11 @@ type expr =
         (* | Call of string * expr list
         | Noexpr *)
 
+type variable_decl = var_decl * variable_type
+
 type var_decl =
-    Variable of variable_type * string
-    | Variable_Initialization of variable_type * string * expr
+    Variable of var_types * string
+    | Variable_Initialization of var_types * string * expression
 
 type stmt =
         Block of stmt list
