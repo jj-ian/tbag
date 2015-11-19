@@ -28,7 +28,7 @@ type variable_decl = var_decl * variable_type
 
 type var_decl =
     Variable of var_types * string
-    | Variable_Initialization of var_types * string * expr
+    | Variable_Initialization of var_types * string * expression
 
 type stmt =
         Block of stmt list

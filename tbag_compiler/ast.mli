@@ -11,7 +11,7 @@ type argument_decl =
 
 type expr =
         IntLiteral of int
-        |  StrLiteral of string
+        | StrLiteral of string
         | Id of string
         (*  | Binop of expr * op * expr *)
         | Assign of string * expr
@@ -23,8 +23,8 @@ type expr =
         | Noexpr *)
 
 type var_decl =
-    Variable of var_types * string
-    | Variable_Initialization of var_types * string * expr
+    Variable of variable_type * string
+    | Variable_Initialization of variable_type * string * expr
 
 type stmt =
         Block of stmt list
