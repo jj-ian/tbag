@@ -23,8 +23,8 @@ type expr =
         | Noexpr *)
 
 type var_decl =
-    Variable of variable_type * string
-    | Variable_Initialization of variable_type * string * expr
+    Var of variable_type * string
+    | Var_Init of variable_type * string * expr
 
 type stmt =
         Block of stmt list
@@ -46,15 +46,9 @@ type func_decl = {
         freturntype: variable_type;
         fname : string;
         formals : argument_decl list; (* formal arguments *)
-        locals: string list; (* locally defined variables *)
+        locals: var_decl list; (* locally defined variables *)
         body : stmt list;
 }
-
-(* let type_of_string = function
-    | "int" -> Int
-    | "string" -> String
- *)
-
 
 type npc_decl = {
         nname: string;
@@ -71,13 +65,3 @@ type basic_program = func_decl list
 type simple_program = room_decl list * func_decl list
 
 type complex_program = room_decl list * adj_decl list * npc_decl list * item_decl list * func_decl list
-
-
-(*
-let string_of_fdecl fdecl =
-  fdecl.fname ^ "(" ^ String.concat ", " fdecl.formals ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n"
-  *)
-

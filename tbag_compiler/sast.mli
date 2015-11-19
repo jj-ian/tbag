@@ -24,11 +24,9 @@ type expr =
         (* | Call of string * expr list
         | Noexpr *)
 
-type variable_decl = var_decl * variable_type
-
 type var_decl =
-    Variable of var_types * string
-    | Variable_Initialization of var_types * string * expression
+    Var of variable_type * string
+    | Var_Init of variable_type * string * expr
 
 type stmt =
         Block of stmt list
@@ -58,7 +56,6 @@ type func_decl = {
     | "int" -> Int
     | "string" -> String
  *)
-
 
 type npc_decl = {
         nname: string;

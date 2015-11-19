@@ -85,7 +85,8 @@ vdecl_list:
         | vdecl_list vdecl      { $2 :: $1 }
 
 vdecl:
-        data_type ID SEMI { Variable(Int, $2) }
+        data_type ID SEMI { Var($1, $2) }
+        | data_type ID ASSIGN expr SEMI { Var_Init($1, $2, $4) }
 
 rdecl_list:
         rdecl rdecl             { [$1; $2] }
