@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
+open Ast
 
 type variable_type =
         Int
@@ -8,6 +8,8 @@ type variable_type =
 
 type argument_decl =
         Argument of variable_type * string
+
+type expression = expr * variable_type
 
 type expr =
         IntLiteral of int
@@ -21,6 +23,8 @@ type expr =
         | Call of string * expr list (* foo(1, 25) *)
         (* | Call of string * expr list
         | Noexpr *)
+
+type variable_decl = var_decl * variable_type
 
 type var_decl =
     Variable of var_types * string
