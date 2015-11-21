@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Game {
 
+	//testing
 	private Room startingRoom;
 	private Scanner scanner;
 	
