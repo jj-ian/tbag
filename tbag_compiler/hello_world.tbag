@@ -5,9 +5,17 @@ a
 comment
 */
 
+room { }
+
 room myRoom { }
 
 room myRoom1 { }
+
+adj { myRoom, myRoom1 };
+
+npc { }
+
+item { }
 
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;
