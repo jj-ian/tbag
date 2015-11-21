@@ -2,4 +2,4 @@
 
 ./tbag < $1
 javac $2
-java hello_world
+java test_hello_world
