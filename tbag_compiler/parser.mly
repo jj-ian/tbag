@@ -22,25 +22,30 @@
 %type <Ast.basic_program> basic_program
 */ 
 
+
 %start simple_program
 %type <Ast.simple_program> simple_program
 
 /*
 %start program
-%type <Ast.program> complex_program
-*/  
+%type <Ast.program> program
+*/ 
 %%
+
 
 basic_program:
     fdecl_list EOF                                  { $1 }
 
 simple_program:
         rdecl_list fdecl_list EOF                   {$1, $2}
+/*
+room_program:
+        rdef rdecl_list fdecl_list EOF              {$1, $2, $3}
 
 program:
-        rdecl_list adecl_list ndecl_list idecl_list fdecl_list EOF 
+        rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list fdecl_list EOF 
                                                     {$1, $2, $3, $4, $5}
-
+*/
 data_type:
         INT                                         { Int }
         | STRING                                    { String }
