@@ -17,15 +17,15 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-
+/*
 %start basic_program
 %type <Ast.basic_program> basic_program
+*/ 
 
-/*
 %start simple_program
 %type <Ast.simple_program> simple_program
 
-
+/*
 %start program
 %type <Ast.program> complex_program
 */  
@@ -55,8 +55,8 @@ fdecl_list:
 fdecl:
         FUNC data_type ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
         { { 
-                returntype = $2;    
-                name = $3;
+                freturntype = $2;    
+                fname = $3;
                 formals = $5;
                 locals = $8;
                 body = List.rev $9      
@@ -96,8 +96,8 @@ rdecl_list:
 rdecl:
         ROOM ID LBRACE stmt_list RBRACE
         { {     
-                name = $2;
-                body = List.rev $4      
+                rname = $2;
+                rbody = List.rev $4      
         } }
 
 adecl_list:
@@ -120,8 +120,8 @@ ndecl_list:
 ndecl:
         NPC ID LBRACE stmt_list RBRACE
         { {      
-                name = $2;
-                body = List.rev $4       
+                nname = $2;
+                nbody = List.rev $4       
         } }
 
 idef:
@@ -134,8 +134,8 @@ idecl_list:
 idecl:
         ITEM ID LBRACE stmt_list RBRACE
         { {      
-                name = $2;
-                body = List.rev $4       
+                iname = $2;
+                ibody = List.rev $4       
         } }
 
 stmt_list:
