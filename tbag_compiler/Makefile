@@ -1,19 +1,25 @@
 default: compiler
  
-compiler: scanner parser compile tbagger
-	ocamlc -o tbag scanner.cmo parser.cmo compile.cmo tbag.cmo
+compiler: scanner parser java_builder tbagger 
+	ocamlc -o tbag scanner.cmo parser.cmo java_builder.cmo tbag.cmo
 
 tbagger:
 	ocamlc -c tbag.ml;
 
-compile: 
-	ocamlc -c compile.ml
+java_builder: jast
+	ocamlc -c java_builder.ml 
 
 scanner: parser
 	ocamllex scanner.mll; ocamlc -o scanner scanner.ml 
 
-parser: ast
+parser: jast
 	ocamlyacc parser.mly; ocamlc -c parser.mli; ocamlc -c parser.ml
+
+jast: sast ast
+	ocamlc -c jast.mli
+
+sast: ast
+	ocamlc -c sast.mli
 
 ast:
 	ocamlc -c ast.mli
