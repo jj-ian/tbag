@@ -2,24 +2,24 @@ open Jast
 open Ast
 
 let rec get_main_method = function
-    []              -> [] (* TODO ERROR STATE *)
-    | hd::tl        -> if hd.fname = "main" 
-    				   then [hd]
-    				   else ( get_main_method tl )
+        []              ->      [] (* TODO ERROR STATE *)
+        | hd::tl        ->      if hd.fname = "main" 
+    				        then [hd]
+    				        else ( get_main_method tl )
 
 let build_main (functions, rooms, adjacencies, npcs, items) = 
 	let main_function = List.hd (get_main_method functions) in
-    { mmethod = main_function; rdecls = rooms; adecls = adjacencies; ndecls = npcs; idecls = items;}
+        { mmethod = main_function; rdecls = rooms; adecls = adjacencies; ndecls = npcs; idecls = items;}
 
 let rec build_others = function
-    []              -> []
-    | hd::tl        -> if hd.fname = "main" 
-    				   then tl
-    				   else ( hd::build_others tl )
+        []              ->      []
+        | hd::tl        ->      if hd.fname = "main" 
+    				        then tl
+    				        else ( hd::build_others tl )
 
 let build_driver (functions, rooms, adjacencies, npcs, items) =
-	let main = build_main (functions, rooms, adjacencies, npcs, items) in
-    let other_functions = build_others functions in
+        let main = build_main (functions, rooms, adjacencies, npcs, items) in
+        let other_functions = build_others functions in
 	(main, other_functions)
 
 let rearrange (program) = 
