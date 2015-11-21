@@ -21,30 +21,32 @@
 %start basic_program
 %type <Ast.basic_program> basic_program
 */ 
-
-
 %start simple_program
 %type <Ast.simple_program> simple_program
-
 /*
+%start room_program
+%type <Ast.room_program> room_program
+
+
 %start program
 %type <Ast.program> program
 */ 
 %%
 
-
+/*
 basic_program:
     fdecl_list EOF                                  { $1 }
-
+*/
 simple_program:
         rdecl_list fdecl_list EOF                   {$1, $2}
 /*
 room_program:
         rdef rdecl_list fdecl_list EOF              {$1, $2, $3}
 
+
 program:
         rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list fdecl_list EOF 
-                                                    {$1, $2, $3, $4, $5}
+                                                    {$1, $2, $3, $4, $5, $6, $7, $8}
 */
 data_type:
         INT                                         { Int }
