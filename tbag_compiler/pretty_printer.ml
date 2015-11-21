@@ -73,7 +73,8 @@ let driver_code (driver_class) =
 		let (main, fdecls) = driver_class in
         "public class Driver {\n\n\tpublic static void main(String[] args) {\n" ^
 (*         room_decl_list main.rdecls ^
- *)        statement_list main.mmethod.body ^
+        adj_decl_list main.adecls ^ *)
+        statement_list main.mmethod.body ^
         "\t}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
