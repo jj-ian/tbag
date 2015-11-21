@@ -13,18 +13,15 @@ type expr =
         IntLiteral of int
         | StrLiteral of string
         | Id of string
-        (*  | Binop of expr * op * expr *)
         | Assign of string * expr
         | ArrayAssign of string * int * expr
         | ArrayAccess of string * int
-        | Binop of expr * op * expr
-        | Call of string * expr list (* foo(1, 25) *)
-        (* | Call of string * expr list
-        | Noexpr *)
+        | Binop of expr * op * expr 
+        | Call of string * expr list
 
 type var_decl =
     Var of variable_type * string
-    | Var_Init of variable_type * string * expr
+    | VarInit of variable_type * string * expr
 
 type stmt =
         Block of stmt list
@@ -33,35 +30,39 @@ type stmt =
         | If of expr * stmt * stmt
         | While of expr * stmt
 
+type room_def = var_decl list
+
 type room_decl = {
-        rname: string;
+        name: string;
         body: stmt list;
 }
 
-type adj_decl = {
-        body: string list;
-}
+type adj_decl = string list
        
 type func_decl = {
-        freturntype: variable_type;
-        fname : string;
-        formals : argument_decl list; (* formal arguments *)
-        locals: var_decl list; (* locally defined variables *)
+        returntype: variable_type;
+        name : string;
+        formals : argument_decl list; 
+        locals: var_decl list;
         body : stmt list;
 }
 
+type npc_def = var_decl list
+
 type npc_decl = {
-        nname: string;
-        nbody: stmt list;
+        name: string;
+        body: stmt list;
 }
 
+type item_def = var_decl list
+
 type item_decl = {
-        iname: string;
-        ibody: stmt list;
+        name: string;
+        body: stmt list;
 }
 
 type basic_program = func_decl list
 
 type simple_program = room_decl list * func_decl list
 
-type complex_program = room_decl list * adj_decl list * npc_decl list * item_decl list * func_decl list
+type program = room_decl list * adj_decl list * npc_decl list * item_decl list * func_decl list

@@ -51,14 +51,14 @@ let rec formals_list = function
         | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
 let room_decl r =
-        ("Room " ^ r.rname ^ " = new Room();\n")
+        ("Room " ^ r.name ^ " = new Room();\n")
 
 let func_decl f =
-        if f.fname = "main" then
+        if f.name = "main" then
                 ("public static void main(String[] args) {\n" ^ (statement_list f.body)    
                 ^ "\t}\n")
         else
-                ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
+                ("public static " ^ (data_type f.returntype) ^ " " ^ f.name ^ "("
                 ^ (formals_list f.formals) ^ "){\n" ^ (statement_list f.body) ^ "\n\t}\n")
 
 let rec room_decl_list = function
