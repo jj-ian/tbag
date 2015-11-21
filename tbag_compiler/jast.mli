@@ -1,4 +1,4 @@
-open Sast
+open Ast
 
 type main_method = 
 {
