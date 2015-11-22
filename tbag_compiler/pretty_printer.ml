@@ -4,10 +4,11 @@ open Ast
 
 let driver_file = "Driver.java"
 
-let data_type = function
+let rec data_type = function
         String -> "String"
         | Int -> "int"
         | Void -> "void"
+        | Array(var_type, size) -> data_type var_type ^ "[" ^ string_of_int size ^ "]"
 
 let operator = function
         Add -> "+"
@@ -25,26 +26,34 @@ let rec expression = function
         StrLiteral(str) -> str
         | IntLiteral(i) -> string_of_int i
         | Id(id) -> id
+        | Assign(id, expr) -> id ^ " = " ^ (expression expr)
+        | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (string_of_int loc) ^ "] = " ^ (expression expr)
+        | ArrayAccess(id, loc) -> id ^ "[" ^ (string_of_int loc) ^ "]"
         | Binop(expr1, op, expr2) -> ((expression expr1) ^ (operator op) ^ (expression expr2))
         | Call(fname, arg) ->
-        let rec expr_list = function
-        [] -> ""
-        | [solo] -> (expression solo)
-        | hd::tl -> ((expression hd) ^ "," ^ (expr_list tl))
-        in (
-                (if fname = "print" then "System.out.println" else fname)
-                ^ "(" ^ expr_list arg ^ ")")
+	        let rec expr_list = function
+	        [] -> ""
+	        | [solo] -> (expression solo)
+	        | hd::tl -> ((expression hd) ^ "," ^ (expr_list tl))
+	        in (
+	                (if fname = "print" then "System.out.println" else fname)
+	                ^ "(" ^ expr_list arg ^ ")")
 
 let expression_with_semi (expr) = 
         ((expression expr) ^ ";\n")
 
-let rec statement = function
-        Expr(expr) -> (expression_with_semi expr)
-        | Return(expr) -> ("return " ^ expression_with_semi expr)
 
 let rec statement_list = function
         [] -> ""
-        | hd::tl -> ("\t\t" ^ (statement hd) ^ (statement_list tl))  
+        | hd::tl -> 
+	        let rec statement = function
+				Block(stmt_list) -> "{" ^ (statement_list stmt_list) ^ "}"
+		        | Expr(expr) -> (expression_with_semi expr)
+		        | Return(expr) -> ("return " ^ expression_with_semi expr)
+		        | If(expr, stmt1, stmt2) -> "if (" ^ (expression expr) ^ ") " ^ (statement stmt1) ^ "else" ^ (statement stmt2)
+		        | While(expr, stmt) -> "while (" ^ (expression expr) ^ ") " ^ (statement stmt)
+    		in
+				("\t\t" ^ (statement hd) ^ (statement_list tl))  
 
 let formal = function
         Argument(datatype, id) -> ((data_type datatype) ^ " " ^ id)
