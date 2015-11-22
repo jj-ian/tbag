@@ -84,8 +84,6 @@ public class Game {
 	// gameplay happens here
 	public void runGame() {
 		Room currentRoom = this.startingRoom;
-		//int adjacentCounter = 1;
-		//int itemCounter = 1;
 		
 		while (/* user doesn't quit and exit condition is unsatisfied*/ true) {
 			System.out.println("Current location: " + currentRoom.getName());
@@ -97,38 +95,6 @@ public class Game {
 			// dealing w/ going to other rooms
 			currentRoom = handleGoingToOtherRooms(currentRoom);
 			
-			/*
-			//going to other rooms
-			System.out.println("Where do you want to go?");
-			
-			for (Room adjacentRoom : currentRoom.adjacentRooms) {
-				System.out.println(adjacentCounter + " : " + adjacentRoom.getName());
-				inputRoomMap.put(new Integer(adjacentCounter), adjacentRoom);
-				adjacentCounter++;
-			}
-			
-			//TODO check for input type errors
-			int inputInt = scanner.nextInt();
-			System.out.println("You entered " + inputInt);
-			
-			Room roomToGoTo;
-			
-			// check that the number they entered maps to a valid room
-			while ((roomToGoTo = inputRoomMap.get(inputInt)) == null) {
-				System.out.println(inputInt + " is not a valid option.");
-				inputInt = scanner.nextInt();
-			}
-			
-			System.out.println("Going to room " + roomToGoTo.getName());
-			System.out.println("--------------------------------------------");
-			
-			// re assign
-			currentRoom = roomToGoTo;
-			
-			// reset 
-			adjacentCounter = 1;
-			this.inputRoomMap.clear();
-			*/
 		}
 	}
 	
@@ -195,7 +161,6 @@ public class Game {
 		
 		//TODO check for input type errors
 		int inputInt = scanner.nextInt();
-		System.out.println("You entered " + inputInt);
 		
 		Room roomToGoTo;
 		
@@ -206,10 +171,7 @@ public class Game {
 		}
 		
 		System.out.println("Going to room " + roomToGoTo.getName());
-		System.out.println("--------------------------------------------");
-		
-		// re assign
-		//currentRoom = roomToGoTo;
+		System.out.println("--------------------------------------------\n");
 		
 		// reset 
 		adjacentCounter = 1;
