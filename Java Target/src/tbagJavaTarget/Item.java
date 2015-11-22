@@ -13,23 +13,12 @@ public class Item {
 		this.equipFunction = equipFunction;
 	}
 	
-	
-	/*
-	public void equip(HashMap<String, Integer> playerStats) {
-		//alter playerstats in some programmer defined way
-		
-		
-		
-	}*/
-	
 	public void equip(HashMap<String, Integer> playerStats, EquipFunction ef) {
 		//alter playerstats in some programmer defined way
 		ef.equipFunction(playerStats);
 		System.out.println(playerStats);
 		
-		
 	}
-	
 	
 	@Override
 	public String toString() {
