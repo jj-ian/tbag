@@ -10,9 +10,9 @@ room {
 	string msg;
 }
 
-room myRoom { }
+room myRoom { name = "living room"; msg = "u entered the living room - good for you bro"; }
 
-room myRoom1 { }
+room myRoom1 { name = "dining room"; msg = "u entered the dining room - eat some food!!"; }
 
 adj { myRoom, myRoom1 };
 

@@ -54,7 +54,7 @@ let rec statement_list = function
 		        | If(expr, stmt1, stmt2) -> "if (" ^ (expression expr) ^ ") " ^ (statement stmt1) ^ "else" ^ (statement stmt2)
 		        | While(expr, stmt) -> "while (" ^ (expression expr) ^ ") " ^ (statement stmt)
     		in
-				("\t\t" ^ (statement hd) ^ (statement_list tl))  
+				((statement hd) ^ (statement_list tl))  
 
 let formal = function
         Argument(datatype, id) -> ((data_type datatype) ^ " " ^ id)
@@ -64,6 +64,14 @@ let rec formals_list = function
         | [solo] -> formal solo
         | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
+let vdecl = function
+        Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
+        | VarInit(vtype, id, expr)     ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
+
+let rec vdecl_list  = function
+        []              ->      ""
+        | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
+
 let func_decl f =
         ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
         ^ (formals_list f.formals) ^ "){\n" ^ (statement_list f.body) ^ "\t}\n")
@@ -72,12 +80,17 @@ let rec func_decl_list = function
         []              -> ""
         | hd::tl        -> "\t" ^ ((func_decl hd) ^ "\t" ^ (func_decl_list tl)) ^ "\n"
 
+let rec room_props_list proplist prefix = match proplist with 
+        []              -> ""
+        | hd::tl        -> prefix ^ "." ^ (statement_list [hd]) ^ (room_props_list tl prefix)
+
 let room_decl r =
-        ("Room " ^ r.rname ^ " = new Room();")
+        "Room " ^ r.rname ^ " = new Room();\n" ^ (room_props_list r.rbody r.rname)
 
 let rec room_decl_list = function
         []              -> ""
         | hd::tl        -> "\t\t" ^ ((room_decl hd) ^ "\n" ^ (room_decl_list tl))
+
 
 let adj_decl = function
         []              -> ""
@@ -96,14 +109,6 @@ let driver_code (driver_class) =
         "\t}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
-let vdecl = function
-        Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
-        | VarInit(vtype, id, expr)     ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
-
-let rec vdecl_list  = function
-        []              ->      ""
-        | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
-
 let room_constructor = "\n\tpublic Room(){\n\t\tadjRooms = new HashSet<Room>();\n\t}\n"
 
 let room_adj_functions = "\tpublic void setAdjacent(Room room){\n\t\tadjRooms.add(room);\n\t\troom.adjRooms.add(this);\n\t}\n\n" ^
@@ -121,4 +126,3 @@ let pretty_print (driver_class, room_def, npc_def, item_def) =
         let oc = open_out room_file in
         fprintf oc "%s" (room_code room_def);
         close_out oc;
-
