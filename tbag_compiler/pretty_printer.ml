@@ -3,6 +3,7 @@ open Jast
 open Ast
 
 let driver_file = "Driver.java"
+let room_file = "Room.java"
 
 let rec data_type = function
         String -> "String"
@@ -87,7 +88,14 @@ let driver_code (driver_class) =
         "\t}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
+let room_code (room_def) =
+        "public class Room {\n\n\t}\n"
+
 let pretty_print (driver_class, room_def, npc_def, item_def) = 
         let oc = open_out driver_file in
         fprintf oc "%s" (driver_code driver_class);
         close_out oc;
+        let oc = open_out room_file in
+        fprintf oc "%s" (room_code room_def);
+        close_out oc;
+
