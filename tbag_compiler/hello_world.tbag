@@ -5,7 +5,10 @@ a
 comment
 */
 
-room { }
+room {
+	string name;
+	string msg;
+}
 
 room myRoom { }
 
