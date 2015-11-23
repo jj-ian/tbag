@@ -5,7 +5,10 @@ a
 comment
 */
 
-room { }
+room {
+	int name;
+	int msg;
+}
 
 room myRoom { }
 

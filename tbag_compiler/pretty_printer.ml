@@ -88,8 +88,16 @@ let driver_code (driver_class) =
         "\t}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
+let vdecl = function
+        Var(_, str)             ->      "Variable " ^ str ^ ";\n"
+        | VarInit(_, str, _)    ->      "Variable Initialization" ^ ";\n"
+
+let rec vdecl_list  = function
+        []              ->      "none"
+        | hd::tl        ->      (vdecl hd) ^ "\n" ^ (vdecl_list tl) ^ "\n"
+
 let room_code (room_def) =
-        "public class Room {\n\n\t}\n"
+        "public class Room {\n\n\t" ^ (vdecl_list room_def) ^ "}\n"
 
 let pretty_print (driver_class, room_def, npc_def, item_def) = 
         let oc = open_out driver_file in
