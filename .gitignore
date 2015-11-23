@@ -6,5 +6,6 @@ tbag_compiler/scanner.ml
 tbag_compiler/tbaginterpreter.ml
 scanner
 #*.java
-#*.class
+*.class
 tbag
+*.swp
