@@ -82,28 +82,24 @@ let rec func_decl_list = function
 let driver_code (driver_class) =
 		let (main, fdecls) = driver_class in
         "public class Driver {\n\n\tpublic static void main(String[] args) {\n" ^
-(*         room_decl_list main.rdecls ^
-        adj_decl_list main.adecls ^ *)
-        statement_list main.mmethod.body ^
+        room_decl_list main.rdecls ^
+(*         adj_decl_list main.adecls ^
+ *)        statement_list main.mmethod.body ^
         "\t}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
-let print_vtype = function
-        Int             ->      "int"
-        | String        ->      "String"
-        | Void          ->      "null"
-        | Array (_,_)   ->      "array" (* not yet implemented *)
-
 let vdecl = function
-        Var(vtype, str)                 ->      (print_vtype vtype) ^ " " ^ str ^ ";\n"
-        | VarInit(vtype, str, _)        ->      (print_vtype vtype) ^ ";\n"  (* not yet implemented *)
+        Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
+        | VarInit(vtype, id, expr)     ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
 let rec vdecl_list  = function
         []              ->      ""
-        | hd::tl        ->      (vdecl hd) ^ (vdecl_list tl)
+        | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
+
+let room_constructor = "\n\tpublic Room(){}\n"
 
 let room_code (room_def) =
-        "public class Room {\n\t" ^ (vdecl_list room_def) ^ "}\n"
+        "public class Room {\n" ^ (vdecl_list room_def) ^ room_constructor ^ "}\n"
 
 let pretty_print (driver_class, room_def, npc_def, item_def) = 
         let oc = open_out driver_file in
