@@ -6,8 +6,8 @@ comment
 */
 
 room {
-	int name;
-	int msg;
+	string name;
+	string msg;
 }
 
 room myRoom { }
