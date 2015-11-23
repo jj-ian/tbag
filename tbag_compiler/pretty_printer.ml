@@ -64,27 +64,35 @@ let rec formals_list = function
         | [solo] -> formal solo
         | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
-let room_decl r =
-        ("Room " ^ r.rname ^ " = new Room();")
-
 let func_decl f =
-		("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
+        ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
         ^ (formals_list f.formals) ^ "){\n" ^ (statement_list f.body) ^ "\t}\n")
-
-let rec room_decl_list = function
-        []              -> ""
-        | hd::tl        -> "\t\t" ^ ((room_decl hd) ^ "\n" ^ (room_decl_list tl))
 
 let rec func_decl_list = function
         []              -> ""
         | hd::tl        -> "\t" ^ ((func_decl hd) ^ "\t" ^ (func_decl_list tl)) ^ "\n"
 
+let room_decl r =
+        ("Room " ^ r.rname ^ " = new Room();")
+
+let rec room_decl_list = function
+        []              -> ""
+        | hd::tl        -> "\t\t" ^ ((room_decl hd) ^ "\n" ^ (room_decl_list tl))
+
+let adj_decl = function
+        []              -> ""
+        | hd::tl        -> hd ^ ".setAdjacent(" ^ (List.hd tl) ^ ");"        
+
+let rec adj_decl_list = function
+        []              -> ""
+        | hd::tl        -> "\t\t" ^ ((adj_decl hd) ^ "\t" ^ (adj_decl_list tl)) ^ "\n"
+
 let driver_code (driver_class) =
 		let (main, fdecls) = driver_class in
         "public class Driver {\n\n\tpublic static void main(String[] args) {\n" ^
         room_decl_list main.rdecls ^
-(*         adj_decl_list main.adecls ^
- *)        statement_list main.mmethod.body ^
+        adj_decl_list main.adecls ^
+        statement_list main.mmethod.body ^
         "\t}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
@@ -96,10 +104,15 @@ let rec vdecl_list  = function
         []              ->      ""
         | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
 
-let room_constructor = "\n\tpublic Room(){}\n"
+let room_constructor = "\n\tpublic Room(){\n\t\tadjRooms = new HashSet<Room>();\n\t}\n"
+
+let room_adj_functions = "\tpublic void setAdjacent(Room room){\n\t\tadjRooms.add(room);\n\t\troom.adjRooms.add(this);\n\t}\n\n" ^
+                         "\tpublic boolean isAdjacent(Room room){\n\t\treturn adjRooms.contains(room);\n\t}\n"
+
+let room_adj_field = "\tpublic HashSet<Room> adjRooms;"
 
 let room_code (room_def) =
-        "public class Room {\n" ^ (vdecl_list room_def) ^ room_constructor ^ "}\n"
+        "import java.util.*;\n\npublic class Room {\n\n" ^ (vdecl_list room_def) ^ room_adj_field ^ "\n" ^ room_constructor ^ "\n" ^ room_adj_functions ^ "\n}\n"
 
 let pretty_print (driver_class, room_def, npc_def, item_def) = 
         let oc = open_out driver_file in
