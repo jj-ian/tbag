@@ -1,5 +1,5 @@
 open Printf
-open Jast
+open Cast
 open Ast
 
 let driver_file = "Driver.java"

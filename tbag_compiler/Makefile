@@ -1,7 +1,7 @@
 default: compiler
  
-compiler: scanner parser java_builder pretty_printer tbagger 
-	ocamlc -o tbag scanner.cmo parser.cmo java_builder.cmo pretty_printer.cmo tbag.cmo
+compiler: scanner parser c_builder pretty_printer tbagger 
+	ocamlc -o tbag scanner.cmo parser.cmo c_builder.cmo pretty_printer.cmo tbag.cmo
 
 tbagger:
 	ocamlc -c tbag.ml;
@@ -9,17 +9,17 @@ tbagger:
 pretty_printer:
 	ocamlc -c pretty_printer.ml
 
-java_builder: jast
-	ocamlc -c java_builder.ml 
+c_builder: cast
+	ocamlc -c c_builder.ml 
 
 scanner: parser
 	ocamllex scanner.mll; ocamlc -o scanner scanner.ml 
 
-parser: jast
+parser: cast
 	ocamlyacc parser.mly; ocamlc -c parser.mli; ocamlc -c parser.ml
 
-jast: sast ast
-	ocamlc -c jast.mli
+cast: sast ast
+	ocamlc -c cast.mli
 
 sast: ast
 	ocamlc -c sast.mli
