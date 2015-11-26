@@ -8,8 +8,8 @@ open Map
 type symbol_table = {
 (*  MV's group had these be mutable *)
 	mutable parent : symbol_table option;
-	mutable variables : (string * checked_var_decl * var_types) list;
-	mutable functions : function_decl list;
+	mutable variables : (string * checked_var_decl * variable_type) list;
+	mutable functions : func_decl list;
 
 	mutable return_found : bool;
 	(*  add Rooms, Items, NPCs here*)
@@ -17,10 +17,10 @@ type symbol_table = {
 
 let rec check_id (scope: symbol_table) name = 
 	try 
-		List.find (fun (s, _, _, _ ) -> s = name ) scope.variables
+		List.find (fun (s, _, _ ) -> s = name ) scope.variables
 	with Not_found ->
 		match scope.parent with 
-			Some(parent) -> find_variable parent name
+			Some(parent) -> check_id parent name
 		| _ -> raise Not_found
 
 (* provides context / where are we? *)
@@ -32,19 +32,16 @@ type translation_environment = {
 
 (* adapted from edwards' notes*)
 let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
-	Noexpr -> Sast.Noexpr, Void
-	(*) An integer constant: convert and return Int type *)
-	| IntLiteral(v) -> Sast.IntLiteral(v), variable_type.Int (* Or the last one should be just Int, not sure of the semantic notation.*)
-	(*what is Sast.IntLiteral?? how does it know what type it is? What is this line really doing?*)
-
-	| String_literal(str) -> Sast.StrConst(str), Sast.String
+	(*Noexpr -> Sast.Noexpr, Void*)
 	
+	 IntLiteral(v) -> (Sast.IntLiteral(v), Int) (* An integer constant: convert and return Int type *)
+	| StrLiteral(str) -> (Sast.StrLiteral(str), String)
 	(* An identifier: verify it is scope and return its type *)
 	| Id(vname) -> 
 		let vdecl = 
 			try check_id scope vname (* locate a variable by name *)
 		with Not_found -> 
-			raise (Error("undeclared identifier " ^ vname))
+			raise (Failure ("undeclared identifier " ^ vname))
 		in let (_, typ) = vdecl in (* get the variable's type *)
 		Sast.Id(vdecl), typ
 
@@ -76,7 +73,7 @@ let rec check_var_type (scope : symbol_table) (v : Ast.var_types) = match v with
 		let v = check_var_type scope v in
 		let expr = check_expr scope expr in
 		let (_, t) = expr in
-		if t <> Int then raise (Error "Array size must have integer.")
+		if t <> Int then raise (Failure "Array size must have integer.")
 		else Sast.Array(v, expr) 
 
 let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
@@ -133,14 +130,14 @@ let process_var_decl (scope : symbol_table) (v : Ast.var_decl) =
 	let triple = match v with
 		Var(t, name) ->
 			let t = check_var_type scope t in 
-			(name, Sast.Var(t, name), t)
+			(name, Sast.Var(t, name), t) (*return this*)
 		| VarInit(t, name, expr) ->
 			let t = check_var_type scope t in
 			let expr = check_expr scope expr in
 			let (_, t2 ) = expr in
-			if t <> t2 then raise (Failure "wrong type for variable initialization") 
-			else (name, Sast.VarInit(t, name, expr), t) (*return this*)
-
+				if t <> t2 then raise (Failure "wrong type for variable initialization") 
+				else (name, Sast.VarInit(t, name, expr), t) (*return this*)
+			in
 	let (_, decl, t) = triple in
 	if t = Void then
 		raise (Failure "Variable cannot be type void.")
