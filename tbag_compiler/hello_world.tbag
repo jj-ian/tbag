@@ -14,7 +14,7 @@ room myRoom { name = "living room"; msg = "u entered the living room - good for 
 
 room myRoom1 { name = "dining room"; msg = "u entered the dining room - eat some food!!"; }
 
-adj { myRoom, myRoom1 };
+myRoom <-> myRoom1;
 
 npc { }
 

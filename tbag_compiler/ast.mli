@@ -29,6 +29,7 @@ type stmt =
         | Return of expr
         | If of expr * stmt * stmt
         | While of expr * stmt
+        | Goto of string
 
 type room_def = var_decl list
 

@@ -1,7 +1,7 @@
 %{ open Ast %}
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
-%token FUNC ROOM ADJ ITEM NPC
+%token FUNC ROOM ADJ GOTO ITEM NPC
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -112,10 +112,10 @@ adecl_list:
         | adecl_list adecl                          { $2 :: $1 }
 
 adecl:
-        ADJ LBRACE adj_list RBRACE SEMI             { List.rev $3 }
+        adj_list SEMI                               { List.rev $1 }
 
 adj_list:
-        ID COMMA ID                                 { [$1; $3] }
+        ID ADJ ID                                   { [$1; $3] }
 
 ndef:
         NPC LBRACE vdecl_list RBRACE                { $3 }
@@ -155,6 +155,7 @@ stmt:
         | LBRACE stmt_list RBRACE                   { Block(List.rev $2) }
         | IF LPAREN expr RPAREN stmt ELSE stmt      { If($3, $5, $7) }
         | WHILE LPAREN expr RPAREN stmt             { While($3, $5) }
+        | GOTO ID                                   { Goto($2) }
 
 int_opt:
         INT_LITERAL                                 { $1 }
