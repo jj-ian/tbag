@@ -15,12 +15,13 @@ type symbol_table = {
 	(*  add Rooms, Items, NPCs here*)
 }
 
-let rec check_id (scope: symbol_table) name = 
-	try 
-		List.find (fun (s, _, _ ) -> s = name ) scope.variables
+let rec check_id (scope: symbol_table) id = 
+	try
+		let (_, decl, t) = List.find(fun (n, _, _) -> n = id ) scope.variables in
+		decl, t
 	with Not_found ->
 		match scope.parent with 
-			Some(parent) -> check_id parent name
+			Some(parent) -> check_id parent id
 		| _ -> raise Not_found
 
 (* provides context / where are we? *)
@@ -33,17 +34,13 @@ type translation_environment = {
 (* adapted from edwards' notes*)
 let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 	(*Noexpr -> Sast.Noexpr, Void*)
-	
 	 IntLiteral(v) -> (Sast.IntLiteral(v), Int) (* An integer constant: convert and return Int type *)
 	| StrLiteral(str) -> (Sast.StrLiteral(str), String)
 	(* An identifier: verify it is scope and return its type *)
 	| Id(vname) -> 
-		let vdecl = 
-			try check_id scope vname (* locate a variable by name *)
-		with Not_found -> 
-			raise (Failure ("undeclared identifier " ^ vname))
-		in let (_, typ) = vdecl in (* get the variable's type *)
-		Sast.Id(vdecl), typ
+		(try 
+			let (decl, t) = check_id scope vname in (Sast.Id(decl), t) 
+		with Not_found -> raise (Failure ("Id named " ^ vname ^ " not found")))
 
 (*MV's groups check_exp below
 let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
@@ -65,24 +62,23 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 	| Array_Member_Assign(_, _, _) as a -> check_array_assignment scope a
 *)
 
-let rec check_var_type (scope : symbol_table) (v : Ast.var_types) = match v with
-	Ast.Void -> Sast.Void
-	| Ast.Int -> Sast.Int
+let rec check_var_type (scope : symbol_table) (v : Ast.variable_type) = match v with
+	 Ast.Int -> Sast.Int
 	| Ast.String -> Sast.String
-	| Ast.Array(v, expr) ->
+	| Ast.Array(v, i) ->
 		let v = check_var_type scope v in
-		let expr = check_expr scope expr in
+		(*let expr = check_expr scope expr in
 		let (_, t) = expr in
 		if t <> Int then raise (Failure "Array size must have integer.")
-		else Sast.Array(v, expr) 
+		else*) Sast.Array(v, i) 
 
 let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	let scope' = { env.scope with parent = Some(env.scope); variables = []; return_found = false } in
-	let t = check_var_type env.scope f.ftype in
+	let t = check_var_type env.scope f.freturntype in
 	
 	let formals = List.fold_left ( (* formals = arguments*)
 		fun a f -> match f with
-		Ast.Param(t, n) ->
+		Ast.Argument(t, n) ->
 			let t = check_var_type scope' t in 
 			scope'.variables <- (n, Sast.Var(t, n), t) :: scope'.variables; (Sast.Var(t, n), t) :: a
 	) [] f.formals in
@@ -92,7 +88,7 @@ let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	(*let statements = process_func_stmt scope' f.body t in *)
 	(*let units = List.fold_left ( fun a u -> process_func_units scope' u formals t :: a) [] f.units in*)
 	(*if scope'.return_found then *)
-		let f = { 	ftype = t; 
+		let f = { 	freturntype = t; 
 					fname = f.fname; 
 					checked_formals = formals; 
 					checked_locals = locals; 
