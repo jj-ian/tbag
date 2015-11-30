@@ -25,7 +25,7 @@ and function_decl = {
 	fname : string; (* Name of the function *)
 	checked_formals : sast_var_decl list; (* Formal argument names *)
 	checked_locals : sast_var_decl list; (* Locally defined variables *)
-	checked_body : stmt list;
+	(*checked_body : stmt list;*)
 }
 
 
