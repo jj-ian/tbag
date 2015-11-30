@@ -72,6 +72,25 @@ let rec check_var_type (scope : symbol_table) (v : Ast.variable_type) = match v 
 		if t <> Int then raise (Failure "Array size must have integer.")
 		else*) Sast.Array(v, i) 
 
+let process_var_decl (scope : symbol_table) (v : Ast.var_decl) =
+	let triple = match v with
+		Var(t, name) ->
+			let t = check_var_type scope t in 
+			(name, Sast.Variable(t, name), t) (*return this*)
+		| VarInit(t, name, expr) ->
+			let t = check_var_type scope t in
+			let expr = check_expr scope expr in
+			let (_, t2 ) = expr in
+				if t <> t2 then raise (Failure "wrong type for variable initialization") 
+				else (name, Sast.Variable_Initialization(t, name, expr), t) (*return this*)
+			in
+	let (_, decl, t) = triple in
+	if t = Void then
+		raise (Failure "Variable cannot be type void.")
+	else 
+		(scope.variables <- triple :: scope.variables;
+		(decl, t))
+
 let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	let scope' = { env.scope with parent = Some(env.scope); variables = []; return_found = false } in
 	let t = check_var_type env.scope f.freturntype in
@@ -80,7 +99,8 @@ let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 		fun a f -> match f with
 		Ast.Argument(t, n) ->
 			let t = check_var_type scope' t in 
-			scope'.variables <- (n, Sast.Var(t, n), t) :: scope'.variables; (Sast.Var(t, n), t) :: a
+			scope'.variables <- (n, Sast.Variable(t, n), t) ::
+                            scope'.variables; (Sast.Variable(t, n), t) :: a
 	) [] f.formals in
 	(*local variables*)
 	let locals = List.fold_left ( fun a l -> process_var_decl scope' l :: a ) [] f.locals in
@@ -121,26 +141,6 @@ let process_func_decl (env : translation_environment) (f : Ast.func_decl) =
 		if f.fname = "print" then raise (Failure "A function cannot be named 'print'")
 		else
 			check_func_decl env f
-
-let process_var_decl (scope : symbol_table) (v : Ast.var_decl) =
-	let triple = match v with
-		Var(t, name) ->
-			let t = check_var_type scope t in 
-			(name, Sast.Var(t, name), t) (*return this*)
-		| VarInit(t, name, expr) ->
-			let t = check_var_type scope t in
-			let expr = check_expr scope expr in
-			let (_, t2 ) = expr in
-				if t <> t2 then raise (Failure "wrong type for variable initialization") 
-				else (name, Sast.VarInit(t, name, expr), t) (*return this*)
-			in
-	let (_, decl, t) = triple in
-	if t = Void then
-		raise (Failure "Variable cannot be type void.")
-	else 
-		(scope.variables <- triple :: scope.variables;
-		(decl, t))
-
 	
 let check_basic_program (p : Ast.program) =
 	let s = { parent = None; variables = []; functions = []; return_found = false } in
