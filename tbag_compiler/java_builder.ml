@@ -1,4 +1,4 @@
-open Cast
+open Jast
 open Ast
 
 let rec get_main_method = function
