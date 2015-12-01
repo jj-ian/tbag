@@ -1,9 +1,9 @@
 /* 
-this
-is 
-a
-comment
-*/
+   this
+   is 
+   a
+   comment
+ */
 
 room {
 	string name;
@@ -16,9 +16,14 @@ room myRoom1 { name = "dining room"; msg = "u entered the dining room - eat some
 
 myRoom <-> myRoom1;
 
-npc { }
+npc {
+	string npcName;
+}
 
-item { }
+item {
+	string name;
+	int magnitude;
+}
 
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;

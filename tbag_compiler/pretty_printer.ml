@@ -4,6 +4,8 @@ open Ast
 
 let driver_file = "Driver.java"
 let room_file = "Room.java"
+let npc_file = "Npc.java"
+let item_file = "Item.java"
 
 let rec data_type = function
         String -> "String"
@@ -119,10 +121,22 @@ let room_adj_field = "\tpublic HashSet<Room> adjRooms;"
 let room_code (room_def) =
         "import java.util.*;\n\npublic class Room {\n\n" ^ (vdecl_list room_def) ^ room_adj_field ^ "\n" ^ room_constructor ^ "\n" ^ room_adj_functions ^ "\n}\n"
 
+let npc_code (npc_def) = 
+        "public class Npc {\n\n" ^ (vdecl_list npc_def) ^ "\n}\n"
+
+let item_code (item_def) = 
+        "public class Item {\n\n" ^ (vdecl_list item_def) ^ "\n}\n"
+
 let pretty_print (driver_class, room_def, npc_def, item_def) = 
         let oc = open_out driver_file in
         fprintf oc "%s" (driver_code driver_class);
         close_out oc;
         let oc = open_out room_file in
         fprintf oc "%s" (room_code room_def);
+        close_out oc;
+        let oc = open_out npc_file in
+        fprintf oc "%s" (npc_code npc_def);
+        close_out oc;
+        let oc = open_out item_file in
+        fprintf oc "%s" (item_code item_def);
         close_out oc;
