@@ -27,8 +27,8 @@ rule token = parse
         | '>'                                   { GT }
         | ">="                                  { GEQ }
         | '='                                   { ASSIGN }
-        | ';'					{ SEMI }
-        | "int"					{ INT }         (* types  *)
+        | ';'					                { SEMI }
+        | "int"					                { INT }
         | "string"                              { STRING }
         | "void"                                { VOID }
         | "boolean"                             { BOOLEAN }
@@ -36,6 +36,9 @@ rule token = parse
         | "else"                                { ELSE }
         | "while"                               { WHILE }
         | "return"                              { RETURN }
+        | "AND"                                 { AND }
+        | "OR"                                  { OR }
+        | "NOT"                                 { NOT }
         | "true"                                as lxm { BOOL_LITERAL(bool_of_string lxm) }
         | "false"                                as lxm { BOOL_LITERAL(bool_of_string lxm) }
         | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) }

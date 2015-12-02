@@ -2,7 +2,7 @@
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
 %token FUNC ROOM ADJ GOTO ITEM NPC
-%token ASSIGN EQ NEQ LT LEQ GT GEQ
+%token ASSIGN EQ NEQ LT LEQ GT GEQ AND OR NOT
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
 %token INT STRING VOID BOOLEAN
@@ -60,7 +60,7 @@ data_type:
         | BOOLEAN                                   { Boolean }
 
 pred_stmt:
-        ID LBRACE vdecl_list stmt_list RBRACE
+        expr LBRACE vdecl_list stmt_list RBRACE
         { {
                 pred = $1;
                 locals = $3;
@@ -192,6 +192,9 @@ expr:
         | expr LEQ expr                             { Binop($1, Leq, $3) }
         | expr GT expr                              { Binop($1, Greater, $3) }
         | expr GEQ expr                             { Binop($1, Geq, $3) }
+        | expr AND expr                             { Binop($1, And, $3)}
+        | expr OR expr                              { Binop($1, Or, $3)}
+        | NOT expr                                  { Boolneg(Not, $2)}
         | ID ASSIGN expr                            { Assign($1, $3) }
         | ID LBRACK INT_LITERAL RBRACK ASSIGN expr  { ArrayAssign($1, $3, $6) }
         | ID LBRACK INT_LITERAL RBRACK              { ArrayAccess($1, $3) }

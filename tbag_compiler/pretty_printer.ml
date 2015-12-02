@@ -25,6 +25,9 @@ let operator = function
         | Leq -> "<="
         | Greater -> ">"
         | Geq -> ">="
+        | And -> "&&"
+        | Or -> "||"
+        | Not -> "!"
 
 let rec expression = function
         StrLiteral(str) -> str
@@ -35,7 +38,8 @@ let rec expression = function
         | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (string_of_int loc) ^ "] = " ^ (expression expr)
         | ArrayAccess(id, loc) -> id ^ "[" ^ (string_of_int loc) ^ "]"
         | Binop(expr1, op, expr2) -> ((expression expr1) ^ (operator op) ^ (expression expr2))
-        | Call(fname, arg) ->
+        | Boolneg(op, expr) -> ((operator op) ^ (expression expr))
+        | Call(fname, arg) -> 
 	        let rec expr_list = function
 	        [] -> ""
 	        | [solo] -> (expression solo)
@@ -122,7 +126,7 @@ let rec adj_decl_list = function
         | hd::tl        -> "\t\t" ^ ((adj_decl hd) ^ "\t" ^ (adj_decl_list tl)) ^ "\n"
 
 let pred_stmt s = 
-        "if(" ^ s.pred ^ "){\n" ^ vdecl_list s.locals ^ statement_list s.body ^ "}"
+        "if(" ^ (expression s.pred) ^ "){\n" ^ vdecl_list s.locals ^ statement_list s.body ^ "}"
 
 let rec pred_stmt_list = function 
         []              -> ""

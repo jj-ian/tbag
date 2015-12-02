@@ -29,6 +29,7 @@ item {
 }
 
 boolean start = true;
+boolean test_start = false;
 boolean finished = false;
 
 func int add(int a, int b){
@@ -64,7 +65,7 @@ func void foo() {
 	 */	
 }
 
-start {
+start AND NOT test_start {
 	start = false;
 	finished = true;
 }

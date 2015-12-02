@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq
+type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq | And | Or | Not
 
 type variable_type =
         Int
@@ -19,6 +19,7 @@ type expr =
         | ArrayAssign of string * int * expr
         | ArrayAccess of string * int
         | Binop of expr * op * expr 
+        | Boolneg of op * expr
         | Call of string * expr list
 
 type var_decl =
@@ -45,7 +46,7 @@ type adj_decl = string list
 
 type pred_stmt = 
         {
-                pred: string;
+                pred: expr;
                 locals: var_decl list;
                 body: stmt list;
         }
