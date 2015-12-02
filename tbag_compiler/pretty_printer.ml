@@ -126,7 +126,7 @@ let pred_stmt s =
 
 let rec pred_stmt_list = function 
         []              -> ""
-        | hd::tl        -> "\t\t" ^ ((pred_stmt hd) ^ "\t" ^ (pred_stmt_list tl)) ^ "\n"
+        | hd::tl        -> "\t" ^ ((pred_stmt hd) ^ "\t" ^ (pred_stmt_list tl)) ^ "\n"
 
 let driver_code (driver_class) =
 		let (vars, main, fdecls) = driver_class in

@@ -64,12 +64,6 @@ func void foo() {
 	 */	
 }
 
-func void main(){
-	print("hello world");
-	print(add(1,2));
-	foo();
-}
-
 start {
 	start = false;
 	finished = true;
