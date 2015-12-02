@@ -2,8 +2,9 @@
    this
    is 
    a
-   comment
+   commentt
  */
+
 
 room {
 	string name;
@@ -31,13 +32,13 @@ myPred {
 	int i;
 	int j = 0;
 	print("inside myPred\n");
-	}
+}
 
 myPred2 {
 	int i;
 	int j = 0;
 	print("inside myPred2");
-	}
+}
 
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;
@@ -46,9 +47,34 @@ func int add(int a, int b){
 func void foo() {
 	int i;
 	int j = 0;
+	boolean b1 = true;
+	boolean b2 = true;
+	boolean b3 = false;
+	while (b1 == b2) {
+		print("b1 == b2 success");
+		b1 = b3;
+	}
+	while (b1 != b2) {
+		print("b1 != b2 success");
+		b1 = b2;
+	}
+	while (b1 == true) {
+		print("b1 == true success");
+		b1 = false;
+	}
+	while (b1 != true) {
+		print("b1 != true success");
+		b1 = true;
+	}
+	/*danger! infinite loop! 
+	  while(true){
+	  print("true sucess");
+	  }
+	 */	
 }
 
 func void main(){
 	print("hello world");
 	print(add(1,2));
+	foo();
 }

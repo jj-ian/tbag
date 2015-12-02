@@ -8,7 +8,7 @@
 %token INT STRING VOID BOOLEAN
 %token <int> INT_LITERAL
 %token <string> STRING_LITERAL
-%token <string> BOOL_LITERAL
+%token <bool> BOOL_LITERAL
 %token <string> ID
 %token EOF
 
