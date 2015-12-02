@@ -46,8 +46,10 @@ room_program:
 */
 
 program:
-        rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list fdecl_list EOF 
-                                                    { ($1, $2, $3, $4, $5, $6, $7, $8) }
+        rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list
+        predicate_list fdecl_list EOF 
+                                                    { ($1, $2, $3, $4, $5, $6,
+                                                    $7, $8, $9) }
 
 data_type:
         INT                                         { Int }
@@ -57,6 +59,10 @@ data_type:
         | STRING LBRACK int_opt RBRACK              { Array(String, $3) }
         | BOOLEAN                                   { Boolean }
 
+predicate_list:
+        /* nothing */                           { [] }
+
+        
 fdecl_list:
         /* nothing */                               { [] }
         | fdecl_list fdecl                          { $2 :: $1 }

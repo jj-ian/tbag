@@ -9,6 +9,7 @@ room {
 	string name;
 	string msg;
 	boolean visited;
+
 }
 
 room myRoom { name = "living room"; msg = "u entered the living room - good for you bro"; visited = true;}
@@ -26,8 +27,13 @@ item {
 	int magnitude;
 }
 
+
+
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;
+}
+
+func void foo() {
 }
 
 func void main(){
