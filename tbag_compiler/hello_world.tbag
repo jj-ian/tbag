@@ -11,9 +11,9 @@ room {
 	boolean visited;
 }
 
-room myRoom { name = "living room"; msg = "u entered the living room - good for you bro"; }
+room myRoom { name = "living room"; msg = "u entered the living room - good for you bro"; visited = true;}
 
-room myRoom1 { name = "dining room"; msg = "u entered the dining room - eat some food!!"; }
+room myRoom1 { name = "dining room"; msg = "u entered the dining room - eat some food!!"; visited = false;}
 
 myRoom <-> myRoom1;
 
