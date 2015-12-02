@@ -9,7 +9,7 @@ type symbol_table = {
 (*  MV's group had these be mutable *)
 	mutable parent : symbol_table option;
 	mutable variables : (string * checked_var_decl * variable_type) list;
-	mutable functions : func_decl list;
+	mutable functions : function_decl list;
 
 	mutable return_found : bool;
 	(*  add Rooms, Items, NPCs here*)
@@ -181,7 +181,8 @@ let process_func_decl (env : translation_environment) (f : Ast.func_decl) =
 let check_basic_program (p : Ast.program) =
 	let s = { parent = None; variables = []; functions = []; return_found = false } in
 	let env = { scope = s; found_main = false } in
-	let funcs = p in 	
+	let (room_defs, room_decls, adj_decls, npc_defs, npc_decls, item_defs,
+        item_decls, funcs) = p in
 	let funcs = 
 		List.fold_left (
 			fun a f -> process_func_decl env f :: a
