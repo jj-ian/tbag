@@ -34,6 +34,8 @@ func int add(int a, int b){
 }
 
 func void foo() {
+	int i;
+	int j = 0;
 }
 
 func void main(){
