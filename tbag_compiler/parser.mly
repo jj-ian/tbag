@@ -73,7 +73,7 @@ fdecl:
                 freturntype = $2;    
                 fname = $3;
                 formals = $5;
-                locals = $8;
+                locals = List.rev $8;
                 body = List.rev $9      
         } }
 
