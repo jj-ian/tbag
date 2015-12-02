@@ -46,9 +46,17 @@ func int add(int a, int b){
 func void foo() {
 	int i;
 	int j = 0;
+	boolean b1 = true;
+	boolean b2 = true;
+	boolean b3 = false;
+	while (b1 == b2) {
+		print("looping");
+		b1 = b3;
+	}
 }
 
 func void main(){
 	print("hello world");
 	print(add(1,2));
+	foo();
 }
