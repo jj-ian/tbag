@@ -49,7 +49,7 @@ program:
         rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list
         vdecl_list fdecl_list predicate_list EOF 
                                                     { ($1, $2, $3, $4, $5, $6,
-                                                    $7, $8, $9, $10) }
+                                                    $7, $8, $9, List.rev $10) }
 
 data_type:
         INT                                         { Int }
@@ -59,17 +59,17 @@ data_type:
         | STRING LBRACK int_opt RBRACK              { Array(String, $3) }
         | BOOLEAN                                   { Boolean }
 
-predicate:
+pred_stmt:
         ID LBRACE vdecl_list stmt_list RBRACE
         { {
-                pname = $1;
+                pred = $1;
                 locals = $3;
                 body = $4;
         } }
 
 predicate_list:
         /* nothing */                           { [] }
-        | predicate_list predicate              { $2 :: $1 }
+        | predicate_list pred_stmt              { $2 :: $1 }
 
         
 fdecl_list:
@@ -164,7 +164,7 @@ idecl:
 
 stmt_list:
         /* nothing */                               { [] }
-        | stmt_list stmt                            { $2 :: $1 }
+        | stmt_list stmt                            { List.rev ($2 :: $1) }
 
 stmt:
         expr SEMI                                   { Expr($1) }

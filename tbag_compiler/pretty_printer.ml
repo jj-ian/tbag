@@ -85,6 +85,14 @@ let rec vdecl_list  = function
         []              ->      ""
         | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
 
+let global_vdecl = function
+        Var(vtype, id)                 ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
+        | VarInit(vtype, id, expr)     ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
+
+let rec global_vdecl_list  = function
+        []              ->      ""
+        | hd::tl        ->      "\t" ^ (global_vdecl hd) ^ (global_vdecl_list tl)
+
 let func_decl f =
         ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
         ^ (formals_list f.formals) ^ "){\n" ^ (locals_list f.locals) ^ (statement_list f.body) ^ "\t}\n")
@@ -113,13 +121,23 @@ let rec adj_decl_list = function
         []              -> ""
         | hd::tl        -> "\t\t" ^ ((adj_decl hd) ^ "\t" ^ (adj_decl_list tl)) ^ "\n"
 
+let pred_stmt s = 
+        "if(" ^ s.pred ^ "){\n" ^ vdecl_list s.locals ^ statement_list s.body ^ "}"
+
+let rec pred_stmt_list = function 
+        []              -> ""
+        | hd::tl        -> "\t\t" ^ ((pred_stmt hd) ^ "\t" ^ (pred_stmt_list tl)) ^ "\n"
+
 let driver_code (driver_class) =
-		let (main, fdecls) = driver_class in
-        "public class Driver {\n\n\tpublic static void main(String[] args) {\n" ^
+		let (vars, main, fdecls) = driver_class in
+        "public class Driver {\n\n\t " ^
+        global_vdecl_list vars ^        
+        "public static void main(String[] args) {\n" ^
         room_decl_list main.rdecls ^
         adj_decl_list main.adecls ^
-        statement_list main.mmethod.body ^
-        "\t}\n\n" ^
+        "while (true) {\n" ^
+        pred_stmt_list main.predicates ^
+        "}\t}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
 let room_constructor = "\n\tpublic Room(){\n\t\tadjRooms = new HashSet<Room>();\n\t}\n"
