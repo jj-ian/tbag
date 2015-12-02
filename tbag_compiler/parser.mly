@@ -59,8 +59,17 @@ data_type:
         | STRING LBRACK int_opt RBRACK              { Array(String, $3) }
         | BOOLEAN                                   { Boolean }
 
+predicate:
+        ID LBRACE vdecl_list stmt_list RBRACE
+        { {
+                pname = $1;
+                locals = $3;
+                body = $4;
+        } }
+
 predicate_list:
         /* nothing */                           { [] }
+        | predicate_list predicate              { $2 :: $1 }
 
         
 fdecl_list:

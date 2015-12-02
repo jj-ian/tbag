@@ -27,7 +27,17 @@ item {
 	int magnitude;
 }
 
+myPred {
+	int i;
+	int j = 0;
+	print("inside myPred\n");
+	}
 
+myPred2 {
+	int i;
+	int j = 0;
+	print("inside myPred2");
+	}
 
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;
