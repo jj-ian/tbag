@@ -5,6 +5,7 @@ type variable_type =
         | String
         | Void
         | Array of variable_type * int
+        | Boolean
 and checked_var_decl =
 	Variable of variable_type * string
 	| Variable_Initialization of variable_type * string * expression
@@ -12,6 +13,7 @@ and checked_var_decl =
 and expr_detail =
         IntLiteral of int
         | StrLiteral of string
+        | BoolLiteral of string
         | Id of checked_var_decl
         | Assign of checked_var_decl * expr
         | ArrayAssign of checked_var_decl * int * expression
@@ -20,12 +22,18 @@ and expr_detail =
         | Call of func_decl * expression list
 and expression = expr_detail * variable_type
 and sast_var_decl = checked_var_decl * variable_type
+and stmt =
+        Block of stmt list
+        | Expr of expression
+        | Return of expression
+        | If of expression * stmt * stmt
+        | While of expression * stmt
 and function_decl = {
 	freturntype: variable_type;
 	fname : string; (* Name of the function *)
 	checked_formals : sast_var_decl list; (* Formal argument names *)
 	checked_locals : sast_var_decl list; (* Locally defined variables *)
-	(*checked_body : stmt list;*)
+	checked_body : stmt list; (* Body of the function *)
 }
 
 

@@ -91,6 +91,62 @@ let process_var_decl (scope : symbol_table) (v : Ast.var_decl) =
 		(scope.variables <- triple :: scope.variables;
 		(decl, t))
 
+let rec check_stmt (scope : symbol_table) (stmt : Ast.stmt) = match stmt with
+        Block(sl) -> Sast.Block(List.fold_left ( fun a s -> (check_stmt scope s) :: a) [] sl)
+        | Expr(e) -> Sast.Expr(check_expr scope e)
+        | Return(e) -> Sast.Return(check_expr scope e)
+        | If(expr, stmt1, stmt2) -> 
+                let new_expr = check_expr scope expr in
+                let (_, t) = new_expr in
+                if t <> Sast.Boolean then
+                        raise (Failure "If statement must have a boolean expression")
+                else 
+                        let new_stmt1 = check_stmt scope stmt1 in
+                        let new_stmt2 = check_stmt scope stmt2 in
+                        Sast.If(new_expr, new_stmt1, new_stmt2)
+        | While(expr, stmt) ->
+                let expr = check_expr scope expr in
+                let (_, t) = expr in
+                if t <> Sast.Boolean then
+                        raise (Failure "If statement must have a boolean expression")
+                else 
+                        let stmt = check_stmt scope stmt in
+                        Sast.While(expr, stmt)
+
+let rec check_func_stmt (scope : symbol_table) (stml : Sast.stmt list) (ftype :
+    Sast.variable_type) =
+	List.iter (
+		fun s -> match s with 
+		Sast.Block (sl) ->
+			check_func_stmt scope sl ftype
+		| Sast.Return(e) -> 
+			let (_, t) = e in 
+			if t <> ftype then raise (Failure "func return type is incorrect") else ()
+		| Sast.If(_, s1, s2) -> 
+			check_func_stmt scope [s1] ftype; check_func_stmt scope [s2] ftype
+		| Sast.While(_, s) ->
+			check_func_stmt scope [s] ftype
+		| _ -> ()
+	) stml
+
+let process_func_stmt (scope : symbol_table) (stml : Ast.stmt list) (ftype :
+    Sast.variable_type) = 
+	List.fold_left (
+		fun a s -> let stmt = check_stmt scope s in
+		match stmt with 
+		Sast.Block (sl) ->
+			check_func_stmt scope sl ftype; stmt :: a
+		| Sast.Return(e) -> 
+			let (_, t) = e in 
+			if t <> ftype then raise (Failure "while processing func statement, return type incorrect") else
+			scope.return_found <- true; stmt :: a 
+		| Sast.If(_, s1, s2) -> 
+			check_func_stmt scope [s1] ftype; check_func_stmt scope [s2] ftype; stmt :: a
+		| Sast.While(_, s) ->
+			check_func_stmt scope [s] ftype; stmt :: a
+		| _ -> stmt :: a
+	) [] stml
+
 let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	let scope' = { env.scope with parent = Some(env.scope); variables = []; return_found = false } in
 	let t = check_var_type env.scope f.freturntype in
@@ -105,15 +161,15 @@ let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	(*local variables*)
 	let locals = List.fold_left ( fun a l -> process_var_decl scope' l :: a ) [] f.locals in
 	(* currently not handling statements, units, or return type *)
-	(*let statements = process_func_stmt scope' f.body t in *)
+	let statements = process_func_stmt scope' f.body t in
 	(*let units = List.fold_left ( fun a u -> process_func_units scope' u formals t :: a) [] f.units in*)
 	(*if scope'.return_found then *)
 		let f = { 	freturntype = t; 
 					fname = f.fname; 
 					checked_formals = formals; 
 					checked_locals = locals; 
-					(*checked_body = statements;
-					checked_units = units*) } in
+					checked_body = statements;
+					(*checked_units = units*) } in
 		env.scope.functions <- f :: env.scope.functions; (* throw away scope of function *) f
 	(*else (if f.ftype = Void then 
 		let f = { 	ftype = t; 
@@ -126,42 +182,7 @@ let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	(*else
 		raise (Failure ("No return for function " ^ f.fname ^ " when return expected.")))*)
 
-(*let rec check_func_stmt (scope : symbol_table) (stml : Sast.stmt list) (ftype : Sast.var_types) = 
-	List.iter (
-		fun s -> match s with 
-		Sast.Block (sl) ->
-			check_func_stmt scope sl ftype
-		| Sast.Return(e) -> 
-			let (_, t) = e in 
-			if t <> ftype then raise (Failure "func return type is incorrect") else ()
-		| Sast.If(_, s1, s2) -> 
-			check_func_stmt scope [s1] ftype; check_func_stmt scope [s2] ftype
-		| Sast.For(_, _, _, s) ->
-			check_func_stmt scope [s] ftype
-		| Sast.While(_, s) ->
-			check_func_stmt scope [s] ftype
-		| _ -> ()
-	) stml
 
-let process_func_stmt (scope : symbol_table) (stml : Ast.stmt list) (ftype : Sast.var_types) = 
-	List.fold_left (
-		fun a s -> let stmt = check_stmt scope s in
-		match stmt with 
-		Sast.Block (sl) ->
-			check_func_stmt scope sl ftype; stmt :: a
-		| Sast.Return(e) -> 
-			let (_, t) = e in 
-			if t <> ftype then raise (Failure "while processing func statement, return type incorrect") else
-			scope.return_found <- true; stmt :: a 
-		| Sast.If(_, s1, s2) -> 
-			check_func_stmt scope [s1] ftype; check_func_stmt scope [s2] ftype; stmt :: a
-		| Sast.For(_, _, _, s) ->
-			check_func_stmt scope [s] ftype; stmt :: a
-		| Sast.While(_, s) ->
-			check_func_stmt scope [s] ftype; stmt :: a
-		| _ -> stmt :: a
-	) [] stml
-*)
 type function_table = {
 	funcs : func_decl list
 }
