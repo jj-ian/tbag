@@ -5,6 +5,7 @@ type variable_type =
         | String
         | Void
         | Array of variable_type * int
+        | Boolean
 
 type argument_decl =
         Argument of variable_type * string
@@ -12,6 +13,7 @@ type argument_decl =
 type expr =
         IntLiteral of int
         | StrLiteral of string
+        | BoolLiteral of string
         | Id of string
         | Assign of string * expr
         | ArrayAssign of string * int * expr

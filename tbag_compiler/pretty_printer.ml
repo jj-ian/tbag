@@ -12,6 +12,7 @@ let rec data_type = function
         | Int -> "int"
         | Void -> "void"
         | Array(var_type, size) -> data_type var_type ^ "[" ^ string_of_int size ^ "]"
+        | Boolean -> "boolean"
 
 let operator = function
         Add -> "+"
@@ -28,6 +29,7 @@ let operator = function
 let rec expression = function
         StrLiteral(str) -> str
         | IntLiteral(i) -> string_of_int i
+        | BoolLiteral(str) -> str
         | Id(id) -> id
         | Assign(id, expr) -> id ^ " = " ^ (expression expr)
         | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (string_of_int loc) ^ "] = " ^ (expression expr)
@@ -50,7 +52,7 @@ let rec statement_list = function
         [] -> ""
         | hd::tl -> 
 	        let rec statement = function
-				Block(stmt_list) -> "{" ^ (statement_list stmt_list) ^ "}"
+			Block(stmt_list) -> "{" ^ (statement_list stmt_list) ^ "}"
 		        | Expr(expr) -> (expression_with_semi expr)
 		        | Return(expr) -> ("return " ^ expression_with_semi expr)
 		        | If(expr, stmt1, stmt2) -> "if (" ^ (expression expr) ^ ") " ^ (statement stmt1) ^ "else" ^ (statement stmt2)
