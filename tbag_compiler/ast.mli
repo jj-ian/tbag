@@ -13,7 +13,7 @@ type argument_decl =
 type expr =
         IntLiteral of int
         | StrLiteral of string
-        | BoolLiteral of string
+        | BoolLiteral of bool
         | Id of string
         | Assign of string * expr
         | ArrayAssign of string * int * expr

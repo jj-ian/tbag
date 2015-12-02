@@ -29,7 +29,7 @@ let operator = function
 let rec expression = function
         StrLiteral(str) -> str
         | IntLiteral(i) -> string_of_int i
-        | BoolLiteral(str) -> str
+        | BoolLiteral(boolean) -> string_of_bool boolean
         | Id(id) -> id
         | Assign(id, expr) -> id ^ " = " ^ (expression expr)
         | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (string_of_int loc) ^ "] = " ^ (expression expr)
