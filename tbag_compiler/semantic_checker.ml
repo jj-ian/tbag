@@ -108,7 +108,7 @@ let rec check_stmt (scope : symbol_table) (stmt : Ast.stmt) = match stmt with
                 let expr = check_expr scope expr in
                 let (_, t) = expr in
                 if t <> Sast.Boolean then
-                        raise (Failure "If statement must have a boolean expression")
+                        raise (Failure "While statement must have a boolean expression")
                 else 
                         let stmt = check_stmt scope stmt in
                         Sast.While(expr, stmt)
