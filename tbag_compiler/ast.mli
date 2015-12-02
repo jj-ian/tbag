@@ -42,6 +42,13 @@ type room_decl =
 }
 
 type adj_decl = string list
+
+type predicate = 
+        {
+                pname: string;
+                locals: var_decl list;
+                body: stmt list;
+        }
        
 type func_decl = 
 {
@@ -84,4 +91,5 @@ type program =  room_def *
                 npc_decl list * 
                 item_def *
                 item_decl list * 
+                predicate list *
                 func_decl list

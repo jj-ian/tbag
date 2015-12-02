@@ -46,8 +46,10 @@ room_program:
 */
 
 program:
-        rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list fdecl_list EOF 
-                                                    { ($1, $2, $3, $4, $5, $6, $7, $8) }
+        rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list
+        predicate_list fdecl_list EOF 
+                                                    { ($1, $2, $3, $4, $5, $6,
+                                                    $7, $8, $9) }
 
 data_type:
         INT                                         { Int }
@@ -57,6 +59,19 @@ data_type:
         | STRING LBRACK int_opt RBRACK              { Array(String, $3) }
         | BOOLEAN                                   { Boolean }
 
+predicate:
+        ID LBRACE vdecl_list stmt_list RBRACE
+        { {
+                pname = $1;
+                locals = $3;
+                body = $4;
+        } }
+
+predicate_list:
+        /* nothing */                           { [] }
+        | predicate_list predicate              { $2 :: $1 }
+
+        
 fdecl_list:
         /* nothing */                               { [] }
         | fdecl_list fdecl                          { $2 :: $1 }
@@ -67,7 +82,7 @@ fdecl:
                 freturntype = $2;    
                 fname = $3;
                 formals = $5;
-                locals = $8;
+                locals = List.rev $8;
                 body = List.rev $9      
         } }
 

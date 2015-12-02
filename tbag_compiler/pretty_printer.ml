@@ -68,6 +68,15 @@ let rec formals_list = function
         | [solo] -> formal solo
         | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
+let local = function
+        Var(var_type, str)      ->      ((data_type var_type) ^ " " ^ str)
+        | VarInit(var_type, str, expr)    ->      ((data_type var_type) ^ " " ^
+        str ^ " = " ^ (expression expr))
+
+let rec locals_list = function
+        []              ->      ""
+        | hd::tl        ->      ((local hd) ^ ";\n" ^ (locals_list tl))
+
 let vdecl = function
         Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
         | VarInit(vtype, id, expr)     ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
@@ -78,7 +87,7 @@ let rec vdecl_list  = function
 
 let func_decl f =
         ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
-        ^ (formals_list f.formals) ^ "){\n" ^ (statement_list f.body) ^ "\t}\n")
+        ^ (formals_list f.formals) ^ "){\n" ^ (locals_list f.locals) ^ (statement_list f.body) ^ "\t}\n")
 
 let rec func_decl_list = function
         []              -> ""
