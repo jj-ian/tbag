@@ -8,6 +8,7 @@
 room {
 	string name;
 	string msg;
+	boolean visited;
 }
 
 room myRoom { name = "living room"; msg = "u entered the living room - good for you bro"; }

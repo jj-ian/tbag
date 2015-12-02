@@ -5,9 +5,10 @@
 %token ASSIGN EQ NEQ LT LEQ GT GEQ
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
-%token INT STRING VOID
+%token INT STRING VOID BOOLEAN
 %token <int> INT_LITERAL
 %token <string> STRING_LITERAL
+%token <string> BOOL_LITERAL
 %token <string> ID
 %token EOF
 
@@ -54,6 +55,7 @@ data_type:
         | VOID                                      { Void }
         | INT LBRACK int_opt RBRACK                 { Array(Int, $3) }
         | STRING LBRACK int_opt RBRACK              { Array(String, $3) }
+        | BOOLEAN                                   { Boolean }
 
 fdecl_list:
         /* nothing */                               { [] }
@@ -163,6 +165,7 @@ int_opt:
 expr:
         INT_LITERAL                                 { IntLiteral($1) }
         | STRING_LITERAL                            { StrLiteral($1) }
+        | BOOL_LITERAL                              { BoolLiteral($1) }
         | ID                                        { Id($1) }
         | expr PLUS expr                            { Binop($1, Add, $3) }
         | expr MINUS expr                           { Binop($1, Sub, $3) }

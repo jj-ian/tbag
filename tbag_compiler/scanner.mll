@@ -27,10 +27,11 @@ rule token = parse
         | '>'                                   { GT }
         | ">="                                  { GEQ }
         | '='                                   { ASSIGN }
-        | ';'					                { SEMI }
-        | "int"					                { INT }         (* types  *)
+        | ';'					{ SEMI }
+        | "int"					{ INT }         (* types  *)
         | "string"                              { STRING }
         | "void"                                { VOID }
+        | "boolean"                             { BOOLEAN }
         | "if"                                  { IF }
         | "else"                                { ELSE }
         | "while"                               { WHILE }
