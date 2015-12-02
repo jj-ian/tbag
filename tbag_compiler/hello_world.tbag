@@ -28,17 +28,8 @@ item {
 	int magnitude;
 }
 
-myPred {
-	int i;
-	int j = 0;
-	print("inside myPred\n");
-}
-
-myPred2 {
-	int i;
-	int j = 0;
-	print("inside myPred2");
-}
+boolean start = true;
+boolean finished = false;
 
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;
@@ -77,4 +68,14 @@ func void main(){
 	print("hello world");
 	print(add(1,2));
 	foo();
+}
+
+start {
+	start = false;
+	finished = true;
+}
+
+finished {
+	print("hello world");
+	break;
 }
