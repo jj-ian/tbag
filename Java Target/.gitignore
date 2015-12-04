@@ -1,0 +1,4 @@
+# for Java Target, so git will track .java and .class files in here but not elsewhere in the repo
+
+!*.java
+!*.class
