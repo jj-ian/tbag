@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Driver {
@@ -9,11 +10,12 @@ public class Driver {
 	public static Room currentRoom;
 	public static String input;
 	public static boolean started = false;
+	public static boolean haveKey = false;
 	
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		System.out.println("hello");
+		// initialize global objects
+		scanner = new Scanner(System.in);
 		
 		// configure rooms
 		Room room1 = new Room();
@@ -37,23 +39,63 @@ public class Driver {
 		while (true) {
 			if (!started) {
 				started = true;
-				playerGoToRoom(room1);
-				
+				playerGoToRoom(room2);
+				System.out.println("which room?");
+				promptForInput(new String[]{"south", "east"});
 
 			}
-			//System.out.println("Lol");
+			
+			if (currentRoom == room2 && input.equalsIgnoreCase("south")) {
+				playerGoToRoom(room1);
+				if (haveKey == false) {
+					System.out.println("there's a key here. pick it up?");
+					promptForInput(new String[]{"yes", "no"});
+				}
+				
+			}
+			
+			if (currentRoom == room1 && input.equalsIgnoreCase("yes")) {
+				haveKey = true;
+				System.out.println("which room?");
+				promptForInput(new String[]{"north"});
+			}
+			
+			if (currentRoom == room1 && input.equals("no")) {
+				System.out.println("which room?");
+				promptForInput(new String[]{"north"});
+			}
+			
+			//if (currentRoom == room1 && input.)
+			
 		}
 
 		
 	}
 
-	// this is what happens when u do player->room1
+	// this is what happens when u do player->room
 	public static void playerGoToRoom(Room room) {
 		currentRoom = room;
 		System.out.println("You're in " + room.name);
 		System.out.println(room.message);
 		
 	}
+	
+	public static void promptForInput(String[] acceptableInputs) {
+		
+		// transform to uppercase so inputs can be case insensitive
+		for (int i = 0; i < acceptableInputs.length; i++) {
+			acceptableInputs[i] = acceptableInputs[i].toUpperCase();
+		}
+
+		input = scanner.nextLine();
+		while(!Arrays.asList(acceptableInputs).contains(input.toUpperCase())) {
+			System.out.println("invalid input");
+			input = scanner.nextLine();
+		}				
+
+	}
+	
+	
 
 	
 
