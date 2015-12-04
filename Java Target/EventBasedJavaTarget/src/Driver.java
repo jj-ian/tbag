@@ -82,11 +82,26 @@ public class Driver {
 			
 			if (currentRoom == room2 && input.equalsIgnoreCase("east")) {
 				movePlayerToRoom(room3);
-				System.out.println("u see a locked door");
-				//checkLockedDoor = true;
+				//System.out.println("u see a locked door");
+				if (room3Locked == true) {
+					System.out.println("there's a locked door here");
+					//use key or not
+					System.out.println("which room?");
+					promptForInput(new String[]{"west"});
+					
+				} else {
+					System.out.println("door is unlocked");
+					System.out.println("which room?");
+					promptForInput(new String[]{"east", "west"});
+				}
 			}
 			
-			//if (currentRoom )
+			
+			if (currentRoom == room3 && input.equalsIgnoreCase("west")) {
+				movePlayerToRoom(room2);
+				System.out.println("which room?");
+				promptForInput(new String[]{"south", "east"});			
+				}
 			
 		}
 
