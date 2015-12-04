@@ -9,8 +9,11 @@ public class Driver {
 	//global vars for event stuff
 	public static Room currentRoom;
 	public static String input;
+	
+	// in tbag code programmer should be able to init global vars w/ defaults
 	public static boolean started = false;
 	public static boolean haveKey = false;
+	public static boolean room3Locked = true;
 	
 
 	public static void main(String[] args) {
@@ -39,33 +42,51 @@ public class Driver {
 		while (true) {
 			if (!started) {
 				started = true;
-				playerGoToRoom(room2);
+				movePlayerToRoom(room2);
 				System.out.println("which room?");
 				promptForInput(new String[]{"south", "east"});
 
 			}
 			
 			if (currentRoom == room2 && input.equalsIgnoreCase("south")) {
-				playerGoToRoom(room1);
+				movePlayerToRoom(room1);
 				if (haveKey == false) {
 					System.out.println("there's a key here. pick it up?");
 					promptForInput(new String[]{"yes", "no"});
+				} 
+				else {
+					System.out.println("which room?");
+					promptForInput(new String[]{"north"});
 				}
 				
 			}
 			
+			
 			if (currentRoom == room1 && input.equalsIgnoreCase("yes")) {
+				System.out.println("you picked up key");
 				haveKey = true;
 				System.out.println("which room?");
 				promptForInput(new String[]{"north"});
 			}
 			
-			if (currentRoom == room1 && input.equals("no")) {
+			if (currentRoom == room1 && input.equalsIgnoreCase("no")) {
 				System.out.println("which room?");
 				promptForInput(new String[]{"north"});
 			}
 			
-			//if (currentRoom == room1 && input.)
+			if (currentRoom == room1 && input.equalsIgnoreCase("north")) {
+				movePlayerToRoom(room2);
+				System.out.println("which room?");
+				promptForInput(new String[]{"south", "east"});
+			}
+			
+			if (currentRoom == room2 && input.equalsIgnoreCase("east")) {
+				movePlayerToRoom(room3);
+				System.out.println("u see a locked door");
+				//checkLockedDoor = true;
+			}
+			
+			//if (currentRoom )
 			
 		}
 
@@ -73,7 +94,7 @@ public class Driver {
 	}
 
 	// this is what happens when u do player->room
-	public static void playerGoToRoom(Room room) {
+	public static void movePlayerToRoom(Room room) {
 		currentRoom = room;
 		System.out.println("You're in " + room.name);
 		System.out.println(room.message);
@@ -81,6 +102,10 @@ public class Driver {
 	}
 	
 	public static void promptForInput(String[] acceptableInputs) {
+		System.out.println("available options: ");
+		for (String option : acceptableInputs) {
+			System.out.println(option);
+		}
 		
 		// transform to uppercase so inputs can be case insensitive
 		for (int i = 0; i < acceptableInputs.length; i++) {
