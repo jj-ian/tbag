@@ -29,6 +29,7 @@ and stmt =
         | Return of expression
         | If of expression * stmt * stmt
         | While of expression * stmt
+        | Goto of string
 and function_decl = {
 	freturntype: variable_type;
 	fname : string; (* Name of the function *)

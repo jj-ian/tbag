@@ -100,6 +100,7 @@ and check_op (scope : symbol_table) binop = match binop with
                         | And -> if (t1 <> Boolean || t2 <> Boolean) then raise (Failure "Incorrect types for & ") else Sast.Boolean
                         | Not -> raise (Failure "! is a unary operator.")
                 in Sast.Binop(e1, op, e2), t
+        | _ -> raise (Failure "Not an op")
 
 and check_uni_op (scope : symbol_table) uniop = match uniop with
         Ast.Boolneg(op, expr) -> (
@@ -114,8 +115,10 @@ type for ! ") else Sast.Boolneg(op, e), Boolean
         | _ -> raise (Failure "Not a uniop") 
 
 let rec check_var_type (scope : symbol_table) (v : Ast.variable_type) = match v with
-	 Ast.Int -> Sast.Int
+         Ast.Void -> Sast.Void
+        | Ast.Int -> Sast.Int
 	| Ast.String -> Sast.String
+        | Ast.Boolean -> Sast.Boolean
 	| Ast.Array(v, i) ->
 		let v = check_var_type scope v in
 		(*let expr = check_expr scope expr in
