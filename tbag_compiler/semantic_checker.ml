@@ -41,6 +41,14 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 		(try 
 			let (decl, t) = check_id scope vname in (Sast.Id(decl), t) 
 		with Not_found -> raise (Failure ("Id named " ^ vname ^ " not found")))
+	| BoolLiteral(b) -> Sast.BoolLiteral(b), Sast.Boolean
+	| Assign(_, _) as a -> check_assign scope a
+	| Binop(_, _, _) as b -> check_op scope b
+        | Boolneg(op, expr) as u -> check_uni_op scope u 
+	(*| Uniop(op, expr) as u -> check_uni_op scope u
+	| Call(_, _) as c -> check_call scope c
+	| Access(_, _) as a -> check_access scope a
+        *)
 
 (*MV's groups check_exp below
 let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
@@ -61,6 +69,49 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 	| Struct_Member_Assign(_, _, _) as a -> check_struct_assignment scope a
 	| Array_Member_Assign(_, _, _) as a -> check_array_assignment scope a
 *)
+and check_assign (scope : symbol_table) a = match a with
+        Ast.Assign(id, expr) ->
+                let (decl, t) = check_id scope id in
+                let e = check_expr scope expr in
+                let (_, t2) = e in
+                if t <> t2 then raise (Failure "Incorrect type assignment.") else Sast.Assign(decl, e), t
+        | _ -> raise (Failure "Not an assignment")
+
+and check_op (scope : symbol_table) binop = match binop with
+        Ast.Binop(xp1, op, xp2) ->
+                let e1 = check_expr scope xp1 and e2 = check_expr scope xp2 in
+                let (_, t1) = e1 and (_, t2) = e2 in
+                let t = match op with
+                        Add ->
+                                if (t1 <> Int || t2 <> Int) then
+                                        if (t1 <> String || t2 <> String) then raise (Failure "Incorrect types for +")
+                                        else String
+                                else Int
+                        | Sub -> if (t1 <> Int || t2 <> Int) then raise (Failure "Incorrect types for - ") else Sast.Int
+                        | Mult -> if (t1 <> Int || t2 <> Int) then raise (Failure "Incorrect types for * ") else Sast.Int
+                        | Div -> if (t1 <> Int || t2 <> Int) then raise (Failure "Incorrect types for / ") else Sast.Int
+                        | Equal -> if (t1 <> t2) then raise (Failure "Incorrect types for = ") else Sast.Boolean
+                        | Neq -> if (t1 <> t2) then raise (Failure "Incorrect types for != ") else Sast.Boolean
+                        | Less -> if (t1 <> Int || t2 <> Int) then raise (Failure "Incorrect types for < ") else Sast.Boolean
+                        | Leq -> if (t1 <> Int || t2 <> Int) then raise (Failure "Incorrect types for <= ") else Sast.Boolean
+                        | Greater -> if (t1 <> Int || t2 <> Int) then raise (Failure "Incorrect types for > ") else Sast.Boolean
+                        | Geq -> if (t1 <> Int || t2 <> Int) then raise (Failure "Incorrect types for >= ") else Sast.Boolean
+                        | Or -> if (t1 <> Boolean || t2 <> Boolean) then raise (Failure "Incorrect types for | ") else Sast.Boolean
+                        | And -> if (t1 <> Boolean || t2 <> Boolean) then raise (Failure "Incorrect types for & ") else Sast.Boolean
+                        | Not -> raise (Failure "! is a unary operator.")
+                in Sast.Binop(e1, op, e2), t
+
+and check_uni_op (scope : symbol_table) uniop = match uniop with
+        Ast.Boolneg(op, expr) -> (
+                match op with
+                        Not ->
+                                let e = check_expr scope expr in
+                                let (_, t) = e in 
+                                if (t <> Boolean) then raise (Failure "Incorrect
+type for ! ") else Sast.Boolneg(op, e), Boolean
+                        | _ -> raise (Failure "Not a unary operator")
+                )
+        | _ -> raise (Failure "Not a uniop") 
 
 let rec check_var_type (scope : symbol_table) (v : Ast.variable_type) = match v with
 	 Ast.Int -> Sast.Int
@@ -203,7 +254,7 @@ let check_basic_program (p : Ast.program) =
 	let s = { parent = None; variables = []; functions = []; return_found = false } in
 	let env = { scope = s; found_main = false } in
 	let (room_defs, room_decls, adj_decls, npc_defs, npc_decls, item_defs,
-        item_decls, funcs) = p in
+        item_decls, var_decls, funcs, pred_stmt) = p in
 	let funcs = 
 		List.fold_left (
 			fun a f -> process_func_decl env f :: a

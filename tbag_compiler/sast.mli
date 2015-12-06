@@ -13,12 +13,13 @@ and checked_var_decl =
 and expr_detail =
         IntLiteral of int
         | StrLiteral of string
-        | BoolLiteral of string
+        | BoolLiteral of bool
         | Id of checked_var_decl
-        | Assign of checked_var_decl * expr
+        | Assign of checked_var_decl * expression
         | ArrayAssign of checked_var_decl * int * expression
         | ArrayAccess of checked_var_decl * int
         | Binop of expression * op * expression 
+        | Boolneg of op * expression
         | Call of func_decl * expression list
 and expression = expr_detail * variable_type
 and sast_var_decl = checked_var_decl * variable_type
