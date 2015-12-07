@@ -130,7 +130,7 @@ let pred_stmt s =
 
 let rec pred_stmt_list = function 
         []              -> ""
-        | hd::tl        -> "\t" ^ ((pred_stmt hd) ^ "\t" ^ (pred_stmt_list tl)) ^ "\n"
+        | hd::tl        -> "\t" ^ ((pred_stmt hd) ^ "\n\t" ^ (pred_stmt_list tl)) ^ "\n"
 
 let driver_code (driver_class) =
         let (vars, main, fdecls) = driver_class in
@@ -142,7 +142,7 @@ let driver_code (driver_class) =
         adj_decl_list main.adecls ^
         "while (true) {\n" ^
         pred_stmt_list main.predicates ^
-        "}\t" ^ "in.close();" ^ "}\n\n" ^
+        "}\n\t" ^ "in.close();\n}\n\n" ^
         func_decl_list fdecls ^ "}\n"
 
 let room_constructor = "\n\tpublic Room(){\n\t\tadjRooms = new HashSet<Room>();\n\t}\n"
