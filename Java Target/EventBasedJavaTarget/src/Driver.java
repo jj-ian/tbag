@@ -15,6 +15,7 @@ public class Driver {
 	public static boolean haveKey = false;
 	public static boolean room3Locked = true;
 	public static boolean tryToOpenLockedDoor = false;
+	public static boolean finishedLockPrompting = false;
 	
 
 	public static void main(String[] args) {
@@ -84,6 +85,7 @@ public class Driver {
 			if (currentRoom == room2 && input.equalsIgnoreCase("east")) {
 				movePlayerToRoom(room3);
 			}
+
 			
 			if (currentRoom == room3 && room3Locked == true) {
 				System.out.println("there's a locked door here");
@@ -92,8 +94,6 @@ public class Driver {
 			
 			if (currentRoom == room3 && room3Locked == false) {
 				System.out.println("the door is unlcoked");
-				System.out.println("which room?");
-				promptForInput(new String[]{"east", "west"});
 				
 			}
 			
@@ -123,8 +123,9 @@ public class Driver {
 
 			}
 			
+			
 			if (currentRoom == room3) {
-				System.out.println("which room?");
+				System.out.println("which ROOM?");
 				if (room3Locked) {
 					promptForInput(new String[]{"west"});
 				} else {
@@ -133,6 +134,7 @@ public class Driver {
 				}
 				
 			}
+
 			
 			if (currentRoom == room3 && input.equalsIgnoreCase("west")) {
 				movePlayerToRoom(room2);
@@ -146,7 +148,7 @@ public class Driver {
 			}
 			
 			if (currentRoom == room4) {
-				System.out.println("which room?");
+				System.out.println("whichhhhhh room?");
 				promptForInput(new String[]{"east"});		
 			}
 			
