@@ -14,6 +14,7 @@ public class Driver {
 	public static boolean started = false;
 	public static boolean haveKey = false;
 	public static boolean room3Locked = true;
+	public static boolean tryToOpenLockedDoor = false;
 	
 
 	public static void main(String[] args) {
@@ -82,26 +83,79 @@ public class Driver {
 			
 			if (currentRoom == room2 && input.equalsIgnoreCase("east")) {
 				movePlayerToRoom(room3);
-				//System.out.println("u see a locked door");
-				if (room3Locked == true) {
-					System.out.println("there's a locked door here");
-					//use key or not
-					System.out.println("which room?");
-					promptForInput(new String[]{"west"});
-					
-				} else {
-					System.out.println("door is unlocked");
-					System.out.println("which room?");
-					promptForInput(new String[]{"east", "west"});
-				}
 			}
 			
+			if (currentRoom == room3 && room3Locked == true) {
+				System.out.println("there's a locked door here");
+				tryToOpenLockedDoor = true;
+			}
+			
+			if (currentRoom == room3 && room3Locked == false) {
+				System.out.println("the door is unlcoked");
+				System.out.println("which room?");
+				promptForInput(new String[]{"east", "west"});
+				
+			}
+			
+			if (currentRoom == room3 && tryToOpenLockedDoor == true && haveKey == true) {
+				System.out.println("use ur key?");
+				promptForInput(new String[]{"yes", "no"});
+
+			}
+			
+			if (currentRoom == room3 && tryToOpenLockedDoor == true && haveKey == false) {
+				System.out.println("u don't have the key");
+				tryToOpenLockedDoor = false;
+
+
+			}
+			
+			if (currentRoom == room3 && tryToOpenLockedDoor && input.equalsIgnoreCase("yes")) {
+				System.out.println("u unlocked it! woo!");
+				room3Locked = false;
+				tryToOpenLockedDoor = false;
+
+			}
+			
+			if (currentRoom == room3 && tryToOpenLockedDoor && input.equalsIgnoreCase("no")) {
+				System.out.println("u didn't try to unlock it");
+				tryToOpenLockedDoor = false;
+
+			}
+			
+			if (currentRoom == room3) {
+				System.out.println("which room?");
+				if (room3Locked) {
+					promptForInput(new String[]{"west"});
+				} else {
+					promptForInput(new String[]{"east","west"});
+
+				}
+				
+			}
 			
 			if (currentRoom == room3 && input.equalsIgnoreCase("west")) {
 				movePlayerToRoom(room2);
 				System.out.println("which room?");
 				promptForInput(new String[]{"south", "east"});			
-				}
+			}
+			
+			if (currentRoom == room3 && input.equalsIgnoreCase("east")) {
+				movePlayerToRoom(room4);
+	
+			}
+			
+			if (currentRoom == room4) {
+				System.out.println("which room?");
+				promptForInput(new String[]{"east"});		
+			}
+			
+			if (currentRoom == room4 && input.equalsIgnoreCase("east")) {
+				movePlayerToRoom(room3);
+			}
+			
+			
+			
 			
 		}
 
@@ -116,10 +170,16 @@ public class Driver {
 		
 	}
 	
-	public static void promptForInput(String[] acceptableInputs) {
-		System.out.println("available options: ");
-		for (String option : acceptableInputs) {
-			System.out.println(option);
+	// prompts player for input and sets global var "input" to whatever player inputted, provided it's a valid input.
+	// invalid inputs will be reprompted
+	// boolean printAvailableInputs -- if true, it'll print the list of possible inputs. if false, it won't. enter false if you 
+	// want to provide functionality like cheat codes -- where there are valid inputs that you don't want to display to player
+	public static void promptForInput(String[] acceptableInputs, boolean printAvailableInputs) {
+		if (printAvailableInputs == true) {
+			System.out.println("available options: ");
+			for (String option : acceptableInputs) {
+				System.out.println(option);
+			}
 		}
 		
 		// transform to uppercase so inputs can be case insensitive
@@ -133,6 +193,11 @@ public class Driver {
 			input = scanner.nextLine();
 		}				
 
+	}
+	
+	// same as above, but if no printAvailableInputs argument is specified, then it defaults to true -- print available inputs 
+	public static void promptForInput(String[] acceptableInputs) {
+		promptForInput(acceptableInputs, true);
 	}
 	
 	
