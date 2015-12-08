@@ -17,6 +17,7 @@
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left AND OR NOT
 
 /*
 %start basic_program
