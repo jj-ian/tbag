@@ -132,18 +132,28 @@ let rec pred_stmt_list = function
         []              -> ""
         | hd::tl        -> "\t" ^ ((pred_stmt hd) ^ "\n\t" ^ (pred_stmt_list tl)) ^ "\n"
 
+let default_globals = 
+    "
+    public static Scanner scanner;
+    public static Room currentRoom;
+    public static String input;
+    "
+
 let driver_code (driver_class) =
-        let (vars, main, fdecls) = driver_class in
+        let (vars, main, fdecls, lib_funcs) = driver_class in
         "import java.util.*;\n\npublic class Driver {\n\n\t " ^
+        default_globals ^ 
         global_vdecl_list vars ^        
         "public static void main(String[] args) {\n\t" ^
-        "Scanner in = new Scanner(System.in);\n\t" ^
+        "Scanner scanner = new Scanner(System.in);\n\t" ^
         room_decl_list main.rdecls ^
         adj_decl_list main.adecls ^
         "while (true) {\n" ^
         pred_stmt_list main.predicates ^
-        "}\n\t" ^ "in.close();\n}\n\n" ^
-        func_decl_list fdecls ^ "}\n"
+        "}\n\t" ^ "scanner.close();\n}\n\n" ^
+        func_decl_list fdecls ^ 
+        lib_funcs ^
+        "}\n"
 
 let room_constructor = "\n\tpublic Room(){\n\t\tadjRooms = new HashSet<Room>();\n\t}\n"
 
