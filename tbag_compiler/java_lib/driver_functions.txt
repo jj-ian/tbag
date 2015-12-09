@@ -43,10 +43,10 @@
 	public static void promptForInput(String[] acceptableInputs) {
 		promptForInput(acceptableInputs, true);
 	}
-
+	
 	public static void displayAdj(Room room) {
-		System.out.println("Move to: ");
-		for(Room r : room.adjRooms) {
-			System.out.println(r.name);
-		}
-	}
+			System.out.println("Move to: ");
+			for(Room r : room.adjRooms) {
+				System.out.println(r.name);
+			}
+		}	

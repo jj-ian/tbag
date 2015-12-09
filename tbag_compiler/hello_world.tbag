@@ -69,11 +69,11 @@ func void foo() {
 
 start AND NOT test_start {
 	print("started\n");
-	start = false;
-	test_start = true;
+	get_intput_from_options("test_start");
+	->myRoom
 }
 
-test_start {
+currentRoom == myRoom {
 	displayAdj(myRoom);
 	finished = true;
 }

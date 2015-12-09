@@ -64,8 +64,8 @@ pred_stmt:
         expr LBRACE vdecl_list stmt_list RBRACE
         { {
                 pred = $1;
-                locals = $3;
-                body = $4;
+                locals = List.rev $3;
+                body = List.rev $4;
         } }
 
 predicate_list:
@@ -165,7 +165,7 @@ idecl:
 
 stmt_list:
         /* nothing */                               { [] }
-        | stmt_list stmt                            { List.rev ($2 :: $1) }
+        | stmt_list stmt                            { $2 :: $1 }
 
 stmt:
         expr SEMI                                   { Expr($1) }

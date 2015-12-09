@@ -45,8 +45,12 @@ let rec expression = function
 	        | [solo] -> (expression solo)
 	        | hd::tl -> ((expression hd) ^ "," ^ (expr_list tl))
 	        in (
-	                (if fname = "print" then "System.out.println" else fname)
+	                (if fname = "get_intput_from_options" then "promptForInput(new String[]{" ^ expr_list arg ^ "})"
+                     else (
+                     if fname = "print" then "System.out.println" 
+                     else fname)
 	                ^ "(" ^ expr_list arg ^ ")")
+                    )
 
 let expression_with_semi (expr) = 
         ((expression expr) ^ ";\n")
@@ -61,7 +65,7 @@ let rec statement_list = function
 		        | Return(expr) -> ("return " ^ expression_with_semi expr)
 		        | If(expr, stmt1, stmt2) -> "if (" ^ (expression expr) ^ ") " ^ (statement stmt1) ^ "else" ^ (statement stmt2)
 		        | While(expr, stmt) -> "while (" ^ (expression expr) ^ ") " ^ (statement stmt)
-                        | Goto(str)     ->      "movePlayerToRoom(str);\n"
+                        | Goto(str)     ->      "movePlayerToRoom(" ^ str ^ ");\n"
     		in
 				((statement hd) ^ (statement_list tl))  
 
@@ -146,7 +150,7 @@ let driver_code (driver_class) =
         default_globals ^ 
         global_vdecl_list vars ^        
         "public static void main(String[] args) {\n\t" ^
-        "Scanner scanner = new Scanner(System.in);\n\t" ^
+        "scanner = new Scanner(System.in);\n\t" ^
         room_decl_list main.rdecls ^
         adj_decl_list main.adecls ^
         "while (true) {\n" ^

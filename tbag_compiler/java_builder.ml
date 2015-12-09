@@ -25,4 +25,3 @@ let rearrange (program) =
 	let driver = build_driver (vdecl_list, predicate_list, func_decl_list, room_decl_list, adj_decl_list,
                 npc_decl_list, item_decl_list) in
 	(driver, room_def, npc_def, item_def)
-
