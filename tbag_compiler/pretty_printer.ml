@@ -61,6 +61,7 @@ let rec statement_list = function
 		        | Return(expr) -> ("return " ^ expression_with_semi expr)
 		        | If(expr, stmt1, stmt2) -> "if (" ^ (expression expr) ^ ") " ^ (statement stmt1) ^ "else" ^ (statement stmt2)
 		        | While(expr, stmt) -> "while (" ^ (expression expr) ^ ") " ^ (statement stmt)
+                        | Goto(str)     ->      "movePlayerToRoom(str);\n"
     		in
 				((statement hd) ^ (statement_list tl))  
 
