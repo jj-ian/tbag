@@ -136,7 +136,7 @@ let rec pred_stmt_list = function
 let driver_code (driver_class) =
         let (vars, main, fdecls) = driver_class in
         "import java.util.*;\n\npublic class Driver {\n\n\t " ^
-        global_vdecl_list vars ^        
+        global_vdecl_list vars ^ "public static Room currentRoom;\n" ^
         "public static void main(String[] args) {\n\t" ^
         "Scanner in = new Scanner(System.in);\n\t" ^
         room_decl_list main.rdecls ^
