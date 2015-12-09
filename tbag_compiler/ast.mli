@@ -42,6 +42,8 @@ type room_decl =
         rbody: stmt list;
 }
 
+type start = string
+
 type adj_decl = string list
 
 type pred_stmt = 
@@ -88,6 +90,7 @@ type room_program = room_def *
 type program =  room_def * 
                 room_decl list * 
                 adj_decl list * 
+                start *                
                 npc_def *
                 npc_decl list * 
                 item_def *

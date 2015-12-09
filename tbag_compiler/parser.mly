@@ -47,10 +47,10 @@ room_program:
 */
 
 program:
-        rdef rdecl_list adecl_list ndef ndecl_list idef idecl_list
+        rdef rdecl_list adecl_list start ndef ndecl_list idef idecl_list
         vdecl_list fdecl_list predicate_list EOF 
                                                     { ($1, $2, $3, $4, $5, $6,
-                                                    $7, $8, $9, List.rev $10) }
+                                                    $7, $8, $9, $10, List.rev $11) }
 
 data_type:
         INT                                         { Int }
@@ -124,6 +124,9 @@ rdecl:
                 rname = $2;
                 rbody = List.rev $4      
         } }
+
+start:
+        START LBRACE ID RBRACE                      { $3 }        
 
 adecl_list:
         adecl                                       { [$1] }

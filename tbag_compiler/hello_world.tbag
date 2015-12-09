@@ -21,6 +21,8 @@ room myRoom2 { name = "cigar lounge"; msg = "welcome to the cigar lounge"; visit
 myRoom <-> myRoom1;
 myRoom <-> myRoom2;
 
+start {myRoom}
+
 npc {
 	string npcName;
 }
@@ -30,7 +32,6 @@ item {
 	int magnitude;
 }
 
-boolean start = true;
 boolean test_start = false;
 boolean finished = false;
 
@@ -67,14 +68,14 @@ func void foo() {
 	 */	
 }
 
-start AND NOT test_start {
+NOT test_start {
 	print("started\n");
-	get_intput_from_options("test_start");
-	->myRoom
+	get_intput_from_options("myRoom1");
+	->input
 }
 
-currentRoom == myRoom {
-	displayAdj(myRoom);
+currentRoom == myRoom1 {
+	displayAdj(myRoom1);
 	finished = true;
 }
 

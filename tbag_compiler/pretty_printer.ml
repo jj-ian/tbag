@@ -130,6 +130,9 @@ let rec adj_decl_list = function
         []              -> ""
         | hd::tl        -> "\t\t" ^ ((adj_decl hd) ^ "\t" ^ (adj_decl_list tl)) ^ "\n"
 
+let start_decl s = 
+    "\t\tcurrentRoom = " ^ s ^ ";\n"
+
 let pred_stmt s = 
         "if(" ^ (expression s.pred) ^ "){\n" ^ vdecl_list s.locals ^ statement_list s.body ^ "}"
 
@@ -154,6 +157,7 @@ let driver_code (driver_class) =
         "scanner = new Scanner(System.in);\n\t" ^
         room_decl_list main.rdecls ^
         adj_decl_list main.adecls ^
+        start_decl main.start ^ 
         "while (true) {\n" ^
         pred_stmt_list main.predicates ^
         "}\n\t" ^ "scanner.close();\n}\n\n" ^
