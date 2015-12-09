@@ -115,7 +115,7 @@ let rec room_props_list proplist prefix = match proplist with
         | hd::tl        -> prefix ^ "." ^ (statement_list [hd]) ^ (room_props_list tl prefix)
 
 let room_decl r =
-        "Room " ^ r.rname ^ " = new Room();\n" ^ (room_props_list r.rbody r.rname)
+        "Room " ^ r.rname ^ " = new Room();\n\troomMap.put(\"" ^ r.rname ^"\", " ^ r.rname ^ ");\n" ^ (room_props_list r.rbody r.rname)
 
 let rec room_decl_list = function
         []              -> ""
@@ -142,6 +142,7 @@ let default_globals =
     public static Scanner scanner;
     public static Room currentRoom;
     public static String input;
+    public static HashMap<String, Room> roomMap = new HashMap<String, Room>();
     "
 
 let driver_code (driver_class) =
