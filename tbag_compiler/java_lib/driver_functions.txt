@@ -1,6 +1,13 @@
 	// this is what happens when u do player->room
-	public static void movePlayerToRoom(Room room) {
-		currentRoom = room;
+	public static void movePlayerToRoom(Object room) {
+		if (room instanceof Room) {
+			currentRoom = (Room) room;
+		}
+		else {
+			Room update = roomMap.get(room);
+			currentRoom = update;
+		}
+
 	}
 
 	// public static void movePlayerToRoomPrintNameAndMessage(Room room) {
