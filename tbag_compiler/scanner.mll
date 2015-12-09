@@ -5,6 +5,7 @@ rule token = parse
         | "/*"                                  { comment lexbuf } 
         | "func"                                { FUNC }
         | "room"                                { ROOM }
+        | "start"                               { START }
         | "<->"                                 { ADJ }
         | "->"                                  { GOTO }
         | "npc"                                 { NPC }
