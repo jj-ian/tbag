@@ -158,8 +158,10 @@ let driver_code (driver_class) =
 
 let room_constructor = "\n\tpublic Room(){\n\t\tadjRooms = new HashSet<Room>();\n\t}\n"
 
-let room_adj_functions = "\tpublic void setAdjacent(Room room){\n\t\tadjRooms.add(room);\n\t\troom.adjRooms.add(this);\n\t}\n\n" ^
-                         "\tpublic boolean isAdjacent(Room room){\n\t\treturn adjRooms.contains(room);\n\t}\n"
+let room_adj_functions = "\tpublic void setAdjacent(Room room){\n\t\t" ^
+                                "adjRooms.add(room);\n\t\troom.adjRooms.add(this);\n\t}\n\n" ^
+                                "\tpublic boolean isAdjacent(Room room){\n\t\t" ^ 
+                                "return adjRooms.contains(room);\n\t}\n\t\t"
 
 let room_adj_field = "\tpublic HashSet<Room> adjRooms;"
 

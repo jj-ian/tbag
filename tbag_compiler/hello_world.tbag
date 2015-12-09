@@ -17,7 +17,9 @@ room myRoom { name = "living room"; msg = "u entered the living room - good for 
 
 room myRoom1 { name = "dining room"; msg = "u entered the dining room - eat some food!!"; visited = false;}
 
+room myRoom2 { name = "cigar lounge"; msg = "welcome to the cigar lounge"; visited = false;}
 myRoom <-> myRoom1;
+myRoom <-> myRoom2;
 
 npc {
 	string npcName;
@@ -66,9 +68,16 @@ func void foo() {
 }
 
 start AND NOT test_start {
+	print("started\n");
 	start = false;
+	test_start = true;
+}
+
+test_start {
+	displayAdj(myRoom);
 	finished = true;
 }
+
 
 finished {
 	print("hello world");
