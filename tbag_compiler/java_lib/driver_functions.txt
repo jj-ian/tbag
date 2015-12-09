@@ -1,0 +1,45 @@
+	// this is what happens when u do player->room
+	public static void movePlayerToRoom(Room room) {
+		currentRoom = room;
+	}
+
+	// public static void movePlayerToRoomPrintNameAndMessage(Room room) {
+	// 	currentRoom = room;
+	// 	System.out.println("You are now in " + room.name);
+	// 	System.out.println(room.message);			
+	// }
+
+	
+	// Prompts player for input and sets global var "input" to whatever player submitted, provided it's a valid input. 
+	// If invalid inputs are entered, it'll reprompt until player enters a valid input.
+	
+	// Arguments:
+	// String[] acceptableInputs -- the list of acceptable inputs
+	// boolean printAvailableInputs -- if true, it'll print the list of possible inputs. if false, it won't. enter false if you 
+	// want to provide functionality like cheat codes -- where there are valid inputs that you don't want to display to player
+	public static void promptForInput(String[] acceptableInputs, boolean printAvailableInputs) {
+		if (printAvailableInputs == true) {
+			System.out.println("Choose from one of the following options:");
+			for (String option : acceptableInputs) {
+				System.out.println(option);
+			}
+		}
+		
+		// transform to uppercase so inputs can be case insensitive
+		for (int i = 0; i < acceptableInputs.length; i++) {
+			acceptableInputs[i] = acceptableInputs[i].toUpperCase();
+		}
+
+		// loop until player enters valid input
+		input = scanner.nextLine();
+		while(!Arrays.asList(acceptableInputs).contains(input.toUpperCase())) {
+			System.out.println("Invalid Input");
+			input = scanner.nextLine();
+		}				
+
+	}
+	
+	// same as above, but if no printAvailableInputs argument is specified, then it defaults to true -- print available inputs 
+	public static void promptForInput(String[] acceptableInputs) {
+		promptForInput(acceptableInputs, true);
+	}
