@@ -73,5 +73,6 @@ currentRoom == Outside {
 
 finished {
 	print("Good job making it outside, lazybones.");
+	print("\n");
 	break;
 }

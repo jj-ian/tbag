@@ -36,8 +36,8 @@ let rec expression = function
         | Id(id) -> id
         | Access(id, field)     ->      id ^ "." ^ field
         | Assign(id, expr) -> id ^ " = " ^ (expression expr)
-        | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (string_of_int loc) ^ "] = " ^ (expression expr)
-        | ArrayAccess(id, loc) -> id ^ "[" ^ (string_of_int loc) ^ "]"
+        | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (expression loc) ^ "] = " ^ (expression expr)
+        | ArrayAccess(id, loc) -> id ^ "[" ^ (expression loc) ^ "]"
         | Binop(expr1, op, expr2) -> ((expression expr1) ^ (operator op) ^ (expression expr2))
         | Boolneg(op, expr) -> ((operator op) ^ (expression expr))
         | Call(fname, arg) -> 

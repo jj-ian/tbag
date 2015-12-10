@@ -201,8 +201,8 @@ expr:
         | expr OR expr                              { Binop($1, Or, $3)}
         | NOT expr                                  { Boolneg(Not, $2)}
         | ID ASSIGN expr                            { Assign($1, $3) }
-        | ID LBRACK INT_LITERAL RBRACK ASSIGN expr  { ArrayAssign($1, $3, $6) }
-        | ID LBRACK INT_LITERAL RBRACK              { ArrayAccess($1, $3) }
+        | ID LBRACK expr RBRACK ASSIGN expr  { ArrayAssign($1, $3, $6) }
+        | ID LBRACK expr RBRACK              { ArrayAccess($1, $3) }
         | ID LPAREN actuals_opt RPAREN              { Call ($1, $3) }
         | LPAREN expr RPAREN                        { $2 }
         | ID ACCESS ID                              { Access ($1, $3) }
