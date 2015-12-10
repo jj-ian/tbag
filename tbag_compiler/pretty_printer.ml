@@ -45,7 +45,7 @@ let rec expression = function
 	        | [solo] -> (expression solo)
 	        | hd::tl -> ((expression hd) ^ "," ^ (expr_list tl))
 	        in (
-	                (if fname = "get_intput_from_options" then "promptForInput(new String[]{" ^ expr_list arg ^ "})"
+	                (if fname = "get_input_from_options" then "promptForInput(new String[]{" ^ expr_list arg ^ "})"
                      else (
                      if fname = "print" then "System.out.println" 
                      else fname)

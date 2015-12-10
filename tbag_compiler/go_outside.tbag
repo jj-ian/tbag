@@ -1,0 +1,57 @@
+room {
+}
+
+room Closet {
+}
+
+room Bedroom {
+}
+
+
+room LivingRoom {
+}
+
+room Outside {
+}
+
+Closet <-> Bedroom;
+
+Bedroom <-> LivingRoom;
+
+start { Bedroom }
+
+npc {
+}
+
+item {
+}
+
+boolean finished = false;
+
+currentRoom == Bedroom {
+	print("\nWelcome to your Bedroom.");
+	get_input_from_options("Closet", "LivingRoom");
+	->input
+}
+
+currentRoom == Closet {
+	print("\nWelcome to your Closet.");
+	get_input_from_options("Bedroom");
+	->input
+}
+
+currentRoom == LivingRoom {
+	print("\nWelcome to your LivingRoom.");
+	get_input_from_options("Bedroom", "Outside");
+	->input
+}
+
+currentRoom == Outside {
+	print("\nWelcome Outside.");
+	finished = true;
+}
+
+finished {
+	print("Good job making it outside, lazybones.");
+	break;
+}

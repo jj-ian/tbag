@@ -70,12 +70,12 @@ func void foo() {
 
 NOT test_start {
 	print("started\n");
-	get_intput_from_options("myRoom1");
+	get_input_from_options("myRoom1");
 	->input
 }
 
 currentRoom == myRoom1 {
-	displayAdj(myRoom1);
+	/* displayAdj(myRoom1); */
 	finished = true;
 }
 
