@@ -45,8 +45,9 @@ currentRoom == Bedroom {
 }
 
 currentRoom == Closet {
+	string testName = currentRoom.name;
 	print("Currently in: ");
-	print(currentRoom.name);
+	print(testName);
 	print("\n");
 	get_input_from_options("Bedroom");
 	->input
