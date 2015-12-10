@@ -2,17 +2,21 @@ room {
 	string name;
 }
 
-room Closet {
+room Closet { 
+	name = "Closet";
 }
 
 room Bedroom {
+	name = "Bedroom";
 }
 
 
 room LivingRoom {
+	name = "Living Room";
 }
 
 room Outside {
+	name = "Outside";
 }
 
 Closet <-> Bedroom;
@@ -22,34 +26,48 @@ Bedroom <-> LivingRoom;
 start { Bedroom }
 
 npc {
+
 }
 
 item {
+
 }
 
 boolean finished = false;
 
 currentRoom == Bedroom {
-	print("\nWelcome to your Bedroom.");
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
 	get_input_from_options("Closet", "LivingRoom");
 	->input
+	print("\n");
 }
 
 currentRoom == Closet {
-	print("\nWelcome to your Closet.");
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
 	get_input_from_options("Bedroom");
 	->input
+	print("\n");
 }
 
 currentRoom == LivingRoom {
-	print("\nWelcome to your LivingRoom.");
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
 	get_input_from_options("Bedroom", "Outside");
 	->input
+	print("\n");
 }
 
 currentRoom == Outside {
-	print("\nWelcome Outside.");
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
 	finished = true;
+	print("\n");
 }
 
 finished {

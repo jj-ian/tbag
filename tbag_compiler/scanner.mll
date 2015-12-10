@@ -28,8 +28,9 @@ rule token = parse
         | '>'                                   { GT }
         | ">="                                  { GEQ }
         | '='                                   { ASSIGN }
-        | ';'					                { SEMI }
-        | "int"					                { INT }
+        | ';'					{ SEMI }
+        | '.'                                   { ACCESS }
+        | "int"					{ INT }
         | "string"                              { STRING }
         | "void"                                { VOID }
         | "boolean"                             { BOOLEAN }
