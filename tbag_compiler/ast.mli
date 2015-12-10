@@ -24,7 +24,8 @@ type expr =
         | Access of string * string  (* foo.bar *)
 
 type var_decl =
-        Var of variable_type * string
+        Array_decl of variable_type * expr * string
+        | Var of variable_type * string
         | VarInit of variable_type * string * expr
 
 type stmt =
