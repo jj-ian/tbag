@@ -20,7 +20,7 @@ and expr_detail =
         | ArrayAccess of checked_var_decl * int
         | Binop of expression * op * expression 
         | Boolneg of op * expression
-        | Call of func_decl * expression list
+        | Call of function_decl * expression list
 and expression = expr_detail * variable_type
 and sast_var_decl = checked_var_decl * variable_type
 and stmt =

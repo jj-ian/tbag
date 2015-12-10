@@ -15,6 +15,13 @@ type symbol_table = {
 	(*  add Rooms, Items, NPCs here*)
 }
 
+type function_table = {
+	funcs : func_decl list
+}
+
+let find_func (l : function_decl list) f =
+	List.find(fun c -> c.fname = f) l
+
 let rec check_id (scope: symbol_table) id = 
 	try
 		let (_, decl, t) = List.find(fun (n, _, _) -> n = id ) scope.variables in
@@ -42,11 +49,12 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 			let (decl, t) = check_id scope vname in (Sast.Id(decl), t) 
 		with Not_found -> raise (Failure ("Id named " ^ vname ^ " not found")))
 	| BoolLiteral(b) -> Sast.BoolLiteral(b), Sast.Boolean
+        (*| ArrayAccess(_, _) as a -> check_array_access scope a*)
 	| Assign(_, _) as a -> check_assign scope a
 	| Binop(_, _, _) as b -> check_op scope b
         | Boolneg(op, expr) as u -> check_uni_op scope u 
-	(*| Uniop(op, expr) as u -> check_uni_op scope u
 	| Call(_, _) as c -> check_call scope c
+        (*
 	| Access(_, _) as a -> check_access scope a
         *)
 
@@ -69,6 +77,18 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 	| Struct_Member_Assign(_, _, _) as a -> check_struct_assignment scope a
 	| Array_Member_Assign(_, _, _) as a -> check_array_assignment scope a
 *)
+and check_array_access (scope : symbol_table) a = match a with
+        Ast.ArrayAccess(id, expr) ->
+                let (decl, t) = check_id scope id in (match t with
+                Sast.Array(t, _) ->
+                        (*let e1 = check_expr scope expr in
+                        let (_, t2) = e1 in
+                        if t2 <> Int then raise (Failure "Array access must be integer.") else
+                        Sast.ArrayAccess(decl, e1), t*)
+                        Sast.ArrayAccess(decl, expr)
+                | _ -> raise (Failure "this id is not an array"))
+        | _ -> raise (Failure "Not an array access")
+
 and check_assign (scope : symbol_table) a = match a with
         Ast.Assign(id, expr) ->
                 let (decl, t) = check_id scope id in
@@ -76,6 +96,39 @@ and check_assign (scope : symbol_table) a = match a with
                 let (_, t2) = e in
                 if t <> t2 then raise (Failure "Incorrect type assignment.") else Sast.Assign(decl, e), t
         | _ -> raise (Failure "Not an assignment")
+
+and check_call (scope : symbol_table) c = match c with
+        Ast.Call(id, el) ->
+                (
+                        try
+                                let f = find_func scope.functions id in
+                                let exprs = List.fold_left2 (
+                                                fun a b c -> 
+                                                        let (_, t) = b in
+                                                        let expr = check_expr scope c in
+                                                        let (_, t2) = expr in
+                                                        if t <> t2
+                                                        then raise (Failure "wrong type")
+                                                        else expr :: a
+                                        ) [] f.checked_formals el in
+                                Sast.Call(f, exprs), f.freturntype
+                        with Not_found ->
+                                (*if id = "print" then match el with
+                                        | hd :: []-> let expr = check_expr scope hd in
+                                                let (_, t) = expr in
+                                                if (t = Sast.String || t = Sast.Int) then Sast.Call(the_print_function, [expr]), Sast.Void else raise (Failure "Print takes only type string or int")
+                                        | _ -> raise (Failure "Print only takes one argument")  
+                                else if id = "exit" then match el with
+                                        | hd :: []-> let expr = check_expr scope hd in
+                                                let (_, t) = expr in
+                                                if t = String then Sast.Call(the_exit_function, [expr]), Sast.Void else raise (Failure "Exit takes only type string")
+                                        | _ -> raise (Failure "Exit only takes one argument")
+                                else if id = "main" then 
+                                        raise (Failure "Cannot fall main function")
+                                
+                                else *)raise (Failure ("Function not found with name " ^ id))
+                )
+        | _ -> raise (Failure "Not a call")     
 
 and check_op (scope : symbol_table) binop = match binop with
         Ast.Binop(xp1, op, xp2) ->
@@ -237,12 +290,6 @@ let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 		raise (Failure ("No return for function " ^ f.fname ^ " when return expected.")))*)
 
 
-type function_table = {
-	funcs : func_decl list
-}
-
-let find_func (l : function_decl list) f =
-	List.find(fun c -> c.fname = f) l
 
 let process_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	try
@@ -253,11 +300,10 @@ let process_func_decl (env : translation_environment) (f : Ast.func_decl) =
 		else
 			check_func_decl env f
 	
-let check_basic_program (p : Ast.program) =
+let check_basic_program (p : Ast.basic_program) =
 	let s = { parent = None; variables = []; functions = []; return_found = false } in
 	let env = { scope = s; found_main = false } in
-	let (room_defs, room_decls, adj_decls, npc_defs, npc_decls, item_defs,
-        item_decls, var_decls, funcs, pred_stmt) = p in
+	let funcs = p in
 	let funcs = 
 		List.fold_left (
 			fun a f -> process_func_decl env f :: a
