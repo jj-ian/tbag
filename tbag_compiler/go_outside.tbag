@@ -1,4 +1,5 @@
 room {
+	string name;
 }
 
 room Closet {
