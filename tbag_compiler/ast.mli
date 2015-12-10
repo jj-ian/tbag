@@ -21,6 +21,7 @@ type expr =
         | Binop of expr * op * expr 
         | Boolneg of op * expr
         | Call of string * expr list
+        | Access of string * string  (* foo.bar *)
 
 type var_decl =
         Var of variable_type * string

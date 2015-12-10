@@ -34,6 +34,7 @@ let rec expression = function
         | IntLiteral(i) -> string_of_int i
         | BoolLiteral(boolean) -> string_of_bool boolean
         | Id(id) -> id
+        | Access(id, field)     ->      id ^ "." ^ field
         | Assign(id, expr) -> id ^ " = " ^ (expression expr)
         | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (string_of_int loc) ^ "] = " ^ (expression expr)
         | ArrayAccess(id, loc) -> id ^ "[" ^ (string_of_int loc) ^ "]"
@@ -47,7 +48,7 @@ let rec expression = function
 	        in (
 	                (if fname = "get_input_from_options" then "promptForInput(new String[]{" ^ expr_list arg ^ "})"
                      else (
-                     if fname = "print" then "System.out.println" 
+                     if fname = "print" then "System.out.print" 
                      else fname)
 	                ^ "(" ^ expr_list arg ^ ")")
                     )

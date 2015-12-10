@@ -2,7 +2,7 @@
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
 %token FUNC ROOM ADJ GOTO ITEM NPC START
-%token ASSIGN EQ NEQ LT LEQ GT GEQ AND OR NOT
+%token ASSIGN EQ NEQ LT LEQ GT GEQ AND OR NOT ACCESS
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
 %token INT STRING VOID BOOLEAN
@@ -18,6 +18,7 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 %left AND OR NOT
+%left ACCESS
 
 /*
 %start basic_program
@@ -204,4 +205,5 @@ expr:
         | ID LBRACK INT_LITERAL RBRACK              { ArrayAccess($1, $3) }
         | ID LPAREN actuals_opt RPAREN              { Call ($1, $3) }
         | LPAREN expr RPAREN                        { $2 }
+        | ID ACCESS ID                              { Access ($1, $3) }
 
