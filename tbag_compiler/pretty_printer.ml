@@ -36,8 +36,8 @@ let rec expression = function
         | Id(id) -> id
         | Access(id, field)     ->      id ^ "." ^ field
         | Assign(id, expr) -> id ^ " = " ^ (expression expr)
-        | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (string_of_int loc) ^ "] = " ^ (expression expr)
-        | ArrayAccess(id, loc) -> id ^ "[" ^ (string_of_int loc) ^ "]"
+        | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (expression loc) ^ "] = " ^ (expression expr)
+        | ArrayAccess(id, loc) -> id ^ "[" ^ (expression loc) ^ "]"
         | Binop(expr1, op, expr2) -> ((expression expr1) ^ (operator op) ^ (expression expr2))
         | Boolneg(op, expr) -> ((operator op) ^ (expression expr))
         | Call(fname, arg) -> 
@@ -79,7 +79,9 @@ let rec formals_list = function
         | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
 let local = function
-        Var(var_type, str)      ->      ((data_type var_type) ^ " " ^ str)
+        Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
+        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
+        | Var(var_type, str)      ->      ((data_type var_type) ^ " " ^ str)
         | VarInit(var_type, str, expr)    ->      ((data_type var_type) ^ " " ^
         str ^ " = " ^ (expression expr))
 
@@ -88,7 +90,9 @@ let rec locals_list = function
         | hd::tl        ->      ((local hd) ^ ";\n" ^ (locals_list tl))
 
 let vdecl = function
-        Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
+        Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
+        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
+        | Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
         | VarInit(vtype, id, expr)     ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
 let rec vdecl_list  = function
@@ -96,7 +100,9 @@ let rec vdecl_list  = function
         | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
 
 let global_vdecl = function
-        Var(vtype, id)                 ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
+        Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
+        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
+        | Var(vtype, id)                 ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
         | VarInit(vtype, id, expr)     ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
 let rec global_vdecl_list  = function

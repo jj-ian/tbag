@@ -16,15 +16,16 @@ type expr =
         | BoolLiteral of bool
         | Id of string
         | Assign of string * expr
-        | ArrayAssign of string * int * expr
-        | ArrayAccess of string * int
+        | ArrayAssign of string * expr * expr
+        | ArrayAccess of string * expr
         | Binop of expr * op * expr 
         | Boolneg of op * expr
         | Call of string * expr list
         | Access of string * string  (* foo.bar *)
 
 type var_decl =
-        Var of variable_type * string
+        Array_decl of variable_type * expr * string
+        | Var of variable_type * string
         | VarInit of variable_type * string * expr
 
 type stmt =

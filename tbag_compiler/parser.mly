@@ -57,8 +57,6 @@ data_type:
         INT                                         { Int }
         | STRING                                    { String }
         | VOID                                      { Void }
-        | INT LBRACK int_opt RBRACK                 { Array(Int, $3) }
-        | STRING LBRACK int_opt RBRACK              { Array(String, $3) }
         | BOOLEAN                                   { Boolean }
 
 pred_stmt:
@@ -109,7 +107,8 @@ vdecl_list:
         | vdecl_list vdecl                          { $2 :: $1 }
 
 vdecl:
-        data_type ID SEMI                           { Var($1, $2) }
+        data_type LBRACK expr RBRACK ID SEMI         { Array_decl($1, $3, $5) }
+        | data_type ID SEMI                           { Var($1, $2) }
         | data_type ID ASSIGN expr SEMI             { VarInit($1, $2, $4) }
 
 rdef:
@@ -178,9 +177,10 @@ stmt:
         | IF LPAREN expr RPAREN stmt ELSE stmt      { If($3, $5, $7) }
         | WHILE LPAREN expr RPAREN stmt             { While($3, $5) }
         | GOTO ID                                   { Goto($2) }
-
+/*
 int_opt:
         INT_LITERAL                                 { $1 }
+*/
 
 expr:
         INT_LITERAL                                 { IntLiteral($1) }
@@ -201,8 +201,8 @@ expr:
         | expr OR expr                              { Binop($1, Or, $3)}
         | NOT expr                                  { Boolneg(Not, $2)}
         | ID ASSIGN expr                            { Assign($1, $3) }
-        | ID LBRACK INT_LITERAL RBRACK ASSIGN expr  { ArrayAssign($1, $3, $6) }
-        | ID LBRACK INT_LITERAL RBRACK              { ArrayAccess($1, $3) }
+        | ID LBRACK expr RBRACK ASSIGN expr  { ArrayAssign($1, $3, $6) }
+        | ID LBRACK expr RBRACK              { ArrayAccess($1, $3) }
         | ID LPAREN actuals_opt RPAREN              { Call ($1, $3) }
         | LPAREN expr RPAREN                        { $2 }
         | ID ACCESS ID                              { Access ($1, $3) }
