@@ -49,7 +49,7 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 			let (decl, t) = check_id scope vname in (Sast.Id(decl), t) 
 		with Not_found -> raise (Failure ("Id named " ^ vname ^ " not found")))
 	| BoolLiteral(b) -> Sast.BoolLiteral(b), Sast.Boolean
-        (*| ArrayAccess(_, _) as a -> check_array_access scope a*)
+        | ArrayAccess(_, _) as a -> check_array_access scope a
 	| Assign(_, _) as a -> check_assign scope a
 	| Binop(_, _, _) as b -> check_op scope b
         | Boolneg(op, expr) as u -> check_uni_op scope u 
@@ -81,11 +81,10 @@ and check_array_access (scope : symbol_table) a = match a with
         Ast.ArrayAccess(id, expr) ->
                 let (decl, t) = check_id scope id in (match t with
                 Sast.Array(t, _) ->
-                        (*let e1 = check_expr scope expr in
+                        let e1 = check_expr scope expr in
                         let (_, t2) = e1 in
                         if t2 <> Int then raise (Failure "Array access must be integer.") else
-                        Sast.ArrayAccess(decl, e1), t*)
-                        Sast.ArrayAccess(decl, expr)
+                        Sast.ArrayAccess(decl, e1), t
                 | _ -> raise (Failure "this id is not an array"))
         | _ -> raise (Failure "Not an array access")
 
@@ -299,13 +298,16 @@ let process_func_decl (env : translation_environment) (f : Ast.func_decl) =
 		if f.fname = "print" then raise (Failure "A function cannot be named 'print'")
 		else
 			check_func_decl env f
-	
-let check_basic_program (p : Ast.basic_program) =
-	let s = { parent = None; variables = []; functions = []; return_found = false } in
-	let env = { scope = s; found_main = false } in
-	let funcs = p in
-	let funcs = 
-		List.fold_left (
-			fun a f -> process_func_decl env f :: a
-		) [] (List.rev funcs) in
-    funcs
+
+let check_program (p : Ast.program) =
+       let s = { parent = None; variables = []; functions = []; return_found = false } in
+       let env = { scope = s; found_main = false } in
+        let (room_defs, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
+             item_decls, var_decls, funcs, pred_stmt) = p in
+       let funcs = 
+               List.fold_left (
+                       fun a f -> process_func_decl env f :: a
+               ) [] (List.rev funcs) in
+    (room_defs, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
+    item_decls, var_decls, funcs, pred_stmt)
+
