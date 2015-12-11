@@ -219,7 +219,7 @@ let rec check_stmt (scope : symbol_table) (stmt : Ast.stmt) = match stmt with
                         let stmt = check_stmt scope stmt in
                         Sast.While(expr, stmt)
 
-let rec check_func_stmt (scope : symbol_table) (stml : Sast.stmt list) (ftype :
+let rec check_func_stmt (scope : symbol_table) (stml : Sast.sast_stmt list) (ftype :
     Sast.variable_type) =
 	List.iter (
 		fun s -> match s with 

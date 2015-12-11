@@ -11,41 +11,41 @@ type variable_type =
         | Boolean
 and checked_var_decl =
 	Variable of variable_type * string
-	| Variable_Initialization of variable_type * string * expression
-	| Array_Initialization of variable_type * string * expression list
+	| Variable_Initialization of variable_type * string * sast_expr
+	| Array_Initialization of variable_type * string * sast_expr list
 and expr_detail =
         IntLiteral of int
         | StrLiteral of string
         | BoolLiteral of bool
         | Id of checked_var_decl
-        | Assign of checked_var_decl * expression
-        | ArrayAssign of checked_var_decl *  expression
-        | ArrayAccess of checked_var_decl * expression
-        | Binop of expression * op * expression 
-        | Boolneg of op * expression
-        | Call of checked_func_decl * expression list
-and expression = expr_detail * variable_type
+        | Assign of checked_var_decl * sast_expr
+        | ArrayAssign of checked_var_decl *  sast_expr
+        | ArrayAccess of checked_var_decl * sast_expr
+        | Binop of sast_expr * op * sast_expr 
+        | Boolneg of op * sast_expr
+        | Call of checked_func_decl * sast_expr list
+and sast_expr = expr_detail * variable_type
 and sast_var_decl = checked_var_decl * variable_type
-and stmt =
-        Block of stmt list
-        | Expr of expression
-        | Return of expression
-        | If of expression * stmt * stmt
-        | While of expression * stmt
+and sast_stmt =
+        Block of sast_stmt list
+        | Expr of sast_expr
+        | Return of sast_expr
+        | If of sast_expr * sast_stmt * sast_stmt
+        | While of sast_expr * sast_stmt
         | Goto of string
 and checked_func_decl = {
 	freturntype: variable_type;
 	fname : string; (* Name of the function *)
 	checked_formals : sast_var_decl list; (* Formal argument names *)
 	checked_locals : sast_var_decl list; (* Locally defined variables *)
-	checked_body : stmt list; (* Body of the function *)
+	checked_body : sast_stmt list; (* Body of the function *)
 }
 
 and pred_stmt = 
         {
-                pred: expression;
+                pred: sast_expr;
                 locals: checked_var_decl list;
-                body: stmt list;
+                body: sast_stmt list;
         }
 
 
@@ -66,7 +66,7 @@ type room_def = checked_var_decl list
 type room_decl = 
 {
         rname: string;
-        rbody: stmt list;
+        rbody: sast_stmt list;
 }
 
 type start = string
@@ -78,7 +78,7 @@ type npc_def = checked_var_decl list
 type npc_decl = 
 {
         nname: string;
-        nbody: stmt list;
+        nbody: sast_stmt list;
 }
 
 type item_def = checked_var_decl list
@@ -86,7 +86,7 @@ type item_def = checked_var_decl list
 type item_decl = 
 {
         iname: string;
-        ibody: stmt list;
+        ibody: sast_stmt list;
 }
 
 type basic_program = checked_func_decl list
