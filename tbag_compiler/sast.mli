@@ -23,7 +23,7 @@ and expr_detail =
         | ArrayAccess of checked_var_decl * expression
         | Binop of expression * op * expression 
         | Boolneg of op * expression
-        | Call of function_decl * expression list
+        | Call of checked_func_decl * expression list
 and expression = expr_detail * variable_type
 and sast_var_decl = checked_var_decl * variable_type
 and stmt =
@@ -33,7 +33,7 @@ and stmt =
         | If of expression * stmt * stmt
         | While of expression * stmt
         | Goto of string
-and function_decl = {
+and checked_func_decl = {
 	freturntype: variable_type;
 	fname : string; (* Name of the function *)
 	checked_formals : sast_var_decl list; (* Formal argument names *)
@@ -58,7 +58,7 @@ type program =  room_def *
                 item_def *
                 item_decl list * 
                 checked_var_decl list *
-                function_decl list *
+                checked_func_decl list *
                 pred_stmt list
 
 type room_def = checked_var_decl list
@@ -89,11 +89,11 @@ type item_decl =
         ibody: stmt list;
 }
 
-type basic_program = function_decl list
+type basic_program = checked_func_decl list
 
 type simple_program = room_decl list * 
-                      function_decl list
+                      checked_func_decl list
 
 type room_program = room_def *
                     room_decl list * 
-                    function_decl list
+                    checked_func_decl list

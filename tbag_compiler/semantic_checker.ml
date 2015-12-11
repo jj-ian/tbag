@@ -9,7 +9,7 @@ type symbol_table = {
 (*  MV's group had these be mutable *)
 	mutable parent : symbol_table option;
 	mutable variables : (string * checked_var_decl * variable_type) list;
-	mutable functions : function_decl list;
+	mutable functions : checked_func_decl list;
 
 	mutable return_found : bool;
 	(*  add Rooms, Items, NPCs here*)
@@ -19,7 +19,7 @@ type function_table = {
 	funcs : func_decl list
 }
 
-let find_func (l : function_decl list) f =
+let find_func (l : checked_func_decl list) f =
 	List.find(fun c -> c.fname = f) l
 
 let rec check_id (scope: symbol_table) id = 
