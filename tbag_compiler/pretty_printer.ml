@@ -1,6 +1,7 @@
 open Printf
 open Jast
 open Ast
+open Sast
 
 let driver_file = "Driver.java"
 let room_file = "Room.java"
