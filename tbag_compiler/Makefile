@@ -27,6 +27,10 @@ sast: ast
 ast:
 	ocamlc -c ast.mli
 
+semantic_checker: sast scanner
+	ocamlc -c semantic_checker.ml
+	
+
 .PHONY: clean
 clean:
 	rm -f scanner.ml parser.ml parser.mli *.cmo *.cmi scanner a.out *.cmx scannertraced* *.o *.class tbag *.java
