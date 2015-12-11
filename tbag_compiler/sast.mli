@@ -19,7 +19,7 @@ and expr_detail =
         | BoolLiteral of bool
         | Id of checked_var_decl
         | Assign of checked_var_decl * sast_expr
-        | ArrayAssign of checked_var_decl *  sast_expr
+        | ArrayAssign of checked_var_decl * sast_expr * sast_expr
         | ArrayAccess of checked_var_decl * sast_expr
         | Binop of sast_expr * op * sast_expr 
         | Boolneg of op * sast_expr
@@ -46,9 +46,8 @@ and sast_pred_stmt =
                 locals: checked_var_decl list;
                 body: sast_stmt list;
         }
-
-
-type program =  room_def * 
+type sast_program =  
+                room_def * 
                 room_decl list * 
                 adj_decl list * 
                 start *                

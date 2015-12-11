@@ -54,6 +54,7 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 	| Binop(_, _, _) as b -> check_op scope b
         | Boolneg(op, expr) as u -> check_uni_op scope u 
 	| Call(_, _) as c -> check_call scope c
+        | ArrayAssign(_, _, _) as a -> check_array_assignment scope a
         (*
 	| Access(_, _) as a -> check_access scope a
         *)
@@ -77,6 +78,28 @@ let rec check_expr (scope : symbol_table) (expr : Ast.expr) = match expr with
 	| Struct_Member_Assign(_, _, _) as a -> check_struct_assignment scope a
 	| Array_Member_Assign(_, _, _) as a -> check_array_assignment scope a
 *)
+and check_array_assignment (scope : symbol_table) a = match a with
+        Ast.ArrayAssign(arr, expr, expr2) ->
+                (
+                        try
+                                let (original_decl, var_type) = check_id scope arr in match var_type with
+                                        Sast.Array(decl, _) ->
+                                                (
+                                                        let access_expr = check_expr scope expr in
+                                                        let (_, t) = access_expr in
+                                                        if t <> Sast.Int then
+                                                                raise (Failure "Array access must be type int")
+                                                        else
+                                                                (let assign_expr = check_expr scope expr2 in
+                                                                let (_, t2) = assign_expr in
+                                                                if decl <> t2 then raise (Failure "type assignment is wrong")
+                                                                else Sast.ArrayAssign(original_decl, access_expr, assign_expr), t2)
+                                                )
+                                        | _ -> raise (Failure (arr ^ " is not an array."))
+                        with Not_found -> raise (Failure ("Variable " ^ arr ^ " not declared."))
+                )
+        | _ -> raise (Failure "Not an array assignment")
+ 
 and check_array_access (scope : symbol_table) a = match a with
         Ast.ArrayAccess(id, expr) ->
                 let (decl, t) = check_id scope id in (match t with
