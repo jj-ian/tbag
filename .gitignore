@@ -9,3 +9,5 @@ scanner
 *.class
 tbag
 *.swp
+*.log
+*.diff

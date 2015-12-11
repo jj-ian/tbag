@@ -1,0 +1,35 @@
+room {
+	string name;
+}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+Closet <-> Bedroom;
+
+start { Bedroom }
+
+npc {
+	
+}
+
+item {
+	
+}
+
+boolean finished = false;
+
+currentRoom == Bedroom {
+	print("lol\n");
+	finished = true;
+}
+
+finished {
+	break;
+}
+
