@@ -1,0 +1,21 @@
+find_func: Sast.checked_func_decl
+check_id: (Sast.checked_var_decl, Sast.variable_type)
+check_expr: Sast.sast_expr
+check_array_access: Sast.ArrayAccess
+check_assign: Sast.Assign
+check_call: Sast.Call
+check_op: Sast.Binop
+check_uni_op: Sast.Boolneg
+check_var_type: Sast.variable_type
+check_stmt: Sast.sast_stmt
+check_program:  sast_room_def * 
+                sast_room_decl list * 
+                sast_adj_decl list * 
+                start *                
+                sast_npc_def *
+                sast_npc_decl list * 
+                sast_item_def *
+                sast_item_decl list * 
+                checked_var_decl list *
+                checked_func_decl list *
+                sast_pred_stmt list
