@@ -1,6 +1,6 @@
 open Ast
 
-type argument_decl =
+type sast_argument_decl =
         Argument of variable_type * string
 
 type variable_type =
@@ -40,8 +40,7 @@ and checked_func_decl = {
 	checked_locals : sast_var_decl list; (* Locally defined variables *)
 	checked_body : sast_stmt list; (* Body of the function *)
 }
-
-and pred_stmt = 
+and sast_pred_stmt = 
         {
                 pred: sast_expr;
                 locals: checked_var_decl list;
@@ -61,9 +60,9 @@ type program =  room_def *
                 checked_func_decl list *
                 pred_stmt list
 
-type room_def = checked_var_decl list
+type sast_room_def = checked_var_decl list
 
-type room_decl = 
+type sast_room_decl = 
 {
         rname: string;
         rbody: sast_stmt list;
@@ -71,29 +70,29 @@ type room_decl =
 
 type start = string
 
-type adj_decl = string list
+type sast_adj_decl = string list
 
-type npc_def = checked_var_decl list
+type sast_npc_def = checked_var_decl list
 
-type npc_decl = 
+type sast_npc_decl = 
 {
         nname: string;
         nbody: sast_stmt list;
 }
 
-type item_def = checked_var_decl list
+type sast_item_def = checked_var_decl list
 
-type item_decl = 
+type sast_item_decl = 
 {
         iname: string;
         ibody: sast_stmt list;
 }
 
-type basic_program = checked_func_decl list
+type sast_basic_program = checked_func_decl list
 
-type simple_program = room_decl list * 
+type sast_simple_program = sast_room_decl list * 
                       checked_func_decl list
 
-type room_program = room_def *
-                    room_decl list * 
+type sast_room_program = sast_room_def *
+                    sast_room_decl list * 
                     checked_func_decl list
