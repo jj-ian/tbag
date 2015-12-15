@@ -25,7 +25,7 @@ item {
 boolean finished = false;
 
 currentRoom == Bedroom {
-	print(69-7);
+	print(420 + 8 * 69 - 5);
 	finished = true;
 }
 
