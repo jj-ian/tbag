@@ -1,0 +1,51 @@
+room {
+	string name;
+}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+Closet <-> Bedroom;
+
+start { Bedroom }
+
+npc {
+	
+}
+
+item {
+	
+}
+
+boolean finished = false;
+
+func int gcd(int a, int b) {
+	while (a != b) {
+		if (a > b) { a = a - b; }
+		else { b = b - a; }
+	}
+	return a;
+}
+
+true {
+	print(gcd(2,14));
+	print("\n");
+	print(gcd(3,15));
+	print("\n");
+	print(gcd(99,121));	
+	print("\n");
+	finished = true;
+}
+
+finished {
+	break;
+}
+
+
+
+
