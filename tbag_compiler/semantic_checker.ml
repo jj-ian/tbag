@@ -283,7 +283,7 @@ let check_func_decl (env : translation_environment) (f : Ast.func_decl) =
 	
 	let formals = List.fold_left ( (* formals = arguments*)
 		fun a f -> match f with
-		Ast.Argument(t, n) ->
+		Ast.Var(t, n) ->
 			let t = check_var_type scope' t in 
 			scope'.variables <- (n, Sast.Variable(t, n), t) ::
                             scope'.variables; (Sast.Variable(t, n), t) :: a
