@@ -8,8 +8,8 @@ type variable_type =
         | Boolean
 
 
-type argument_decl =
-        Argument of variable_type * string
+(*type argument_decl =
+        Argument of variable_type * string*)
 
 type expr =
         IntLiteral of int

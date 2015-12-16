@@ -1,7 +1,7 @@
 open Ast
 
-type sast_argument_decl =
-        Argument of variable_type * string
+(*type sast_argument_decl =
+        Argument of variable_type * string*)
 
 type variable_type =
         Int
