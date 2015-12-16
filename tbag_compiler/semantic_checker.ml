@@ -120,20 +120,21 @@ and check_assign (scope : symbol_table) a = match a with
         | _ -> raise (Failure "Not an assignment")
 
 and check_call (scope : symbol_table) c = match c with
-        Ast.Call(id, el) ->
+        Ast.Call(id, el) -> (*id is the name of the function, el is the expression list of arguments *)
                 (
-                        try
-                                let f = find_func scope.functions id in
+                        try (* *)
+                                let f = find_func scope.functions id in (* check that function name exists in symbol table*)
+                                (* check that arguments are the correct type as defined in formals *)
                                 let exprs = List.fold_left2 (
                                                 fun a b c -> 
-                                                        let (_, t) = b in
-                                                        let expr = check_expr scope c in
-                                                        let (_, t2) = expr in
+                                                    let (_, t) = b in
+                                                    let expr = check_expr scope c in
+                                                    let (_, t2) = expr in
                                                         if t <> t2
                                                         then raise (Failure "wrong type")
-                                                        else expr :: a
+                                                        else expr :: a (* add expr to the list *)
                                         ) [] f.checked_formals el in
-                                Sast.Call(f, exprs), f.freturntype
+                                Sast.Call(f, exprs), f.freturntype (* return this *)
                         with Not_found ->
                                 (*if id = "print" then match el with
                                         | hd :: []-> let expr = check_expr scope hd in
