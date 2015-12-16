@@ -9,81 +9,90 @@ let npc_file = "Npc.java"
 let item_file = "Item.java"
 
 let rec data_type = function
-        String -> "String"
-        | Int -> "int"
-        | Void -> "void"
+        String                  -> "String"
+        | Int                   -> "int"
+        | Void                  -> "void"
         | Array(var_type, size) -> data_type var_type ^ "[" ^ string_of_int size ^ "]"
-        | Boolean -> "boolean"
+        | Boolean               -> "boolean"
 
 let operator = function
-        Add -> "+"
-        | Sub -> "-"
-        | Mult -> "*"
-        | Div -> "/"
-        | Equal -> "=="
-        | Neq -> "!="
-        | Less -> "<"
-        | Leq -> "<="
-        | Greater -> ">"
-        | Geq -> ">="
-        | And -> "&&"
-        | Or -> "||"
-        | Not -> "!"
+        Add             -> "+"
+        | Sub           -> "-"
+        | Mult          -> "*"
+        | Div           -> "/"
+        | Equal         -> "=="
+        | Neq           -> "!="
+        | Less          -> "<"
+        | Leq           -> "<="
+        | Greater       -> ">"
+        | Geq           -> ">="
+        | And           -> "&&"
+        | Or            -> "||"
+        | Not           -> "!"
 
-let rec expression = function
-        StrLiteral(str) -> str
-        | IntLiteral(i) -> string_of_int i
-        | BoolLiteral(boolean) -> string_of_bool boolean
-        | Id(id) -> id
-        | Access(id, field)     ->      id ^ "." ^ field
-        | Assign(id, expr) -> id ^ " = " ^ (expression expr)
-        | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (expression loc) ^ "] = " ^ (expression expr)
-        | ArrayAccess(id, loc) -> id ^ "[" ^ (expression loc) ^ "]"
-        | Binop(expr1, op, expr2) -> ((expression expr1) ^ (operator op) ^ (expression expr2))
-        | Boolneg(op, expr) -> ((operator op) ^ (expression expr))
-        | Call(fname, arg) -> 
+let get_id = function
+        Variable(_, str)                        -> str
+        | Variable_Initialization(_, str, _)    -> str
+        | Array_Initialization(_, str, _)       -> str
+
+let get_type = function
+        Variable(aType, _)                      -> data_type aType
+        | Variable_Initialization(aType, _, _)  -> data_type aType
+        | Array_Initialization(aType, _, _)     -> data_type aType
+
+let rec expression (expr_detail) =
+        let (expr_detail, _) = expr_detail in match expr_detail with
+        StrLiteral(str)                 -> str
+        | IntLiteral(i)                 -> string_of_int i
+        | BoolLiteral(boolean)          -> string_of_bool boolean
+        | Id(id)                        -> get_id id
+(*        | Access(id, field)     -> get_id id ^ "." ^ field *)
+        | Assign(id, expr)              -> get_id id ^ " = " ^ (expression expr)
+        | ArrayAssign(id, loc, expr)    -> get_id id ^ "[" ^ (expression loc) ^ "] = " ^ (expression expr)
+        | ArrayAccess(id, loc)          -> get_id id ^ "[" ^ (expression loc) ^ "]"
+        | Binop(expr1, op, expr2)       -> ((expression expr1) ^ (operator op) ^ (expression expr2))
+        | Boolneg(op, expr)             -> ((operator op) ^ (expression expr))
+        | Call(fdecl, arg)              -> 
 	        let rec expr_list = function
 	        [] -> ""
 	        | [solo] -> (expression solo)
 	        | hd::tl -> ((expression hd) ^ "," ^ (expr_list tl))
 	        in (
-	                (if fname = "get_input_from_options" then "promptForInput(new String[]{" ^ expr_list arg ^ "})"
+	                (if fdecl.fname = "get_input_from_options" then "promptForInput(new String[]{" ^ expr_list arg ^ "})"
                      else (
-                     if fname = "print" then "System.out.print" 
-                     else fname)
+                     if fdecl.fname = "print" then "System.out.print" 
+                     else fdecl.fname)
 	                ^ "(" ^ expr_list arg ^ ")")
                     )
 
-let expression_with_semi (expr) = 
-        ((expression expr) ^ ";\n")
+let expression_with_semi (expr) = ((expression expr) ^ ";\n")
 
 
 let rec statement_list = function
-        [] -> ""
-        | hd::tl -> 
+        []              -> ""
+        | hd::tl        -> 
 	        let rec statement = function
-			Block(stmt_list) -> "{" ^ (statement_list stmt_list) ^ "}"
-		        | Expr(expr) -> (expression_with_semi expr)
-		        | Return(expr) -> ("return " ^ expression_with_semi expr)
-		        | If(expr, stmt1, stmt2) -> "if (" ^ (expression expr) ^ ") " ^ (statement stmt1) ^ "else" ^ (statement stmt2)
-		        | While(expr, stmt) -> "while (" ^ (expression expr) ^ ") " ^ (statement stmt)
-                        | Goto(str)     ->      "movePlayerToRoom(" ^ str ^ ");\n"
+			Block(stmt_list)        -> "{" ^ (statement_list stmt_list) ^ "}"
+		        | Expr(expr)            -> (expression_with_semi expr)
+		        | Return(expr)          -> ("return " ^ expression_with_semi expr)
+		        | If(expr, stmt1, stmt2)        -> "if (" ^ (expression expr) ^ ") " ^ (statement stmt1) ^ "else" ^ (statement stmt2)
+		        | While(expr, stmt)     -> "while (" ^ (expression expr) ^ ") " ^ (statement stmt)
+                        | Goto(str)             ->      "movePlayerToRoom(" ^ str ^ ");\n"
     		in
-				((statement hd) ^ (statement_list tl))  
+	        ((statement hd) ^ (statement_list tl))  
 
-let formal = function
-        Argument(datatype, id) -> ((data_type datatype) ^ " " ^ id)
+let formal f = (get_type f) ^ " " ^ (get_id f)
 
 let rec formals_list = function
-        [] -> ""
-        | [solo] -> formal solo
-        | hd::tl -> ((formal hd) ^ "," ^ (formals_list tl)) 
+        []              -> ""
+        | [solo]        -> formal solo
+        | hd::tl        -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
 let local = function
-        Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
+        Array_decl(var_type, expr, str) -> ((data_type var_type) ^ "[] " ^
         str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
-        | Var(var_type, str)      ->      ((data_type var_type) ^ " " ^ str)
-        | VarInit(var_type, str, expr)    ->      ((data_type var_type) ^ " " ^
+        | Var(var_type, str)            -> ((data_type var_type) ^ " " ^ str)
+        | VarInit(var_type, str, expr)  ->      ((data_type var_type) ^ " " ^
         str ^ " = " ^ (expression expr))
 
 let rec locals_list = function
@@ -93,8 +102,8 @@ let rec locals_list = function
 let vdecl = function
         Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
         str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
-        | Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
-        | VarInit(vtype, id, expr)     ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
+        | Var(vtype, id)                ->      (data_type vtype) ^ " " ^ id ^ ";\n"
+        | VarInit(vtype, id, expr)      ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
 let rec vdecl_list  = function
         []              ->      ""
@@ -103,8 +112,8 @@ let rec vdecl_list  = function
 let global_vdecl = function
         Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
         str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
-        | Var(vtype, id)                 ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
-        | VarInit(vtype, id, expr)     ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
+        | Var(vtype, id)                ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
+        | VarInit(vtype, id, expr)      ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
 let rec global_vdecl_list  = function
         []              ->      ""
