@@ -25,7 +25,7 @@ and expr_detail =
         | Boolneg of op * sast_expr
         | Call of checked_func_decl * sast_expr list
 and sast_expr = expr_detail * variable_type
-and sast_var_decl = checked_var_decl * variable_type
+(*and sast_var_decl = checked_var_decl * variable_type*)
 and sast_stmt =
         Block of sast_stmt list
         | Expr of sast_expr
@@ -36,8 +36,8 @@ and sast_stmt =
 and checked_func_decl = {
 	freturntype: variable_type;
 	fname : string; (* Name of the function *)
-	checked_formals : sast_var_decl list; (* Formal argument names *)
-	checked_locals : sast_var_decl list; (* Locally defined variables *)
+	checked_formals : checked_var_decl list; (* Formal argument names *)
+	checked_locals : checked_var_decl list; (* Locally defined variables *)
 	checked_body : sast_stmt list; (* Body of the function *)
 }
 and sast_pred_stmt = 
