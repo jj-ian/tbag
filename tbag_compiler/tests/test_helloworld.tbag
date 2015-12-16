@@ -24,7 +24,7 @@ item {
 
 boolean finished = false;
 
-currentRoom == Bedroom {
+true {
 	print("hello world\n");
 	finished = true;
 }

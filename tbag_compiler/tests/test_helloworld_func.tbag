@@ -29,7 +29,7 @@ func int hello() {
 	return 0;
 }
 
-currentRoom == Bedroom {
+true {
 	hello();
 	finished = true;
 }

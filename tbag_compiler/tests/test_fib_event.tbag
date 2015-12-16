@@ -23,21 +23,22 @@ item {
 }
 
 boolean finished = false;
+int fibTerm = 6;
+int currentTerm = 0;
+int fib1 = 0;
+int fib2 = 1; 
+int tmp = 0;
 
-func int fib(int x) {
-  if (x < 2) { return 1;}
-  else { return fib(x-1) + fib(x-2); }
-
+currentTerm < fibTerm {
+	print(fib2);
+	tmp = fib1;
+	fib1 = fib2;
+	fib2 = tmp + fib2;
+	currentTerm = currentTerm + 1;
 }
 
-currentRoom == Bedroom {
-  print(fib(0));
-  print(fib(1));
-  print(fib(2));
-  print(fib(3));
-  print(fib(4));
-  print(fib(5));	
-  finished = true;
+currentTerm >= fibTerm {
+	finished = true;
 }
 
 finished {

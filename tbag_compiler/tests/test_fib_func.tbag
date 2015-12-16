@@ -30,7 +30,7 @@ func int fib(int x) {
 
 }
 
-currentRoom == Bedroom {
+true {
   print(fib(0));
   print(fib(1));
   print(fib(2));

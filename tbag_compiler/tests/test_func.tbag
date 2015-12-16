@@ -24,12 +24,21 @@ item {
 
 boolean finished = false;
 
+func int add(int a, int b) {
+	return a + b;
+}
+
 true {
-	print(666+24);
+	int a;
+	a = add(666, 3);
+	print(a);
 	finished = true;
 }
 
 finished {
 	break;
 }
+
+
+
 

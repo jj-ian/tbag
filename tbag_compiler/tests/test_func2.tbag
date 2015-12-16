@@ -24,12 +24,23 @@ item {
 
 boolean finished = false;
 
+func int printstuff(int a, string b, int c, string d) {
+	print(a);
+	print(b);
+	print(c);
+	print(d);
+	return 0;
+}
+
 true {
-	print(666+24);
+	printstuff(666, "hi", 69, "lol");
 	finished = true;
 }
 
 finished {
 	break;
 }
+
+
+
 

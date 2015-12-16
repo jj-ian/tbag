@@ -23,13 +23,30 @@ item {
 }
 
 boolean finished = false;
+boolean pred1 = false;
+boolean pred2 = false;
+int a = 0;
+int b = 0;
 
 true {
-	print(666+24);
+	a = 666;
+	pred1 = true;
+}
+
+pred2 {
+	print(a + b);
 	finished = true;
+}
+
+pred1 {
+	b = 3;
+	pred2 = true;
 }
 
 finished {
 	break;
 }
+
+
+
 

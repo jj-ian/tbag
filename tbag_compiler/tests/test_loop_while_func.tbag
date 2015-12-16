@@ -23,13 +23,26 @@ item {
 }
 
 boolean finished = false;
+int i = 0;
+
+func int whileTest() {
+	while (i < 5) {
+		print (i);
+		i = i + 1;
+	}
+	finished = true;
+	print(666);
+	return 0;
+}
 
 true {
-	print(666+24);
-	finished = true;
+	whileTest();
 }
 
 finished {
 	break;
 }
+
+
+
 
