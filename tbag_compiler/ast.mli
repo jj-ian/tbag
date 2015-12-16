@@ -7,6 +7,7 @@ type variable_type =
         | Array of variable_type * int
         | Boolean
 
+
 type argument_decl =
         Argument of variable_type * string
 
@@ -59,7 +60,7 @@ type func_decl =
 {
         freturntype: variable_type;
         fname : string;
-        formals : argument_decl list; 
+        formals : var_decl list; 
         locals: var_decl list;
         body : stmt list;
 }
