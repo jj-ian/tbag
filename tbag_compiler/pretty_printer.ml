@@ -33,12 +33,12 @@ let operator = function
 let get_id = function
         Variable(_, str)                        -> str
         | Variable_Initialization(_, str, _)    -> str
-        | Array_Initialization(_, str, _)       -> str
+        | Array_Decl(_, str, _)       -> str
 
 let get_type = function
         Variable(aType, _)                      -> data_type aType
         | Variable_Initialization(aType, _, _)  -> data_type aType
-        | Array_Initialization(aType, _, _)     -> data_type aType
+        | Array_Decl(aType, _, _)     -> data_type aType
 
 let rec expression (expr_detail) =
         let (expr_detail, _) = expr_detail in match expr_detail with
@@ -89,31 +89,31 @@ let rec formals_list = function
         | hd::tl        -> ((formal hd) ^ "," ^ (formals_list tl)) 
 
 let local = function
-        Array_decl(var_type, expr, str) -> ((data_type var_type) ^ "[] " ^
-        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
-        | Var(var_type, str)            -> ((data_type var_type) ^ " " ^ str)
-        | VarInit(var_type, str, expr)  ->      ((data_type var_type) ^ " " ^
+        Variable(var_type, str)            -> ((data_type var_type) ^ " " ^ str)
+        | Variable_Initialization(var_type, str, expr)  ->      ((data_type var_type) ^ " " ^
         str ^ " = " ^ (expression expr))
+        | Array_Decl(var_type, str, expr) -> ((data_type var_type) ^ "[] " ^
+        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
 
 let rec locals_list = function
         []              ->      ""
         | hd::tl        ->      ((local hd) ^ ";\n" ^ (locals_list tl))
 
 let vdecl = function
-        Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
+        Array_Decl(var_type, str, expr) ->      ((data_type var_type) ^ "[] " ^
         str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
-        | Var(vtype, id)                ->      (data_type vtype) ^ " " ^ id ^ ";\n"
-        | VarInit(vtype, id, expr)      ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
+        | Variable(vtype, id)                ->      (data_type vtype) ^ " " ^ id ^ ";\n"
+        | Variable_Initialization(vtype, id, expr)      ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
 let rec vdecl_list  = function
         []              ->      ""
         | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
 
 let global_vdecl = function
-        Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
+        Array_Decl(var_type, str, expr) ->      ((data_type var_type) ^ "[] " ^
         str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
-        | Var(vtype, id)                ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
-        | VarInit(vtype, id, expr)      ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
+        | Variable(vtype, id)                ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
+        | Variable_Initialization(vtype, id, expr)      ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
 let rec global_vdecl_list  = function
         []              ->      ""
@@ -121,7 +121,8 @@ let rec global_vdecl_list  = function
 
 let func_decl f =
         ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
-        ^ (formals_list f.formals) ^ "){\n" ^ (locals_list f.locals) ^ (statement_list f.body) ^ "\t}\n")
+        ^ (formals_list f.checked_formals) ^ "){\n" ^ (locals_list
+        f.checked_locals) ^ (statement_list f.checked_body) ^ "\t}\n")
 
 let rec func_decl_list = function
         []              -> ""

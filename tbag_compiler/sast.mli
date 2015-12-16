@@ -12,7 +12,7 @@ type variable_type =
 and checked_var_decl =
 	Variable of variable_type * string
 	| Variable_Initialization of variable_type * string * sast_expr
-	| Array_Initialization of variable_type * string * sast_expr list
+	| Array_Decl of variable_type * string * sast_expr
 and expr_detail =
         IntLiteral of int
         | StrLiteral of string
