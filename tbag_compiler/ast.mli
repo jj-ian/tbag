@@ -22,6 +22,7 @@ type expr =
         | Boolneg of op * expr
         | Call of string * expr list
         | Access of string * string  (* foo.bar *)
+        | End
 
 type var_decl =
         Array_decl of variable_type * expr * string

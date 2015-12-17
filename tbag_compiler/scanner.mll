@@ -6,6 +6,7 @@ rule token = parse
         | "func"                                { FUNC }
         | "room"                                { ROOM }
         | "start"                               { START }
+        | "endgame"                             { END }
         | "<->"                                 { ADJ }
         | "->"                                  { GOTO }
         | "npc"                                 { NPC }
