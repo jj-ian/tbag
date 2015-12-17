@@ -46,6 +46,29 @@ item sword {
 boolean test_start = false;
 boolean finished = false;
 
+
+NOT test_start {
+	print("started\n");
+	arrTest();
+	get_input_from_options("myRoom1");
+	->input
+}
+
+currentRoom == myRoom1 {
+	/* displayAdj(myRoom1); */
+	finished = true;
+}
+
+input ~~ "myRoom1" {
+	print("working");
+}
+
+
+finished {
+	print("hello world");
+	break;
+}
+
 func int add(int a, int b){
 	return (a+b*a-b/a)+a;
 }
@@ -92,26 +115,4 @@ func void arrTest() {
 	print("\n");
 	print(test1);
 	print("\n");
-}
-
-NOT test_start {
-	print("started\n");
-	arrTest();
-	get_input_from_options("myRoom1");
-	->input
-}
-
-currentRoom == myRoom1 {
-	/* displayAdj(myRoom1); */
-	finished = true;
-}
-
-input ~~ "myRoom1" {
-	print("working");
-}
-
-
-finished {
-	print("hello world");
-	break;
 }

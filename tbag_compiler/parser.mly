@@ -49,7 +49,7 @@ room_program:
 
 program:
         rdef rdecl_list adecl_list start ndef ndecl_list idef idecl_list
-        vdecl_list fdecl_list predicate_list EOF 
+        vdecl_list predicate_list fdecl_list EOF 
                                                     { ($1, $2, $3, $4, $5, $6,
                                                     $7, $8, $9, $10, List.rev $11) }
 

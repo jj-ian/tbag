@@ -98,5 +98,5 @@ type program =  room_def *
                 item_def *
                 item_decl list * 
                 var_decl list *
-                func_decl list *
-                pred_stmt list
+                pred_stmt list *
+                func_decl list 

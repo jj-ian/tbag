@@ -21,7 +21,7 @@ let build_driver (vars, preds, functions, rooms, adjacencies, start, npcs, items
 
 let rearrange (program) = 
 	let (room_def, room_decl_list, adj_decl_list, start, npc_def, npc_decl_list,
-                item_def, item_decl_list, vdecl_list, func_decl_list, predicate_list) = program in
+                item_def, item_decl_list, vdecl_list, predicate_list, func_decl_list) = program in
 	let driver = build_driver (vdecl_list, predicate_list, func_decl_list, room_decl_list, adj_decl_list, start,
                 npc_decl_list, item_decl_list) in
 	(driver, room_def, npc_def, item_def)

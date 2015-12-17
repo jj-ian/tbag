@@ -178,7 +178,7 @@ let default_globals =
     "
     public static Scanner scanner;
     public static Room currentRoom;
-    public static String input;
+    public static String input = \"\";
     public static HashMap<String, Room> roomMap = new HashMap<String, Room>();
     "
 
