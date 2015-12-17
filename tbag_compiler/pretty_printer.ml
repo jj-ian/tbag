@@ -40,8 +40,7 @@ let get_type = function
         | Variable_Initialization(aType, _, _)  -> data_type aType
         | Array_Decl(aType, _, _)     -> data_type aType
 
-let rec expression (expr_detail) =
-        let (expr_detail, _) = expr_detail in match expr_detail with
+let rec expr_dtl = function
         StrLiteral(str)                 -> str
         | IntLiteral(i)                 -> string_of_int i
         | BoolLiteral(boolean)          -> string_of_bool boolean
@@ -64,6 +63,9 @@ let rec expression (expr_detail) =
                      else fdecl.fname)
 	                ^ "(" ^ expr_list arg ^ ")")
                     )
+and expression e =
+    let (expr_detail, _) = e in
+    expr_dtl expr_detail
 
 let expression_with_semi (expr) = ((expression expr) ^ ";\n")
 
@@ -97,8 +99,8 @@ let rec locals_list = function
         | hd::tl        ->      ((local_sast_to_checked hd) ^ ";\n" ^ (locals_list tl))
 
 let vdecl = function
-        Array_Decl(var_type, str, expr) ->      ((data_type var_type) ^ "[] " ^
-        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
+(*         Array_Decl(var_type, str, expr) ->      ((data_type var_type) ^ "[] " ^
+        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]") *)
         | Variable(vtype, id)                ->      (data_type vtype) ^ " " ^ id ^ ";\n"
         | Variable_Initialization(vtype, id, expr)      ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
@@ -107,8 +109,8 @@ let rec vdecl_list  = function
         | hd::tl        ->      "\t" ^ (vdecl hd) ^ (vdecl_list tl)
 
 let global_vdecl = function
-        Array_Decl(var_type, str, expr) ->      ((data_type var_type) ^ "[] " ^
-        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
+(*         Array_Decl(var_type, str, expr) ->      ((data_type var_type) ^ "[] " ^
+        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]") *)
         | Variable(vtype, id)                ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
         | Variable_Initialization(vtype, id, expr)      ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
@@ -178,11 +180,11 @@ let driver_code (driver_class) =
         let (vars, main, fdecls, lib_funcs) = driver_class in
         "import java.util.*;\n\npublic class Driver {\n\n\t " ^
         default_globals ^ 
-        global_vdecl_list vars ^        
-        "public static void main(String[] args) {\n\t" ^
+(*         global_vdecl_list vars ^        
+ *)        "public static void main(String[] args) {\n\t" ^
         "scanner = new Scanner(System.in);\n\t" ^
 (*         room_decl_list main.rdecls ^
- *)        adj_decl_list main.adecls ^
+ *)     adj_decl_list main.adecls ^
         start_decl main.start ^ 
         "while (true) {\n" ^
 (*         pred_stmt_list main.predicates ^
@@ -213,7 +215,7 @@ let pretty_print (driver_class, room_def, npc_def, item_def) =
         let oc = open_out driver_file in
         fprintf oc "%s" (driver_code driver_class);
         close_out oc;
-        let oc = open_out room_file in
+(*         let oc = open_out room_file in
         fprintf oc "%s" (room_code room_def);
         close_out oc;
         let oc = open_out npc_file in
@@ -221,4 +223,4 @@ let pretty_print (driver_class, room_def, npc_def, item_def) =
         close_out oc;
         let oc = open_out item_file in
         fprintf oc "%s" (item_code item_def);
-        close_out oc;
+        close_out oc; *)

@@ -1,6 +1,6 @@
 open Ast
 open Sast
-
+	
 type main_method = 
 {
     predicates: pred_stmt list;
