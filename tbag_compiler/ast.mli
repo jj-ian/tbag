@@ -12,6 +12,7 @@ type argument_decl =
 
 type expr =
         IntLiteral of int
+        | NegIntLiteral of int
         | StrLiteral of string
         | BoolLiteral of bool
         | Id of string

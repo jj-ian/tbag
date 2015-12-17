@@ -34,6 +34,7 @@ rule token = parse
         | '.'                                   { ACCESS }
         | "int"					{ INT }
         | "string"                              { STRING }
+        | "neg"                                 { NEG }
         | "void"                                { VOID }
         | "boolean"                             { BOOLEAN }
         | "if"                                  { IF }

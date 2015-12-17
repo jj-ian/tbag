@@ -37,6 +37,7 @@ let check_str_eq = function
 let rec expression = function
         StrLiteral(str) -> str
         | IntLiteral(i) -> string_of_int i
+        | NegIntLiteral(i) -> "-" ^ string_of_int i
         | BoolLiteral(boolean) -> string_of_bool boolean
         | Id(id) -> id
         | Access(id, field)     ->      id ^ "." ^ field

@@ -1,7 +1,7 @@
 %{ open Ast %}
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
-%token FUNC ROOM ADJ GOTO ITEM NPC START END
+%token FUNC ROOM ADJ GOTO ITEM NPC START END NEG
 %token ASSIGN EQ STREQ NEQ LT LEQ GT GEQ AND OR NOT ACCESS
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
@@ -184,6 +184,7 @@ int_opt:
 
 expr:
         INT_LITERAL                                 { IntLiteral($1) }
+        | NEG INT_LITERAL                           { NegIntLiteral($2) }
         | STRING_LITERAL                            { StrLiteral($1) }
         | END                                       { End }
         | BOOL_LITERAL                              { BoolLiteral($1) }
