@@ -9,3 +9,6 @@ scanner
 *.class
 tbag
 *.swp
+*.log
+*.diff
+.DS_Store

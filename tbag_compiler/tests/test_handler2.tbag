@@ -1,0 +1,61 @@
+room {
+	string name;
+}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+Closet <-> Bedroom;
+
+start { Bedroom }
+
+npc {
+	
+}
+
+item {
+	
+}
+
+boolean finished = false;
+boolean pred1 = false;
+boolean pred2 = true;
+int int3 = 4;
+int int4 = 9;
+
+pred1 {
+	print("four");
+	finished = true;
+	pred1 = false;
+}
+
+NOT pred2 {
+	print("two");
+	int4 = int4 + 5;
+	pred2 = true;
+}
+
+int3 < 6 {
+	print(1);
+	pred2 = false;
+	int3 = 7;
+}
+
+int4 >= 10 {
+	print(3);
+	pred1 = true;
+	int4 = 9;
+}
+
+finished {
+	break;
+}
+
+
+
+

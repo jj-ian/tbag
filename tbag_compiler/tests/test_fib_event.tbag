@@ -1,0 +1,50 @@
+room {
+	string name;
+}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+Closet <-> Bedroom;
+
+start { Bedroom }
+
+npc {
+	
+}
+
+item {
+	
+}
+
+boolean finished = false;
+int fibTerm = 6;
+int currentTerm = 0;
+int fib1 = 0;
+int fib2 = 1; 
+int tmp = 0;
+
+currentTerm < fibTerm {
+	print(fib2);
+	tmp = fib1;
+	fib1 = fib2;
+	fib2 = tmp + fib2;
+	currentTerm = currentTerm + 1;
+}
+
+currentTerm >= fibTerm {
+	finished = true;
+}
+
+finished {
+	break;
+}
+
+
+
+
