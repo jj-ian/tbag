@@ -1,0 +1,60 @@
+room {
+	string name;
+}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+Closet <-> Bedroom;
+
+start { Bedroom }
+
+npc {
+	
+}
+
+item {
+	
+}
+
+boolean finished = false;
+
+true {
+	string a = "single quo'te";
+	string newline = "\n";
+	string c = "tab\ttab";
+	string d = "backspac\be";
+	string e = "carriage r\return";
+	string f = "formfeed\fformfeed";
+	string g = "escaped \"double quote\"";
+	string h = "backslas\\h";
+	
+	print(a);
+	print(newline);
+	print(c);
+	print(newline);
+	print(d);
+	print(newline);
+	print(e);
+	print(newline);
+	print(f);
+	print(newline);
+	print(g);
+	print(newline);
+	print(h);
+	print(newline);
+	finished = true;
+}
+
+finished {
+	break;
+}
+
+
+
+
