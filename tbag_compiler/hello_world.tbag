@@ -27,10 +27,21 @@ npc {
 	string npcName;
 }
 
+npc dragon {
+	npcName = "dragon";
+}
+
 item {
 	string name;
 	int magnitude;
 }
+
+item sword {
+	name = "sword";
+	magnitude = 10;
+}
+
+
 
 boolean test_start = false;
 boolean finished = false;

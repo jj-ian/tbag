@@ -128,7 +128,6 @@ let rec room_decl_list = function
         []              -> ""
         | hd::tl        -> "\t\t" ^ ((room_decl hd) ^ "\n" ^ (room_decl_list tl))
 
-
 let adj_decl = function
         []              -> ""
         | hd::tl        -> hd ^ ".setAdjacent(" ^ (List.hd tl) ^ ");"        
@@ -146,6 +145,28 @@ let pred_stmt s =
 let rec pred_stmt_list = function 
         []              -> ""
         | hd::tl        -> "\t" ^ ((pred_stmt hd) ^ "\n\t" ^ (pred_stmt_list tl)) ^ "\n"
+
+let rec npc_props_list proplist prefix = match proplist with 
+        []              -> ""
+        | hd::tl        -> prefix ^ "." ^ (statement_list [hd]) ^ (npc_props_list tl prefix)
+
+let npc_decl n =
+        "Npc " ^ n.nname ^ " = new Npc();\n\t\t" ^ (npc_props_list n.nbody n.nname)
+
+let rec npc_decl_list = function
+        []              -> ""
+        | hd::tl        -> "\t\t" ^ ((npc_decl hd) ^ "\n" ^ (npc_decl_list tl))
+
+let rec item_props_list proplist prefix = match proplist with 
+        []              -> ""
+        | hd::tl        -> prefix ^ "." ^ (statement_list [hd]) ^ (item_props_list tl prefix)
+
+let item_decl i =
+        "Item " ^ i.iname ^ " = new Item();\n\t\t" ^ (item_props_list i.ibody i.iname)
+
+let rec item_decl_list = function
+        []              -> ""
+        | hd::tl        -> "\t\t" ^ ((item_decl hd) ^ "\n" ^ (item_decl_list tl))
 
 let default_globals = 
     "
@@ -165,6 +186,8 @@ let driver_code (driver_class) =
         room_decl_list main.rdecls ^
         adj_decl_list main.adecls ^
         start_decl main.start ^ 
+        npc_decl_list main.ndecls ^
+        item_decl_list main.idecls ^
         "while (true) {\n" ^
         pred_stmt_list main.predicates ^
         "}\n\t" ^ "scanner.close();\n}\n\n" ^
