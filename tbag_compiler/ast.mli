@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq | And | Or | Not
+type op = Add | Sub | Mult | Div | Equal | StrEqual | Neq | Less | Leq | Greater | Geq | And | Or | Not
 
 type variable_type =
         Int

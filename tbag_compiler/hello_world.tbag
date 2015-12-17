@@ -106,6 +106,10 @@ currentRoom == myRoom1 {
 	finished = true;
 }
 
+input ~~ "myRoom1" {
+	print("working");
+}
+
 
 finished {
 	print("hello world");

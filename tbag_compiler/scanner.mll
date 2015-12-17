@@ -22,6 +22,7 @@ rule token = parse
         | '*'                                   { TIMES }
         | '/'                                   { DIVIDE } 
         | "=="                                  { EQ }
+        | "~~"                                  { STREQ }
         | "!="                                  { NEQ }
         | '<'                                   { LT }
         | "<="                                  { LEQ }

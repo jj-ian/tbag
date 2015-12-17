@@ -28,6 +28,11 @@ let operator = function
         | And -> "&&"
         | Or -> "||"
         | Not -> "!"
+        | StrEqual -> ".equals("
+
+let check_str_eq = function 
+        StrEqual -> true
+        | _ -> false
 
 let rec expression = function
         StrLiteral(str) -> str
@@ -38,7 +43,8 @@ let rec expression = function
         | Assign(id, expr) -> id ^ " = " ^ (expression expr)
         | ArrayAssign(id, loc, expr) ->  id ^ "[" ^ (expression loc) ^ "] = " ^ (expression expr)
         | ArrayAccess(id, loc) -> id ^ "[" ^ (expression loc) ^ "]"
-        | Binop(expr1, op, expr2) -> ((expression expr1) ^ (operator op) ^ (expression expr2))
+        | Binop(expr1, op, expr2) -> if check_str_eq op then ((expression expr1) ^ (operator op) ^ (expression expr2)) ^ ")"
+                                     else ((expression expr1) ^ (operator op) ^ (expression expr2))
         | Boolneg(op, expr) -> ((operator op) ^ (expression expr))
         | Call(fname, arg) -> 
 	        let rec expr_list = function

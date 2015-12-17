@@ -2,7 +2,7 @@
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
 %token FUNC ROOM ADJ GOTO ITEM NPC START
-%token ASSIGN EQ NEQ LT LEQ GT GEQ AND OR NOT ACCESS
+%token ASSIGN EQ STREQ NEQ LT LEQ GT GEQ AND OR NOT ACCESS
 %token PLUS MINUS TIMES DIVIDE
 %token IF ELSE WHILE RETURN
 %token INT STRING VOID BOOLEAN
@@ -13,7 +13,7 @@
 %token EOF
 
 %right ASSIGN
-%left EQ NEQ
+%left EQ NEQ STREQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
@@ -192,6 +192,7 @@ expr:
         | expr TIMES expr                           { Binop($1, Mult, $3) }
         | expr DIVIDE expr                          { Binop($1, Div, $3) }
         | expr EQ expr                              { Binop($1, Equal, $3) }
+        | expr STREQ expr                           { Binop($1, StrEqual, $3)}
         | expr NEQ expr                             { Binop($1, Neq, $3) }
         | expr LT expr                              { Binop($1, Less, $3) }
         | expr LEQ expr                             { Binop($1, Leq, $3) }
