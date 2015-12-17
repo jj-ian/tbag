@@ -58,6 +58,7 @@ let rec expression = function
                      else fname)
 	                ^ "(" ^ expr_list arg ^ ")")
                     )
+        | End -> "break"
 
 let expression_with_semi (expr) = 
         ((expression expr) ^ ";\n")

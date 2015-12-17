@@ -113,5 +113,5 @@ input ~~ "myRoom1" {
 
 finished {
 	print("hello world");
-	break;
+	endgame;
 }
