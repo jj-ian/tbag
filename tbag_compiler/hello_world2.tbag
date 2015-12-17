@@ -1,0 +1,35 @@
+room {
+	string name;
+}
+
+room Home {
+	name = "Home";
+}
+
+room Outside {
+	name = "Outside";
+}
+
+Home <-> Outside;
+
+start { Home }
+
+npc { }
+
+item { }
+
+boolean finished = false;
+
+NOT finished {
+	sayHello();
+	finished = true;
+}
+
+finished {
+	break;
+}
+
+func void sayHello() {
+	print("Hello\n");
+}
+	
