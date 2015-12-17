@@ -1,0 +1,41 @@
+room {
+	string name;
+}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+Closet <-> Bedroom;
+
+start { Bedroom }
+
+npc {
+	
+}
+
+item {
+	
+}
+
+boolean finished = false;
+
+func int testvar() {
+	int a = 5;
+	print(a);
+	return 0;
+}
+
+true {
+	testvar();
+	finished = true;
+}
+
+finished {
+	break;
+}
+
