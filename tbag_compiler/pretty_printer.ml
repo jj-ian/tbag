@@ -79,14 +79,7 @@ let rec statement_list = function
 		        | While(expr, stmt)     -> "while (" ^ (expression expr) ^ ") " ^ (statement stmt)
                         | Goto(str)             ->      "movePlayerToRoom(" ^ str ^ ");\n"
     		in
-	        ((statement hd) ^ (statement_list tl))  
-
-let formal f = (get_type f) ^ " " ^ (get_id f)
-
-let rec formals_list = function
-        []              -> ""
-        | [solo]        -> formal solo
-        | hd::tl        -> ((formal hd) ^ "," ^ (formals_list tl)) 
+	        ((statement hd) ^ (statement_list tl))   
 
 let local = function
         Variable(var_type, str)            -> ((data_type var_type) ^ " " ^ str)
@@ -95,9 +88,13 @@ let local = function
         | Array_Decl(var_type, str, expr) -> ((data_type var_type) ^ "[] " ^
         str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
 
+let local_sast_to_checked f = 
+        let (checked_var_decl, _) = f in
+        local checked_var_decl  
+
 let rec locals_list = function
         []              ->      ""
-        | hd::tl        ->      ((local hd) ^ ";\n" ^ (locals_list tl))
+        | hd::tl        ->      ((local_sast_to_checked hd) ^ ";\n" ^ (locals_list tl))
 
 let vdecl = function
         Array_Decl(var_type, str, expr) ->      ((data_type var_type) ^ "[] " ^
@@ -118,6 +115,17 @@ let global_vdecl = function
 let rec global_vdecl_list  = function
         []              ->      ""
         | hd::tl        ->      "\t" ^ (global_vdecl hd) ^ (global_vdecl_list tl)
+
+let formal f = (get_type f) ^ " " ^ (get_id f)
+
+let formal_sast_to_checked f = 
+        let (checked_var_decl, _) = f in
+        formal checked_var_decl
+
+let rec formals_list = function
+        []              -> ""
+        | [solo]        -> formal_sast_to_checked solo
+        | hd::tl        -> ((formal_sast_to_checked hd) ^ "," ^ (formals_list tl)) 
 
 let func_decl f =
         ("public static " ^ (data_type f.freturntype) ^ " " ^ f.fname ^ "("
