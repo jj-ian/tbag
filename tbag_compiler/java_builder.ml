@@ -1,5 +1,6 @@
 open Jast
 open Ast
+open Sast
 open Printf
 
 (* http://langref.org/fantom+ocaml+erlang/files/reading/read-into-string *)

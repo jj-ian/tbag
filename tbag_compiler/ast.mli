@@ -7,10 +7,6 @@ type variable_type =
         | Array of variable_type * int
         | Boolean
 
-
-(*type argument_decl =
-        Argument of variable_type * string*)
-
 type expr =
         IntLiteral of int
         | StrLiteral of string

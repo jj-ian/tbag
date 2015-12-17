@@ -181,12 +181,12 @@ let driver_code (driver_class) =
         global_vdecl_list vars ^        
         "public static void main(String[] args) {\n\t" ^
         "scanner = new Scanner(System.in);\n\t" ^
-        room_decl_list main.rdecls ^
-        adj_decl_list main.adecls ^
+(*         room_decl_list main.rdecls ^
+ *)        adj_decl_list main.adecls ^
         start_decl main.start ^ 
         "while (true) {\n" ^
-        pred_stmt_list main.predicates ^
-        "}\n\t" ^ "scanner.close();\n}\n\n" ^
+(*         pred_stmt_list main.predicates ^
+ *)        "}\n\t" ^ "scanner.close();\n}\n\n" ^
         func_decl_list fdecls ^ 
         lib_funcs ^
         "}\n"
