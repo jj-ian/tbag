@@ -13,11 +13,12 @@
 %token EOF
 
 %right ASSIGN
+%left AND OR
 %left EQ NEQ STREQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left AND OR NOT
+%right NOT
 %left ACCESS
 
 /*
