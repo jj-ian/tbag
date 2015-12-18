@@ -1,7 +1,7 @@
 default: compiler
  
-compiler: scanner parser java_builder code_gen tbagger 
-	ocamlc -o tbag scanner.cmo parser.cmo java_builder.cmo code_gen.cmo tbag.cmo
+compiler: scanner parser semantic_checker java_builder code_gen tbagger 
+	ocamlc -o tbag scanner.cmo parser.cmo java_builder.cmo code_gen.cmo semantic_checker.cmo tbag.cmo 
 
 tbagger:
 	ocamlc -c tbag.ml;
@@ -20,6 +20,9 @@ parser: jast
 
 jast: sast ast
 	ocamlc -c jast.mli
+
+semantic_checker: ast scanner
+	ocamlc -c semantic_checker.ml
 
 sast: ast
 	ocamlc -c sast.mli

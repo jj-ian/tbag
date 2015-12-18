@@ -271,10 +271,13 @@ let check_room_def (env: translation_environment) (r: Ast.room_def) =
 let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
        let symbol_table = { parent = None; variables = []; functions = []; room_def = []; } in
-       let translation_environment = { scope = symbol_table; } in
+       let env = { scope = symbol_table; return_type =
+           Ast.Int} in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
-             item_decls, var_decls, funcs, pred_stmt) = p in
-       let checked_room_def = check_room_def translation_environment room_def in
+             item_decls, var_decls, pred_stmt, funcs) = p in
+       let checked_room_def = check_room_def env room_def in
+       let checked_funcs = check_func_decls env funcs in
+       let checked_var_decls = check_var_decls env var_decls in
     (checked_room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
     item_decls, var_decls, funcs, pred_stmt)
 (* make sure return statement of function returns proper type, check the
