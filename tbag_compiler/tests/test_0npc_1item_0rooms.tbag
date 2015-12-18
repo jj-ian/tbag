@@ -1,0 +1,14 @@
+item {
+	string name;
+}
+
+item Purse {
+	name = "fluffy purse";
+}
+
+true {
+	print("You have a ");
+	print(Purse.name);
+
+	endgame;
+}

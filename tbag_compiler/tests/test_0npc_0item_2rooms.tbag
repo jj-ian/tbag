@@ -1,0 +1,35 @@
+room {
+	int temperature;
+}
+
+room Space {
+	name = "space";
+	temperature = neg 1000;
+}
+
+room Sun {
+	name = "surface of the sun";
+	temperature = 99999;
+}
+
+Space <-> Sun;
+
+start { Space }
+
+currentRoom == Space {
+	print("you are in ");
+	print(currentRoom.name);
+	print(". you're being launched into the surface of the sun\n");
+	print("currently the temperature is ");
+	print(currentRoom.temperature);
+	print("\n");
+	->Sun
+}
+
+currentRoom == Sun {
+	print("Now you're on the ");
+	print(currentRoom.name);
+	print(" the temp is ");
+	print(currentRoom.temperature);
+	endgame;
+}
