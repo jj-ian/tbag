@@ -16,6 +16,14 @@ type translation_environment = {
     (*room : room_table;*)
 }
 
+let check_valid_type (v : Ast.variable_type) = match v with
+    Ast.Void -> Ast.Void
+    | Ast.Int -> Ast.Int
+    | Ast.String -> Ast.String
+    | Ast.Boolean -> Ast.Boolean
+    | Ast.Array(v, i) -> Ast.Array(v, i)
+    | _ -> raise (Failure ("Invalid type used"))
+
 let rec find_variable (scope : symbol_table) name = 
     try 
         (* do match with the different types of variables in the List.find
@@ -175,6 +183,32 @@ type of function")
             conditional")
         (*| Goto(rname)*)
 
+let check_var_decl (env: translation_environment) vdecl = 
+        (*Array_decl of variable_type * expr * string
+        | Var of variable_type * string
+        | VarInit of variable_type * string * expr*)
+        let (typ, vname) = get_var_type_name vdecl in
+        try let _ = find_variable env.scope vname in raise(Failure ("Variable with name " ^ vname ^
+        " exists."))
+        with Not_found ->
+            (* add this var to the variables list of this environment *)
+            (* also check that the expr type matches up with the type of the var
+             * *)
+            (* check that type is valid*)
+            match vdecl with 
+            Array_decl(typ, expr, name) -> 
+                    let (expr, exprtyp) = check_expr env expr in
+                    if exprtyp = Int then 
+                    (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) else raise (Failure ("Array size must be integer"))
+              | Var(typ, name) -> let typ = check_valid_type typ in 
+                     env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
+              | VarInit(typ, name, expr) -> let typ = check_valid_type typ in 
+                    let (expr, exprtyp) = check_expr env expr in 
+                    if exprtyp = typ then (env.scope.variables <- VarInit (exprtyp,
+                    name,expr)::env.scope.variables; VarInit (exprtyp, name,
+                    expr)) else raise (Failure ("Type mismatch in variable
+                    initialization"))
+
 (* make sure return statement of function returns proper type, check the
  * statements inside the function, add the declared variables to the scope, have
  * a new scope for the function *)
@@ -193,13 +227,6 @@ let check_func_decl (env: translation_environment) func_decl =
 let check_func_decls env func_decls =
     let func_decls = List.map (fun f -> check_func_decl env f) func_decls in 
     func_decls
-
-let check_valid_type (v : Ast.variable_type) = match v with
-    Ast.Void -> Ast.Void
-    | Ast.Int -> Ast.Int
-    | Ast.String -> Ast.String
-    | Ast.Boolean -> Ast.Boolean
-    | Ast.Array(v, i) -> Ast.Array(v, i)
 
 
 let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match field with
