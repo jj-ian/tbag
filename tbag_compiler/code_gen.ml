@@ -100,7 +100,7 @@ let rec locals_list = function
 
 let vdecl = function
         Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
-        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
+        str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "];")
         | Var(vtype, id)                 ->      (data_type vtype) ^ " " ^ id ^ ";\n"
         | VarInit(vtype, id, expr)     ->      (data_type vtype) ^ " " ^ id ^ " = " ^ expression_with_semi expr
 
