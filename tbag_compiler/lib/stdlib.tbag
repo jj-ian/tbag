@@ -1,18 +1,15 @@
-func int printLine(int a) {
+func void printLine(int a) {
 	print(a);
 	print("\n");
-	return 0;
 }
 
-func int printLine(string s) {
+func void printLine(string s) {
 	print(s);
 	print("\n");
-	return 0;
 }
 
-func int printLine(boolean b) {
+func void printLine(boolean b) {
 	print(b);
 	print("\n");
-	return 0;
 }
 

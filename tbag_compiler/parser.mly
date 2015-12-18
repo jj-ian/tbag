@@ -13,7 +13,8 @@
 %token EOF
 
 %right ASSIGN
-%left AND OR
+%left OR
+%left AND
 %left EQ NEQ STREQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
