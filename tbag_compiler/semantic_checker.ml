@@ -209,6 +209,10 @@ let check_var_decl (env: translation_environment) vdecl =
                     expr)) else raise (Failure ("Type mismatch in variable
                     initialization"))
 
+let check_var_decls (env: translation_environment) var_decls = 
+    let var_decls = List.map(fun vdecl -> check_var_decl env vdecl) var_decls in
+    var_decls
+
 (* make sure return statement of function returns proper type, check the
  * statements inside the function, add the declared variables to the scope, have
  * a new scope for the function *)
@@ -219,15 +223,26 @@ let check_func_decl (env: translation_environment) func_decl =
     else
         let scope' = { parent = Some(env.scope); variables = []; functions = env.scope.functions; room_def = env.scope.room_def} in
         let env' = { env with scope = scope'; return_type = func_decl.freturntype } in
+        let fformals = List.map (
+            fun f -> match f with 
+                     Var(typ, name) ->
+                         let typ = check_valid_type typ in 
+                         env'.scope.variables <- Var(typ,
+                         name)::env'.scope.variables; Var(typ, name)
+                   | _ -> raise (Failure ("Formal argument must be of type
+                     Var"))
+                   ) func_decl.formals in
+        let flocals = check_var_decls env' func_decl.locals in 
         let fbody = func_decl.body in 
         let fbody = List.map (fun s -> check_stmt env' s) fbody in
-        let new_func_decl = { func_decl with  body = fbody} in
+        let ffreturntype = check_valid_type func_decl.freturntype in
+        let new_func_decl = { func_decl with  body = fbody; locals = flocals;
+        formals = fformals; freturntype = ffreturntype; } in
         env.scope.functions <- new_func_decl::env.scope.functions ; new_func_decl 
 
 let check_func_decls env func_decls =
     let func_decls = List.map (fun f -> check_func_decl env f) func_decls in 
     func_decls
-
 
 let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match field with
     Ast.Var(typ, name) -> 
