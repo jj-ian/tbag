@@ -191,6 +191,7 @@ type of function")
         (*| Goto(rname)*)
 
 let check_var_decl (env: translation_environment) vdecl = 
+        print_string"hello from check_var_decl";
         (*Array_decl of variable_type * expr * string
         | Var of variable_type * string
         | VarInit of variable_type * string * expr*)
@@ -206,15 +207,17 @@ let check_var_decl (env: translation_environment) vdecl =
             Array_decl(typ, expr, name) -> 
                     let (expr, exprtyp) = check_expr env expr in
                     if exprtyp = Int then 
-                    (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) else raise (Failure ("Array size must be integer"))
+                    (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) 
+                    else raise (Failure ("Array size must be integer"))
               | Var(typ, name) -> let typ = check_valid_type typ in 
+                        (*we dont know why this isnt working*)
+                     print_string"hello from check_var_decl";
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
               | VarInit(typ, name, expr) -> let typ = check_valid_type typ in 
                     let (expr, exprtyp) = check_expr env expr in 
-                    if exprtyp = typ then (env.scope.variables <- VarInit (exprtyp,
-                    name,expr)::env.scope.variables; VarInit (exprtyp, name,
-                    expr)) else raise (Failure ("Type mismatch in variable
-                    initialization"))
+                    if exprtyp = typ then 
+                        (env.scope.variables <- VarInit (exprtyp,name,expr)::env.scope.variables; VarInit (exprtyp, name,expr)) 
+                    else raise (Failure ("Type mismatch in variable initialization"))
 
 let check_var_decls (env: translation_environment) var_decls = 
     let var_decls = List.map(fun vdecl -> check_var_decl env vdecl) var_decls in
@@ -312,8 +315,8 @@ let check_program (p : Ast.program) =
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
-       let checked_funcs = check_func_decls env funcs in
        let checked_var_decls = check_var_decls env var_decls in
+       let checked_funcs = check_func_decls env funcs in
        let checked_pred_stmts = check_pred_stmts env pred_stmts in
     (checked_room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
     item_decls, checked_var_decls, checked_pred_stmts, checked_funcs)
