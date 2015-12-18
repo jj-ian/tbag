@@ -1,0 +1,20 @@
+room {}
+
+room myRoom { 
+	name = "living room"; 
+}
+
+room myRoom1 {
+	name = "kitchen";
+}
+
+myRoom <-> myRoom1;
+
+start {myRoom}
+
+true {
+	print("hi\n");
+	print(myRoom.name);
+	print("\n");
+	endgame;
+}
