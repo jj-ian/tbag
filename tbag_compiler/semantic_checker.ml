@@ -150,3 +150,23 @@ let rec check_expr env = function
       (* TODO: Access operator for rooms, need to check that the thing is in the
        * room_decl, which will be stored in the environment *)
 
+let rec check_stmt env = function
+        Block(stmt_list) -> Block(List.fold_left ( fun a l -> (check_stmt env
+            l)::a) [] stmt_list)
+        | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
+        | Return(expr) -> let (expr, _) = check_expr env expr in Return(expr)
+        | If(expr, stmt1, stmt2) ->
+            let (expr, typ) = check_expr env expr in
+            let stmt1 = check_stmt env stmt1 in
+            let stmt2 = check_stmt env stmt2 in 
+            if typ = Boolean then If(expr, stmt1, stmt2) 
+            else raise (Failure "If statement must have a boolean expression
+            conditional")
+        | While(expr, stmt) -> 
+            let (expr, typ) = check_expr env expr in
+            let stmt = check_stmt env stmt in
+            if typ = Boolean then While(expr, stmt) 
+            else raise (Failure "While statement must have a boolean expression
+            conditional")
+        (*| Goto of string*)
+
