@@ -163,7 +163,8 @@ let rec check_stmt env = function
         Block(stmt_list) -> 
             (* We don't need this scope stuff because vars are not
              * declared in this stmt type but keeping here for now *)
-            let scope' = { parent = Some(env.scope); variables = []; functions = env.scope.functions } in
+            let scope' = { parent = Some(env.scope); variables = []; functions =
+                env.scope.functions; room_def = env.scope.room_def} in
             let env' = { env with scope = scope';} in
             let sl = List.map (fun s -> check_stmt env' s) stmt_list in scope'.variables <- List.rev scope'.variables; Block(sl)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
@@ -279,20 +280,4 @@ let check_program (p : Ast.program) =
        let checked_funcs = check_func_decls env funcs in
        let checked_var_decls = check_var_decls env var_decls in
     (checked_room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
-    item_decls, var_decls, funcs, pred_stmt)
-(* make sure return statement of function returns proper type, check the
- * statements inside the function, add the declared variables to the scope, have
- * a new scope for the function *)
-let check_func_decl env func_decl = 
-    let scope' = { parent = Some(env.scope); variables = []; functions = env.scope.functions } in
-    let env' = { env with scope = scope'; return_type = func_decl.freturntype } in
-    (* add return type to env *)
-    let fbody = func_decl.body in 
-    let fbody = List.map (fun s -> check_stmt env' s) fbody in
-    let new_func_decl = { func_decl with  body = fbody} in
-    func_decl = new_func_decl
-
-let check_func_decls env func_decls =
-    let func_decls = List.map (fun f -> check_func_decl env f) func_decls in 
-    func_decls
-
+    item_decls, checked_var_decls, pred_stmt, checked_funcs)
