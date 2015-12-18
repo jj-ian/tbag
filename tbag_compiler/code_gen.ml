@@ -79,7 +79,8 @@ let rec statement_list = function
 				((statement hd) ^ (statement_list tl))  
 
 let formal = function
-        Argument(datatype, id) -> ((data_type datatype) ^ " " ^ id)
+        Var(datatype, id) -> ((data_type datatype) ^ " " ^ id)
+        | _ -> ""
 
 let rec formals_list = function
         [] -> ""
