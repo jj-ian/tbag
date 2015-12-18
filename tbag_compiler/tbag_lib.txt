@@ -1,0 +1,5 @@
+
+func void printline(string s){
+	print(s);
+	print("\n");
+}
