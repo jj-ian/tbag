@@ -8,6 +8,7 @@ type symbol_table = {
     mutable variables : var_decl list;
     mutable functions : func_decl list;
     mutable room_def: var_decl list;
+    mutable pred_stmts : pred_stmt list;
 } 
 
 type translation_environment = {
@@ -147,6 +148,7 @@ let rec check_expr env = function
                 let fdecl = find_function env.scope fname in
                 let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
                 let formals = fdecl.formals in
+                (* TODO: replace List.fold_left2 with List.map2 *)
                 let (_, expr_list) = List.fold_left2 (
                     fun a l1 l2 -> 
                         let (formaltyp, formalname) = get_var_type_name l1 in 
@@ -164,7 +166,7 @@ let rec check_stmt env = function
             (* We don't need this scope stuff because vars are not
              * declared in this stmt type but keeping here for now *)
             let scope' = { parent = Some(env.scope); variables = []; functions =
-                env.scope.functions; room_def = env.scope.room_def} in
+                env.scope.functions; room_def = env.scope.room_def; pred_stmts = env.scope.pred_stmts;} in
             let env' = { env with scope = scope';} in
             let sl = List.map (fun s -> check_stmt env' s) stmt_list in scope'.variables <- List.rev scope'.variables; Block(sl)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
@@ -222,7 +224,9 @@ let check_func_decl (env: translation_environment) func_decl =
     then raise (Failure ("Function with " ^ func_decl.fname ^ " already
     exists."))
     else
-        let scope' = { parent = Some(env.scope); variables = []; functions = env.scope.functions; room_def = env.scope.room_def} in
+        let scope' = { parent = Some(env.scope); variables = []; functions =
+            env.scope.functions; room_def = env.scope.room_def; pred_stmts =
+                env.scope.pred_stmts;} in
         let env' = { env with scope = scope'; return_type = func_decl.freturntype } in
         let fformals = List.map (
             fun f -> match f with 
@@ -268,16 +272,41 @@ let check_room_def (env: translation_environment) (r: Ast.room_def) =
     with
     | _ -> raise (Failure "room defs didn't check out")
 
+let check_pred_stmt (env: translation_environment) pstmt =
+    (* check that the expr is a boolean expr, check all var decls, check all
+     * stmts in body *)
+    let scope' = { parent = Some(env.scope); variables = []; functions =
+        env.scope.functions; room_def = env.scope.room_def; pred_stmts =
+            env.scope.pred_stmts;} in
+    let env' = { env with scope = scope'; } in
+    let (checked_pred, typ) = check_expr env pstmt.pred in
+    if typ = Boolean then
+        let checked_locals = check_var_decls env' pstmt.locals in
+        let checked_body = List.map (fun s -> check_stmt env' s) pstmt.body in
+        let new_pstmt = {pred = checked_pred; locals = checked_locals; body =
+            checked_body;} in
+        env.scope.pred_stmts <- new_pstmt::env.scope.pred_stmts ; new_pstmt
+    else raise (Failure "Expression in predicate statement conditional must be
+    of type Boolean")
+
+(* do we need to store the pred_stmts so that we can prevent multiple pred_stmts
+ * with the same condition? Would we compare the exprs in that case? Decompose
+ * expr into all possible boolean exprs, compare operands and operator*)
+let check_pred_stmts (env: translation_environment) pstmts = 
+    let new_pstmts = List.map (fun s -> check_pred_stmt env s) pstmts in
+    new_pstmts
 
 let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
-       let symbol_table = { parent = None; variables = []; functions = []; room_def = []; } in
+       let symbol_table = { parent = None; variables = []; functions = [];
+       room_def = []; pred_stmts = [];} in
        let env = { scope = symbol_table; return_type =
            Ast.Int} in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
-             item_decls, var_decls, pred_stmt, funcs) = p in
+             item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
        let checked_funcs = check_func_decls env funcs in
        let checked_var_decls = check_var_decls env var_decls in
+       let checked_pred_stmts = check_pred_stmts env pred_stmts in
     (checked_room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
-    item_decls, checked_var_decls, pred_stmt, checked_funcs)
+    item_decls, checked_var_decls, checked_pred_stmts, checked_funcs)
