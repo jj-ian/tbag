@@ -1,6 +1,4 @@
-room {
-	string name;
-}
+room {}
 
 room Closet { 
 	name = "Closet";
@@ -20,20 +18,11 @@ room Outside {
 }
 
 Closet <-> Bedroom;
-
 Bedroom <-> LivingRoom;
 
 start { Bedroom }
 
-npc {
-
-}
-
-item {
-
-}
-
-boolean finished = false;
+boolean madeItOutside = false;
 
 currentRoom == Bedroom {
 	print("Currently in: ");
@@ -67,12 +56,12 @@ currentRoom == Outside {
 	print("Currently in: ");
 	print(currentRoom.name);
 	print("\n");
-	finished = true;
 	print("\n");
+	madeItOutside = true;
 }
 
-finished {
+madeItOutside {
 	print("Good job making it outside, lazybones.");
 	print("\n");
-	break;
+	endgame;
 }
