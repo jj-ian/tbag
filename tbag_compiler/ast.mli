@@ -7,9 +7,6 @@ type variable_type =
         | Array of variable_type * int
         | Boolean
 
-type argument_decl =
-        Argument of variable_type * string
-
 type expr =
         IntLiteral of int
         | NegIntLiteral of int
@@ -23,7 +20,7 @@ type expr =
         | Boolneg of op * expr
         | Call of string * expr list
         | Access of string * string  (* foo.bar *)
-        | End
+        | End (* should this be in stmt instead of in expr? *)
 
 type var_decl =
         Array_decl of variable_type * expr * string
@@ -61,7 +58,7 @@ type func_decl =
 {
         freturntype: variable_type;
         fname : string;
-        formals : argument_decl list; 
+        formals : var_decl list; 
         locals: var_decl list;
         body : stmt list;
 }

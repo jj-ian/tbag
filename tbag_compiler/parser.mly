@@ -114,8 +114,8 @@ formals_opt:
         | formal_list                               { List.rev $1 }
 
 formal_list:
-        data_type ID                                { [Argument($1, $2)] }
-        | formal_list COMMA data_type ID            { Argument($3, $4) :: $1 }
+        data_type ID                                { [Var($1, $2)] }
+        | formal_list COMMA data_type ID            { Var($3, $4) :: $1 }
 
 actuals_opt:
         /* nothing */                               { [] }

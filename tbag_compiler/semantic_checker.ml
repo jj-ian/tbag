@@ -1,5 +1,6 @@
 open Ast
-
+(* TODO: pred_stmt checking, adj_decl checking, room/item/npc_decl checking,
+ * room/item/npc_def checking, start checking, Access operator of expr*)
 (*type room_table = var_decl list;*)
 
 type symbol_table = {
@@ -43,6 +44,7 @@ let get_var_type_name var_decl =
 
 let rec check_expr env = function
         Ast.IntLiteral(v) -> (Ast.IntLiteral(v), Ast.Int)
+        | Ast.NegIntLiteral(v) -> (Ast.NegIntLiteral(v), Ast.Int)
         | Ast.StrLiteral(v) -> (Ast.StrLiteral(v), Ast.String)
         | Ast.BoolLiteral(v) -> (Ast.BoolLiteral(v), Ast.Boolean)
         | Ast.Id(vname) ->
@@ -144,6 +146,7 @@ let rec check_expr env = function
                         else raise (Failure "Type mismatch between formal argument and parameter")
                 ) [] formals, expr_list in
                 (Ast.Call(fname, expr_list), typ)
+       | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
       (* TODO: Access operator for rooms, need to check that the thing is in the
        * room_decl, which will be stored in the environment *)
 
