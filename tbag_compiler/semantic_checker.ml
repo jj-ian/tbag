@@ -38,13 +38,14 @@ let rec find_variable (scope : symbol_table) name =
     with Not_found ->
         match scope.parent with 
           Some(parent) -> find_variable parent name
-        | _ -> raise Not_found
+        | _ ->  print_string "Variable not found";
+                raise Not_found
 
 let find_function (scope : symbol_table) name = 
     try
         List.find( fun func_decl -> func_decl.fname = name ) scope.functions
-    with Not_found ->
-        raise Not_found
+    with Not_found -> 
+        if name <> "print" then print_string "Function not found"; raise Not_found
 
 let get_var_type_name var_decl = 
     begin match var_decl with 
@@ -145,18 +146,21 @@ let rec check_expr env = function
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
                (* TODO: put find_function in try/with block *)
-                let fdecl = find_function env.scope fname in
-                let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
-                let formals = fdecl.formals in
-                (* TODO: replace List.fold_left2 with List.map2 *)
-                let (_, expr_list) = List.fold_left2 (
-                    fun a l1 l2 -> 
-                        let (formaltyp, formalname) = get_var_type_name l1 in 
-                        let (argexpr, argtyp) = check_expr env l2 in
-                        if formaltyp = argtyp then argexpr :: a
-                        else raise (Failure "Type mismatch between formal argument and parameter")
-                ) [] formals, expr_list in
-                (Ast.Call(fname, expr_list), typ)
+                let fdecl =  (try find_function env.scope fname 
+                             with Not_found ->
+                                 raise (Failure ("Function " ^ fname ^ " does
+                                 not exist."))) in
+                    let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
+                    let formals = fdecl.formals in
+                    (* TODO: replace List.fold_left2 with List.map2 *)
+                    let (_, expr_list) = List.fold_left2 (
+                        fun a l1 l2 -> 
+                            let (formaltyp, formalname) = get_var_type_name l1 in 
+                            let (argexpr, argtyp) = check_expr env l2 in
+                            if formaltyp = argtyp then argexpr :: a
+                            else raise (Failure "Type mismatch between formal argument and parameter")
+                    ) [] formals, expr_list in
+                    (Ast.Call(fname, expr_list), typ)
        | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
       (* TODO: Access operator for rooms, need to check that the thing is in the
        * room_decl, which will be stored in the environment *)
@@ -220,7 +224,8 @@ let check_var_decls (env: translation_environment) var_decls =
  * statements inside the function, add the declared variables to the scope, have
  * a new scope for the function *)
 let check_func_decl (env: translation_environment) func_decl = 
-    if (List.exists(fun fdecl -> fdecl.fname = func_decl.fname) env.scope.functions)
+    if (List.exists(fun fdecl -> fdecl.fname = func_decl.fname)
+    env.scope.functions || func_decl.fname = "print")
     then raise (Failure ("Function with " ^ func_decl.fname ^ " already
     exists."))
     else
@@ -298,8 +303,10 @@ let check_pred_stmts (env: translation_environment) pstmts =
 
 let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
-       let symbol_table = { parent = None; variables = []; functions = [];
-       room_def = []; pred_stmts = [];} in
+       let print_func = { freturntype = Void; fname = "print"; formals = [];
+       locals = []; body = [];} in
+       let symbol_table = { parent = None; variables = []; functions =
+           [print_func]; room_def = []; pred_stmts = [];} in
        let env = { scope = symbol_table; return_type =
            Ast.Int} in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
