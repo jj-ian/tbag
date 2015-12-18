@@ -7,7 +7,6 @@
 
 
 room {
-	string name;
 	string msg;
 	boolean visited;
 
