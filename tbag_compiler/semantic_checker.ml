@@ -61,11 +61,7 @@ let rec check_expr env = function
                 begin match op with
                     Add -> 
                         if (t1 = Int && t2 = Int) then Int
-                        else 
-                            if (t1 = String && t2 = String) then String
-                            else 
-                                raise (Failure "Types to + must both be Int or
-                                both be String")
+                        else raise (Failure "Types to + must both be Int")
                   | Sub ->
                         if (t1 = Int && t2 = Int) then Int
                         else raise (Failure "Types to - must both be Int")
@@ -78,6 +74,9 @@ let rec check_expr env = function
                   | Equal ->
                         if (t1 = t2) then Boolean 
                         else raise (Failure "Types to == must be the same")
+                  | StrEqual ->
+                        if (t1 = String && t2 = String) then Boolean
+                        else raise (Failure "Types to ~~ must both be String")
                   | Neq ->
                         if (t1 = t2) then Boolean 
                         else raise (Failure "Types to != must be the same")
@@ -100,7 +99,7 @@ let rec check_expr env = function
                         if (t1 = Boolean && t2 = Boolean) then Boolean
                         else raise (Failure "Types to OR must both be Boolean")
                   | Not -> raise (Failure "NOT takes a single operand") 
-                  | _ -> raise (Failure "will fix this later") 
+                  | _ -> raise (Failure "Unknown operator")
 
                 end in (Ast.Binop(e1, op, e2), typ)
         | Ast.Assign(name, expr) ->
@@ -168,5 +167,5 @@ let rec check_stmt env = function
             if typ = Boolean then While(expr, stmt) 
             else raise (Failure "While statement must have a boolean expression
             conditional")
-        (*| Goto of string*)
+        (*| Goto(rname)*)
 
