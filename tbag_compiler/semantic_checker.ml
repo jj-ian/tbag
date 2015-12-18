@@ -7,6 +7,7 @@ type symbol_table = {
     parent : symbol_table option;
     mutable variables : var_decl list;
     mutable functions : func_decl list;
+    mutable room_def: var_decl list;
 } 
 
 type translation_environment = {
@@ -167,3 +168,44 @@ let rec check_stmt env = function
             conditional")
         (*| Goto(rname)*)
 
+let check_valid_type (v : Ast.variable_type) = match v with
+    Ast.Void -> Ast.Void
+    | Ast.Int -> Ast.Int
+    | Ast.String -> Ast.String
+    | Ast.Boolean -> Ast.Boolean
+    | Ast.Array(v, i) -> Ast.Array(v, i)
+
+
+let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match field with
+    Ast.Var(typ, name) -> 
+        let t = check_valid_type typ in
+            if (List.exists ( fun var_decl -> begin match var_decl with 
+                                            Var(_, s) -> s = name 
+                                            |_ -> raise (Failure "should never reach here")
+                                            end ) scope.room_def )
+            then
+                raise (Failure "room fields names cannot repeat.")
+            else
+                scope.room_def <- Ast.Var(t, name):: scope.room_def; (* side affect add room field to room_table *)
+            Ast.Var(t, name) (*return this*)     
+    | _ -> raise (Failure "room field not correct format. declare a type and name.")
+
+
+(* fields in room_def are valid variable types *)
+let check_room_def (env: translation_environment) (r: Ast.room_def) = 
+    try
+        let checked_fields = List.fold_left ( fun checked unchecked -> process_room_field unchecked env.scope :: checked ) [] r in
+        checked_fields
+    with
+    | _ -> raise (Failure "room defs didn't check out")
+
+
+let check_program (p : Ast.program) =
+        (* at the start symbol table is empty *)
+       let symbol_table = { parent = None; variables = []; functions = []; room_def = []; } in
+       let translation_environment = { scope = symbol_table; } in
+        let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
+             item_decls, var_decls, funcs, pred_stmt) = p in
+       let checked_room_def = check_room_def translation_environment room_def in
+    (checked_room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
+    item_decls, var_decls, funcs, pred_stmt)
