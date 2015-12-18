@@ -14,14 +14,37 @@ Home <-> Outside;
 
 start { Home }
 
-npc { }
+/*
+npc {
+	string name;
+}
 
-item { }
+npc Monster { 
+	name = "Monster";
+}
+
+
+item {
+	string name;
+}
+
+item Potion {
+	name = "Potion";
+}
+*/
+
 
 boolean finished = false;
 
 NOT finished {
 	sayHello();
+	print("\n");
+/*	print(Monster.name);
+	print("\n");
+	print(Potion.name);
+	print("\n");
+*/	displayAdj(Home);
+	print("\n");
 	finished = true;
 }
 
