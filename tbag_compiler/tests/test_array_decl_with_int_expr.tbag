@@ -1,0 +1,6 @@
+true {
+	int[1+1+1] a;
+	a[2] = 2;
+	print(a[2]);
+	endgame;
+}
