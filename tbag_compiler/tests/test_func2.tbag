@@ -1,28 +1,7 @@
-room {
-	string name;
+true {
+	printstuff(666, "hi", 69, "lol");
+	endgame;
 }
-
-room Closet { 
-	name = "Closet";
-}
-
-room Bedroom {
-	name = "Bedroom";
-}
-
-Closet <-> Bedroom;
-
-start { Bedroom }
-
-npc {
-	
-}
-
-item {
-	
-}
-
-boolean finished = false;
 
 func int printstuff(int a, string b, int c, string d) {
 	print(a);
@@ -31,16 +10,3 @@ func int printstuff(int a, string b, int c, string d) {
 	print(d);
 	return 0;
 }
-
-true {
-	printstuff(666, "hi", 69, "lol");
-	finished = true;
-}
-
-finished {
-	break;
-}
-
-
-
-

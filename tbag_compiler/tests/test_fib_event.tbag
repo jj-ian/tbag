@@ -1,27 +1,3 @@
-room {
-	string name;
-}
-
-room Closet { 
-	name = "Closet";
-}
-
-room Bedroom {
-	name = "Bedroom";
-}
-
-Closet <-> Bedroom;
-
-start { Bedroom }
-
-npc {
-	
-}
-
-item {
-	
-}
-
 boolean finished = false;
 int fibTerm = 6;
 int currentTerm = 0;
@@ -38,13 +14,5 @@ currentTerm < fibTerm {
 }
 
 currentTerm >= fibTerm {
-	finished = true;
+	endgame;
 }
-
-finished {
-	break;
-}
-
-
-
-

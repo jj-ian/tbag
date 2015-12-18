@@ -1,35 +1,4 @@
-room {
-	string name;
-}
-
-room Closet { 
-	name = "Closet";
-}
-
-room Bedroom {
-	name = "Bedroom";
-}
-
-Closet <-> Bedroom;
-
-start { Bedroom }
-
-npc {
-	
-}
-
-item {
-	
-}
-
-boolean finished = false;
-
 true {
 	print(420 + 8 * 69 - 5);
-	finished = true;
+	endgame;
 }
-
-finished {
-	break;
-}
-
