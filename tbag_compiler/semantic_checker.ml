@@ -5,8 +5,8 @@ open Ast
 
 type symbol_table = {
     parent : symbol_table option;
-    variables : var_decl list;
-    functions : func_decl list;
+    mutable variables : var_decl list;
+    mutable functions : func_decl list;
 } 
 
 type translation_environment = {
@@ -99,7 +99,6 @@ let rec check_expr env = function
                         if (t1 = Boolean && t2 = Boolean) then Boolean
                         else raise (Failure "Types to OR must both be Boolean")
                   | Not -> raise (Failure "NOT takes a single operand") 
-                  | _ -> raise (Failure "Unknown operator")
 
                 end in (Ast.Binop(e1, op, e2), typ)
         | Ast.Assign(name, expr) ->
@@ -150,21 +149,20 @@ let rec check_expr env = function
        * room_decl, which will be stored in the environment *)
 
 let rec check_stmt env = function
-        Block(stmt_list) -> Block(List.fold_left ( fun a l -> (check_stmt env
-            l)::a) [] stmt_list)
+        Block(stmt_list) -> 
+            let scope' = { parent = Some(env.scope); variables = []; functions = env.scope.functions } in
+            let env' = { env with scope = scope';} in
+            let sl = List.map (fun s -> check_stmt env' s) stmt_list in scope'.variables <- List.rev scope'.variables; Block(sl)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
         | Return(expr) -> let (expr, _) = check_expr env expr in Return(expr)
         | If(expr, stmt1, stmt2) ->
             let (expr, typ) = check_expr env expr in
-            let stmt1 = check_stmt env stmt1 in
-            let stmt2 = check_stmt env stmt2 in 
-            if typ = Boolean then If(expr, stmt1, stmt2) 
+            if typ = Boolean then If(expr, check_stmt env stmt1, check_stmt env stmt2) 
             else raise (Failure "If statement must have a boolean expression
             conditional")
         | While(expr, stmt) -> 
             let (expr, typ) = check_expr env expr in
-            let stmt = check_stmt env stmt in
-            if typ = Boolean then While(expr, stmt) 
+            if typ = Boolean then While(expr, check_stmt env stmt) 
             else raise (Failure "While statement must have a boolean expression
             conditional")
         (*| Goto(rname)*)
