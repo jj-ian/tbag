@@ -1,43 +1,9 @@
-room {
-	string name;
+true {
+	hello();
+	endgame;
 }
-
-room Closet { 
-	name = "Closet";
-}
-
-room Bedroom {
-	name = "Bedroom";
-}
-
-Closet <-> Bedroom;
-
-start { Bedroom }
-
-npc {
-	
-}
-
-item {
-	
-}
-
-boolean finished = false;
 
 func int hello() {
 	print("hello world function");
 	return 0;
 }
-
-true {
-	hello();
-	finished = true;
-}
-
-finished {
-	break;
-}
-
-
-
-

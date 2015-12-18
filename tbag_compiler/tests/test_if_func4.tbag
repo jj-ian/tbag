@@ -1,28 +1,7 @@
-room {
-	string name;
+true {
+	testif();
+	endgame;
 }
-
-room Closet { 
-	name = "Closet";
-}
-
-room Bedroom {
-	name = "Bedroom";
-}
-
-Closet <-> Bedroom;
-
-start { Bedroom }
-
-npc {
-	
-}
-
-item {
-	
-}
-
-boolean finished = false;
 
 func int testif() {
 	if (false) {
@@ -33,14 +12,5 @@ func int testif() {
 	}
 	print("hi");
 	return 0;
-}
-
-true {
-	testif();
-	finished = true;
-}
-
-finished {
-	break;
 }
 
