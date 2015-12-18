@@ -9,11 +9,13 @@ type symbol_table = {
     mutable functions : func_decl list;
     mutable room_def: var_decl list;
     mutable pred_stmts : pred_stmt list;
+
 } 
 
 type translation_environment = {
     scope : symbol_table;
     mutable return_type: variable_type;
+    mutable current_func: func_decl option;
     (*room : room_table;*)
 }
 
@@ -146,10 +148,14 @@ let rec check_expr env = function
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
                (* TODO: put find_function in try/with block *)
-                let fdecl =  (try find_function env.scope fname 
-                             with Not_found ->
-                                 raise (Failure ("Function " ^ fname ^ " does
-                                 not exist."))) in
+                let fdecl =  (try find_function env.scope fname  
+                             with Not_found -> begin match env.current_func with 
+                             Some(current_func) -> 
+                                if (current_func.fname = fname) then
+                                    current_func 
+                                else 
+                                    raise (Failure ("Function " ^ fname ^ " does not exist."))
+                            |_-> raise (Failure ("Function " ^ fname ^ " does not exist."))end) in
                     let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
                     let formals = fdecl.formals in
                     (* TODO: replace List.fold_left2 with List.map2 *)
@@ -235,7 +241,7 @@ let check_func_decl (env: translation_environment) func_decl =
         let scope' = { parent = Some(env.scope); variables = []; functions =
             env.scope.functions; room_def = env.scope.room_def; pred_stmts =
                 env.scope.pred_stmts;} in
-        let env' = { env with scope = scope'; return_type = func_decl.freturntype } in
+        let env' = { env with scope = scope'; return_type = func_decl.freturntype; current_func = Some(func_decl)} in
         let fformals = List.map (
             fun f -> match f with 
                      Var(typ, name) ->
@@ -311,7 +317,7 @@ let check_program (p : Ast.program) =
        let symbol_table = { parent = None; variables = []; functions =
            [print_func]; room_def = []; pred_stmts = [];} in
        let env = { scope = symbol_table; return_type =
-           Ast.Int} in
+           Ast.Int; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
