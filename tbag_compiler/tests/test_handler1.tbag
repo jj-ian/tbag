@@ -1,28 +1,3 @@
-room {
-	string name;
-}
-
-room Closet { 
-	name = "Closet";
-}
-
-room Bedroom {
-	name = "Bedroom";
-}
-
-Closet <-> Bedroom;
-
-start { Bedroom }
-
-npc {
-	
-}
-
-item {
-	
-}
-
-boolean finished = false;
 boolean pred1 = false;
 boolean pred2 = false;
 int a = 0;
@@ -35,18 +10,10 @@ true {
 
 pred2 {
 	print(a + b);
-	finished = true;
+	endgame;
 }
 
 pred1 {
 	b = 3;
 	pred2 = true;
 }
-
-finished {
-	break;
-}
-
-
-
-
