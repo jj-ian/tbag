@@ -158,14 +158,13 @@ let rec check_expr env = function
                             |_-> raise (Failure ("Function " ^ fname ^ " does not exist."))end) in
                     let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
                     let formals = fdecl.formals in
-                    (* TODO: replace List.fold_left2 with List.map2 *)
-                    let (_, expr_list) = List.fold_left2 (
-                        fun a l1 l2 -> 
-                            let (formaltyp, formalname) = get_var_type_name l1 in 
-                            let (argexpr, argtyp) = check_expr env l2 in
-                            if formaltyp = argtyp then argexpr :: a
+                    let (_, expr_list) = List.map2 ( 
+                        fun args params ->
+                            let (formaltyp, formalname) = get_var_type_name args in 
+                            let (pexpr, ptyp) = check_expr env params in
+                            if formaltyp = ptyp then pexpr
                             else raise (Failure "Type mismatch between formal argument and parameter")
-                    ) [] formals, expr_list in
+                    ) formals, expr_list in
                     (Ast.Call(fname, expr_list), typ)
        | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
       (* TODO: Access operator for rooms, need to check that the thing is in the
