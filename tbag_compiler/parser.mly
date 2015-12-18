@@ -48,14 +48,33 @@ room_program:
 */
 
 program:
+        /* rooms, npcs, items */
         rdef rdecl_list adecl_list start ndef ndecl_list idef idecl_list vdecl_list
-        predicate_list fdecl_list EOF   { ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, List.rev $11) }
-        | rdef rdecl_list adecl_list start vdecl_list predicate_list fdecl_list EOF
-                                        { ($1, $2, $3, $4, [], [], [], [], $5, $6, List.rev $7) }      
-        | rdef rdecl_list adecl_list start idef idecl_list vdecl_list
-        predicate_list fdecl_list EOF   { ($1, $2, $3, $4, [], [], $5, $6, $7, $8, List.rev $9) }      
-        | rdef rdecl_list adecl_list start ndef ndecl_list vdecl_list
-        predicate_list fdecl_list EOF   { ($1, $2, $3, $4, $5, $6, [], [], $7, $8, List.rev $9) }      
+        predicate_list fdecl_list EOF         
+                { ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, List.rev $11) }
+        | /* rooms, npcs, !items */
+        rdef rdecl_list adecl_list start ndef ndecl_list vdecl_list
+        predicate_list fdecl_list EOF
+                { ($1, $2, $3, $4, $5, $6, [], [], $7, $8, List.rev $9) }      
+        | /* rooms, !npcs, items */
+        rdef rdecl_list adecl_list start idef idecl_list vdecl_list
+        predicate_list fdecl_list EOF
+                { ($1, $2, $3, $4, [], [], $5, $6, $7, $8, List.rev $9) }      
+        | /* rooms, !npcs, !items */
+        rdef rdecl_list adecl_list start vdecl_list predicate_list fdecl_list EOF
+                { ($1, $2, $3, $4, [], [], [], [], $5, $6, List.rev $7) }      
+        | /* !rooms, npcs, items */
+        ndef ndecl_list idef idecl_list vdecl_list predicate_list fdecl_list EOF         
+                { ([], [], [], "null", $1, $2, $3, $4, $5, $6, List.rev $7) }
+        | /* !rooms, npcs, !items */
+        ndef ndecl_list  vdecl_list predicate_list fdecl_list EOF         
+                { ([], [], [], "null", $1, $2, [], [], $3, $4, List.rev $5) }
+        | /* !rooms, !npcs, items */
+        idef idecl_list vdecl_list predicate_list fdecl_list EOF         
+                { ([], [], [], "null", [], [], $1, $2, $3, $4, List.rev $5) }
+        | /* !rooms, !npcs, !items */
+        vdecl_list predicate_list fdecl_list EOF
+                { ([], [], [], "null", [], [], [], [], $1, $2, List.rev $3) }      
 
 data_type:
         INT                                         { Int }

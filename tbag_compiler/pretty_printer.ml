@@ -213,7 +213,7 @@ let room_adj_functions = "\tpublic void setAdjacent(Room room){\n\t\t" ^
 let room_adj_field = "\tpublic HashSet<Room> adjRooms;"
 
 let room_code (room_def) =
-        "import java.util.*;\n\npublic class Room {\n\n" ^ (vdecl_list room_def) ^ room_adj_field ^ "\n" ^ room_constructor ^ "\n" ^ room_adj_functions ^ "\n}\n"
+        "import java.util.*;\n\npublic class Room {\n\nString name;\n\t" ^ (vdecl_list room_def) ^ room_adj_field ^ "\n" ^ room_constructor ^ "\n" ^ room_adj_functions ^ "\n}\n"
 
 let npc_code (npc_def) = 
         "public class Npc {\n\n" ^ (vdecl_list npc_def) ^ "\n}\n"

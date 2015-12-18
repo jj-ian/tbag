@@ -1,5 +1,6 @@
+/*
 room {
-	string name;
+
 }
 
 room Home {
@@ -14,7 +15,6 @@ Home <-> Outside;
 
 start { Home }
 
-/*
 npc {
 	string name;
 }
@@ -43,7 +43,7 @@ NOT finished {
 	print("\n");
 	print(Potion.name);
 	print("\n");
-*/	displayAdj(Home);
+	displayAdj(Home); */
 	print("\n");
 	finished = true;
 }
