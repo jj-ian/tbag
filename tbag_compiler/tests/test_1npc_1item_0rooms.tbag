@@ -1,0 +1,28 @@
+npc {
+	string name;
+	string color;
+}
+
+npc Cat {
+	name = "Tubbs";
+	color = "white";
+}
+
+item {
+	string name;
+}
+
+item Purse {
+	name = "fluffy purse";
+}
+
+true {
+	print("You have a ");
+	print(Purse.name);
+	print(". There's a cat here. Its name is ");
+	print(Cat.name);
+	print(" and it's ");
+	print(Cat.color);
+
+	endgame;
+}
