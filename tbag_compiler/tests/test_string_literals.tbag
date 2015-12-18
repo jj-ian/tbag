@@ -1,29 +1,3 @@
-room {
-	string name;
-}
-
-room Closet { 
-	name = "Closet";
-}
-
-room Bedroom {
-	name = "Bedroom";
-}
-
-Closet <-> Bedroom;
-
-start { Bedroom }
-
-npc {
-	
-}
-
-item {
-	
-}
-
-boolean finished = false;
-
 true {
 	string a = "single quo'te";
 	string newline = "\n";
@@ -48,13 +22,7 @@ true {
 	print(newline);
 	print(h);
 	print(newline);
-	finished = true;
+	endgame;
 }
-
-finished {
-	break;
-}
-
-
 
 
