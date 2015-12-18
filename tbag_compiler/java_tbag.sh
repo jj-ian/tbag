@@ -3,22 +3,26 @@
 basename=`echo $1 | sed 's/.*\\///
                          s/.tbag//'`
 inputtestsdirectory="tests/"
+driverfile="Driver.java"
 
- ./tbag < $1 2> ${basename}_compiler_output.txt
+# clean up all existing .java files
+rm -f Driver.java Item.java Npc.java Room.java *.class
 
- if [$? -eq 0] then
-     rm ${basename}_compiler_output.txt
+./tbag < $1 > ${basename}_compiler_output.txt 2>&1
 
-     javac Driver.java
+if [ -f $driverfile ]; then
+    rm ${basename}_compiler_output.txt
 
-     if [[ ${basename} = *"_input"* ]]
-     then
-         java Driver < "$inputtestsdirectory"${basename}.in
-     else
-         java Driver
-     fi
- else
-     cat ${basename}_compiler_output.txt
+    javac Driver.java
 
+    if [[ ${basename} = *"_input"* ]]
+    then
+        java Driver < "$inputtestsdirectory"${basename}.in
+    else
+        java Driver
+    fi
+else
+    cat ${basename}_compiler_output.txt
+fi
 
-rm Driver.java Item.java Npc.java Room.java *.class
+rm -f Driver.java Item.java Npc.java Room.java *.class
