@@ -34,12 +34,12 @@
 		
 		// transform to uppercase so inputs can be case insensitive
 		for (int i = 0; i < acceptableInputs.length; i++) {
-			acceptableInputs[i] = acceptableInputs[i].toUpperCase();
+			acceptableInputs[i] = acceptableInputs[i];
 		}
 
 		// loop until player enters valid input
 		input = scanner.nextLine();
-		while(!Arrays.asList(acceptableInputs).contains(input.toUpperCase())) {
+		while(!Arrays.asList(acceptableInputs).contains(input)) {
 			System.out.println("Invalid Input");
 			input = scanner.nextLine();
 		}				

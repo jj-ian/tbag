@@ -4,10 +4,4 @@ let _ =
         let lexbuf = Lexing.from_channel stdin in
         let program = Parser.program Scanner.token lexbuf in
         let jast_program = Java_builder.rearrange program in
-        Pretty_printer.pretty_print jast_program;
-                (*
-		printf "%s" program_text;   (* write something *)   
-                flush stdout;
-                *)
-        (*let listing = JavaCode.string_of_prog (Compile.translate program) in
-        print_endline listing*)
+        Code_gen.pretty_print jast_program;
