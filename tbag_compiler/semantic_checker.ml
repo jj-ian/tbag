@@ -275,7 +275,7 @@ let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match fiel
 (* fields in room_def are valid variable types *)
 let check_room_def (env: translation_environment) (r: Ast.room_def) = 
     try
-        let checked_fields = List.fold_left ( fun checked unchecked -> process_room_field unchecked env.scope :: checked ) [] r in
+        let checked_fields = List.map ( fun room_field -> process_room_field room_field env.scope) r in
         checked_fields
     with
     | _ -> raise (Failure "room defs didn't check out")
