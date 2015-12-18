@@ -135,6 +135,7 @@ let rec check_expr env = function
                          end in
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
+               (* TODO: put find_function in try/with block *)
                 let fdecl = find_function env.scope fname in
                 let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
                 let formals = fdecl.formals in
@@ -173,6 +174,25 @@ type of function")
             else raise (Failure "While statement must have a boolean expression
             conditional")
         (*| Goto(rname)*)
+
+(* make sure return statement of function returns proper type, check the
+ * statements inside the function, add the declared variables to the scope, have
+ * a new scope for the function *)
+let check_func_decl (env: translation_environment) func_decl = 
+    if (List.exists(fun fdecl -> fdecl.fname = func_decl.fname) env.scope.functions)
+    then raise (Failure ("Function with " ^ func_decl.fname ^ " already
+    exists."))
+    else
+        let scope' = { parent = Some(env.scope); variables = []; functions = env.scope.functions; room_def = env.scope.room_def} in
+        let env' = { env with scope = scope'; return_type = func_decl.freturntype } in
+        let fbody = func_decl.body in 
+        let fbody = List.map (fun s -> check_stmt env' s) fbody in
+        let new_func_decl = { func_decl with  body = fbody} in
+        env.scope.functions <- new_func_decl::env.scope.functions ; new_func_decl 
+
+let check_func_decls env func_decls =
+    let func_decls = List.map (fun f -> check_func_decl env f) func_decls in 
+    func_decls
 
 let check_valid_type (v : Ast.variable_type) = match v with
     Ast.Void -> Ast.Void
