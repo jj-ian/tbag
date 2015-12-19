@@ -12,7 +12,6 @@ type translation_environment = {
     scope : symbol_table;
     mutable return_type: variable_type;
     mutable current_func: func_decl option;
-    (*room : room_table;*)
     mutable functions : func_decl list;
     mutable room_def: var_decl list;
     mutable pred_stmts : pred_stmt list;
@@ -41,13 +40,6 @@ let check_valid_var_type (v : Ast.variable_type) = match v with
     | Ast.Array(v, i) -> Ast.Array(v, i)
     | _ -> raise (Failure ("Invalid variable type used"))
     (* vars can't be declared as "void" *)
-
-let check_valid_ret_type (v : Ast.variable_type) = match v with
-      Ast.Void -> Ast.Void
-    | Ast.Int -> Ast.Int
-    | Ast.String -> Ast.String
-    | Ast.Boolean -> Ast.Boolean
-    | Ast.Array(v, i) -> Ast.Array(v, i)
 
 let get_var_type_name var_decl = 
     begin match var_decl with 
@@ -151,7 +143,6 @@ let rec check_expr env = function
                          end in
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
-               (*TODO: figure out why Call doesn't catch err in tests *)
                (* TODO: make sure recursive calls to function also match
                 * expr_list *)
                 let fdecl =  (try find_function_with_exprs env fname expr_list
@@ -231,9 +222,6 @@ type of function")
         (*| Goto(rname)*)
 
 let check_var_decl (env: translation_environment) vdecl = 
-        (*Array_decl of variable_type * expr * string
-        | Var of variable_type * string
-        | VarInit of variable_type * string * expr*)
         let (typ, vname) = get_var_type_name vdecl in
         try let _ = find_variable env.scope vname in raise(Failure ("Variable with name " ^ vname ^
         " exists."))
@@ -249,7 +237,6 @@ let check_var_decl (env: translation_environment) vdecl =
                     (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) 
                     else raise (Failure ("Array size must be integer"))
               | Var(typ, name) -> let typ = check_valid_var_type typ in 
-                        (*we dont know why this isnt working*)
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
               | VarInit(typ, name, expr) -> let typ = check_valid_var_type typ in 
                     let (expr, exprtyp) = check_expr env expr in 
@@ -261,9 +248,6 @@ let check_var_decls (env: translation_environment) var_decls =
     let var_decls = List.map(fun vdecl -> check_var_decl env vdecl) var_decls in
     var_decls
 
-(* make sure return statement of function returns proper type, check the
- * statements inside the function, add the declared variables to the scope, have
- * a new scope for the function *)
 let check_func_decl (env: translation_environment) func_decl = 
     try let _ = find_function_with_decls env func_decl.fname func_decl.formals in 
     raise(Failure ("Function with name " ^ func_decl.fname ^ " and given
@@ -285,7 +269,7 @@ let check_func_decl (env: translation_environment) func_decl =
         let flocals = check_var_decls env' func_decl.locals in 
         let fbody = func_decl.body in 
         let fbody = List.map (fun s -> check_stmt env' s) fbody in
-        let ffreturntype = check_valid_ret_type func_decl.freturntype in
+        let ffreturntype = func_decl.freturntype in
         let new_func_decl = { func_decl with  body = fbody; locals = flocals;
         formals = fformals; freturntype = ffreturntype; } in
         env.functions <- new_func_decl::env.functions ; new_func_decl 
@@ -304,7 +288,7 @@ let process_room_field (field: Ast.var_decl) (env: translation_environment) = ma
             then
                 raise (Failure "room fields names cannot repeat.")
             else
-                env.room_def <- Ast.Var(t, name):: env.room_def; (* side affect add room field to room_table *)
+                env.room_def <- Ast.Var(t, name):: env.room_def; (* side effect add room field to room_table *)
             Ast.Var(t, name) (*return this*)     
     | _ -> raise (Failure "room field not correct format. declare a type and name.") 
 
@@ -401,7 +385,6 @@ let check_adj_decls (env: translation_environment) adecls =
     | _ -> raise (Failure "adjacencies didn't check out")   
 
 let check_program (p : Ast.program) =
-        (* at the start symbol table is empty *)
        let print_int = { freturntype = Void; fname = "print"; formals =
            [Var(Ast.Int, "arg")]; locals = []; body = [];} in
        let print_bool = { freturntype = Void; fname = "print"; formals =
