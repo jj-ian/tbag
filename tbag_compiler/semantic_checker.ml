@@ -40,8 +40,6 @@ let rec find_variable (scope : symbol_table) name =
     with Not_found ->
         match scope.parent with 
           Some(parent) -> find_variable parent name
-        | _ ->  print_string "Variable not found";
-                raise Not_found
 
 let find_room (scope: symbol_table) (rd: Ast.room_decl) = 
     try 
@@ -51,8 +49,7 @@ let find_room (scope: symbol_table) (rd: Ast.room_decl) =
 let find_function (scope : symbol_table) name = 
     try
         List.find( fun func_decl -> func_decl.fname = name ) scope.functions
-    with Not_found -> 
-        if name <> "print" then print_string "Function not found"; raise Not_found
+    with Not_found -> raise Not_found
 
 let get_var_type_name var_decl = 
     begin match var_decl with 
@@ -121,12 +118,16 @@ let rec check_expr env = function
 
                 end in (Ast.Binop(e1, op, e2), typ)
         | Ast.Assign(name, expr) ->
-                let vdecl = find_variable env.scope name in
+                let vdecl = (try find_variable env.scope name 
+                with Not_found -> raise (Failure ("undeclared identifier " ^
+                name))) in
                 let (typ, name) = get_var_type_name vdecl in
                 let (expr, typ) = check_expr env expr in
                 (Ast.Assign(name, expr), typ)
         | Ast.ArrayAssign(name, expr1, expr2) ->
-                let vdecl = find_variable env.scope name in
+                let vdecl = (try find_variable env.scope name 
+                with Not_found -> raise (Failure ("undeclared identifier " ^
+                name))) in
                 let (typ, name) = get_var_type_name vdecl in
                 let (pos, postyp) = check_expr env expr1 in
                 let (expr, exprtyp) = check_expr env expr2 in
@@ -137,7 +138,9 @@ let rec check_expr env = function
                 else raise (Failure "Positional array access specifier must be an
                     Integer")
         | Ast.ArrayAccess(name, expr) ->
-                let vdecl = find_variable env.scope name in
+                let vdecl = (try find_variable env.scope name 
+                with Not_found -> raise (Failure ("undeclared identifier " ^
+                name))) in
                 let (typ, name) = get_var_type_name vdecl in 
                 let (pos, postyp) = check_expr env expr in
                 if postyp = Int then (Ast.ArrayAccess(name, expr), typ)
@@ -201,7 +204,6 @@ type of function")
         (*| Goto(rname)*)
 
 let check_var_decl (env: translation_environment) vdecl = 
-        (*print_string"hello from check_var_decl";*)
         (*Array_decl of variable_type * expr * string
         | Var of variable_type * string
         | VarInit of variable_type * string * expr*)
@@ -221,7 +223,6 @@ let check_var_decl (env: translation_environment) vdecl =
                     else raise (Failure ("Array size must be integer"))
               | Var(typ, name) -> let typ = check_valid_type typ in 
                         (*we dont know why this isnt working*)
-                     print_string"hello from check_var_decl";
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
               | VarInit(typ, name, expr) -> let typ = check_valid_type typ in 
                     let (expr, exprtyp) = check_expr env expr in 
