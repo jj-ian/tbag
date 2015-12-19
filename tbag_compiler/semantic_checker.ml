@@ -19,13 +19,23 @@ type translation_environment = {
     (*room : room_table;*)
 }
 
-let check_valid_type (v : Ast.variable_type) = match v with
-    Ast.Void -> Ast.Void
+let check_valid_var_type (v : Ast.variable_type) = match v with
+      Ast.Int -> Ast.Int
+    | Ast.String -> Ast.String
+    | Ast.Boolean -> Ast.Boolean
+    | Ast.Array(v, i) -> Ast.Array(v, i)
+    | _ -> raise (Failure ("Invalid variable type used"))
+    (* vars can't be declared as "void" *)
+
+
+let check_valid_ret_type (v : Ast.variable_type) = match v with
+      Ast.Void -> Ast.Void
     | Ast.Int -> Ast.Int
     | Ast.String -> Ast.String
     | Ast.Boolean -> Ast.Boolean
     | Ast.Array(v, i) -> Ast.Array(v, i)
-    | _ -> raise (Failure ("Invalid type used"))
+    | _ -> raise (Failure ("Invalid return type used"))
+
 
 let rec find_variable (scope : symbol_table) name = 
     try 
@@ -193,10 +203,10 @@ let check_var_decl (env: translation_environment) vdecl =
                     if exprtyp = Int then 
                     (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) 
                     else raise (Failure ("Array size must be integer"))
-              | Var(typ, name) -> let typ = check_valid_type typ in 
+              | Var(typ, name) -> let typ = check_valid_var_type typ in 
                         (*we dont know why this isnt working*)
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
-              | VarInit(typ, name, expr) -> let typ = check_valid_type typ in 
+              | VarInit(typ, name, expr) -> let typ = check_valid_var_type typ in 
                     let (expr, exprtyp) = check_expr env expr in 
                     if exprtyp = typ then 
                         (env.scope.variables <- VarInit (exprtyp,name,expr)::env.scope.variables; VarInit (exprtyp, name,expr)) 
@@ -222,7 +232,7 @@ let check_func_decl (env: translation_environment) func_decl =
         let fformals = List.map (
             fun f -> match f with 
                      Var(typ, name) ->
-                         let typ = check_valid_type typ in 
+                         let typ = check_valid_var_type typ in 
                          env'.scope.variables <- Var(typ,
                          name)::env'.scope.variables; Var(typ, name)
                    | _ -> raise (Failure ("Formal argument must be of type Var"))
@@ -230,7 +240,7 @@ let check_func_decl (env: translation_environment) func_decl =
         let flocals = check_var_decls env' func_decl.locals in 
         let fbody = func_decl.body in 
         let fbody = List.map (fun s -> check_stmt env' s) fbody in
-        let ffreturntype = check_valid_type func_decl.freturntype in
+        let ffreturntype = check_valid_ret_type func_decl.freturntype in
         let new_func_decl = { func_decl with  body = fbody; locals = flocals;
         formals = fformals; freturntype = ffreturntype; } in
         env.scope.functions <- new_func_decl::env.scope.functions ; new_func_decl 
@@ -241,7 +251,7 @@ let check_func_decls env func_decls =
 
 let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match field with
     Ast.Var(typ, name) -> 
-        let t = check_valid_type typ in
+        let t = check_valid_var_type typ in
             if (List.exists ( fun var_decl -> begin match var_decl with 
                                             Var(_, s) -> s = name 
                                             |_ -> raise (Failure "should never reach here")
