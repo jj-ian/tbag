@@ -69,6 +69,7 @@ let rec find_variable (scope : symbol_table) name =
     with Not_found ->
         match scope.parent with 
           Some(parent) -> find_variable parent name
+          | _ -> raise Not_found
 
 let find_room (env: translation_environment) (name) = 
     try 
