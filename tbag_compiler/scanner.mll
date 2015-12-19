@@ -1,7 +1,7 @@
 { open Parser }
 
 rule token = parse
-         [' ' '\t' '\r' '\n'] { token lexbuf }          (* Whitespce *)
+        [' ' '\t' '\r' '\n'] { token lexbuf }   (* Whitespce *)
         | "/*"                                  { comment lexbuf } 
         | "func"                                { FUNC }
         | "room"                                { ROOM }
@@ -45,15 +45,15 @@ rule token = parse
         | "OR"                                  { OR }
         | "NOT"                                 { NOT }
         | "true"                                as lxm { BOOL_LITERAL(bool_of_string lxm) }
-        | "false"                                as lxm { BOOL_LITERAL(bool_of_string lxm) }
+        | "false"                               as lxm { BOOL_LITERAL(bool_of_string lxm) }
         | ['0'-'9']+                            as lxm { INT_LITERAL(int_of_string lxm) }
         | '"'('\\'_|[^'"'])*'"'                 as str { STRING_LITERAL(str) }
         | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*       as lxm { ID(lxm) }
         | eof                                   { EOF }
 
         and comment = parse 
-        "*/" { token lexbuf }   (* End of comment *)
-        | _ { comment lexbuf }  (* eat everything else *)
+        "*/"                            { token lexbuf }   (* End of comment *)
+        | _                             { comment lexbuf }  (* eat everything else *)
 
 (*
 {

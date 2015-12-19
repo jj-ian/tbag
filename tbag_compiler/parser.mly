@@ -22,32 +22,11 @@
 %right NOT
 %left ACCESS
 
-/*
-%start basic_program
-%type <Ast.basic_program> basic_program
-
-%start simple_program
-%type <Ast.simple_program> simple_program
-
-%start room_program
-%type <Ast.room_program> room_program
-*/ 
-
 %start program
 %type <Ast.program> program
 
 %%
 
-/*
-basic_program:
-    fdecl_list EOF                                  { $1 }
-
-simple_program:
-        rdecl_list fdecl_list EOF                   {$1, $2}
-
-room_program:
-        rdef rdecl_list fdecl_list EOF              {$1, $2, $3}
-*/
 
 program:
         /* rooms, npcs, items */
@@ -79,10 +58,10 @@ program:
                 { ([], [], [], "null", [], [], [], [], $1, $2, List.rev $3) }      
 
 data_type:
-        INT                                         { Int }
-        | STRING                                    { String }
-        | VOID                                      { Void }
-        | BOOLEAN                                   { Boolean }
+        INT                                     { Int }
+        | STRING                                { String }
+        | VOID                                  { Void }
+        | BOOLEAN                               { Boolean }
 
 pred_stmt:
         expr LBRACE vdecl_list stmt_list RBRACE
@@ -98,8 +77,8 @@ predicate_list:
 
         
 fdecl_list:
-        /* nothing */                               { [] }
-        | fdecl_list fdecl                          { $2 :: $1 }
+        /* nothing */                           { [] }
+        | fdecl_list fdecl                      { $2 :: $1 }
 
 fdecl:
         FUNC data_type ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
@@ -112,36 +91,36 @@ fdecl:
         } }
 
 formals_opt:
-        /* nothing */                               { [] }
-        | formal_list                               { List.rev $1 }
+        /* nothing */                           { [] }
+        | formal_list                           { List.rev $1 }
 
 formal_list:
-        data_type ID                                { [Var($1, $2)] }
-        | formal_list COMMA data_type ID            { Var($3, $4) :: $1 }
+        data_type ID                            { [Var($1, $2)] }
+        | formal_list COMMA data_type ID        { Var($3, $4) :: $1 }
 
 actuals_opt:
-        /* nothing */                               { [] }
-        | actuals_list                              { List.rev $1 }
+        /* nothing */                           { [] }
+        | actuals_list                          { List.rev $1 }
 
 actuals_list:
-        expr                                        { [$1] }
-        | actuals_list COMMA expr                   { $3 :: $1 }
+        expr                                    { [$1] }
+        | actuals_list COMMA expr               { $3 :: $1 }
 
 vdecl_list:
-        /* nothing */                               { [] }
-        | vdecl_list vdecl                          { $2 :: $1 }
+        /* nothing */                           { [] }
+        | vdecl_list vdecl                      { $2 :: $1 }
 
 vdecl:
-        data_type LBRACK expr RBRACK ID SEMI         { Array_decl($1, $3, $5) }
-        | data_type ID SEMI                           { Var($1, $2) }
-        | data_type ID ASSIGN expr SEMI             { VarInit($1, $2, $4) }
+        data_type LBRACK expr RBRACK ID SEMI    { Array_decl($1, $3, $5) }
+        | data_type ID SEMI                     { Var($1, $2) }
+        | data_type ID ASSIGN expr SEMI         { VarInit($1, $2, $4) }
 
 rdef:
-        ROOM LBRACE vdecl_list RBRACE               { $3 }
+        ROOM LBRACE vdecl_list RBRACE           { $3 }
 
 rdecl_list:
-        rdecl rdecl                                 { [$1; $2] }
-        | rdecl_list rdecl                          { $2 :: $1 }
+        rdecl rdecl                             { [$1; $2] }
+        | rdecl_list rdecl                      { $2 :: $1 }
 
 rdecl:
         ROOM ID LBRACE stmt_list RBRACE
@@ -151,24 +130,24 @@ rdecl:
         } }
 
 start:
-        START LBRACE ID RBRACE                      { $3 }        
+        START LBRACE ID RBRACE                  { $3 }        
 
 adecl_list:
-        adecl                                       { [$1] }
-        | adecl_list adecl                          { $2 :: $1 }
+        adecl                                   { [$1] }
+        | adecl_list adecl                      { $2 :: $1 }
 
 adecl:
-        adj_list SEMI                               { List.rev $1 }
+        adj_list SEMI                           { List.rev $1 }
 
 adj_list:
-        ID ADJ ID                                   { [$1; $3] }
+        ID ADJ ID                               { [$1; $3] }
 
 ndef:
-        NPC LBRACE vdecl_list RBRACE                { $3 }
+        NPC LBRACE vdecl_list RBRACE            { $3 }
 
 ndecl_list:
-        /* nothing */                               { [] }
-        | ndecl_list ndecl                          { $2 :: $1 }
+        /* nothing */                           { [] }
+        | ndecl_list ndecl                      { $2 :: $1 }
 
 ndecl:
         NPC ID LBRACE stmt_list RBRACE
@@ -178,11 +157,11 @@ ndecl:
         } }
 
 idef:
-        ITEM LBRACE vdecl_list RBRACE               { $3 }
+        ITEM LBRACE vdecl_list RBRACE           { $3 }
 
 idecl_list:
-        /* nothing */                               { [] }
-        | idecl_list idecl                          { $2 :: $1 }
+        /* nothing */                           { [] }
+        | idecl_list idecl                      { $2 :: $1 }
 
 idecl:
         ITEM ID LBRACE stmt_list RBRACE
@@ -192,46 +171,46 @@ idecl:
         } }
 
 stmt_list:
-        /* nothing */                               { [] }
-        | stmt_list stmt                            { $2 :: $1 }
+        /* nothing */                           { [] }
+        | stmt_list stmt                        { $2 :: $1 }
 
 stmt:
-        expr SEMI                                   { Expr($1) }
-        | RETURN expr SEMI                          { Return($2) }
-        | LBRACE stmt_list RBRACE                   { Block(List.rev $2) }
-        | IF LPAREN expr RPAREN stmt ELSE stmt      { If($3, $5, $7) }
-        | WHILE LPAREN expr RPAREN stmt             { While($3, $5) }
-        | GOTO ID                                   { Goto($2) }
+        expr SEMI                               { Expr($1) }
+        | RETURN expr SEMI                      { Return($2) }
+        | LBRACE stmt_list RBRACE               { Block(List.rev $2) }
+        | IF LPAREN expr RPAREN stmt ELSE stmt  { If($3, $5, $7) }
+        | WHILE LPAREN expr RPAREN stmt         { While($3, $5) }
+        | GOTO ID                               { Goto($2) }
 /*
 int_opt:
-        INT_LITERAL                                 { $1 }
+        INT_LITERAL                             { $1 }
 */
 
 expr:
-        INT_LITERAL                                 { IntLiteral($1) }
-        | NEG INT_LITERAL                           { NegIntLiteral($2) }
-        | STRING_LITERAL                            { StrLiteral($1) }
-        | END                                       { End }
-        | BOOL_LITERAL                              { BoolLiteral($1) }
-        | ID                                        { Id($1) }
-        | expr PLUS expr                            { Binop($1, Add, $3) }
-        | expr MINUS expr                           { Binop($1, Sub, $3) }
-        | expr TIMES expr                           { Binop($1, Mult, $3) }
-        | expr DIVIDE expr                          { Binop($1, Div, $3) }
-        | expr EQ expr                              { Binop($1, Equal, $3) }
-        | expr STREQ expr                           { Binop($1, StrEqual, $3)}
-        | expr NEQ expr                             { Binop($1, Neq, $3) }
-        | expr LT expr                              { Binop($1, Less, $3) }
-        | expr LEQ expr                             { Binop($1, Leq, $3) }
-        | expr GT expr                              { Binop($1, Greater, $3) }
-        | expr GEQ expr                             { Binop($1, Geq, $3) }
-        | expr AND expr                             { Binop($1, And, $3)}
-        | expr OR expr                              { Binop($1, Or, $3)}
-        | NOT expr                                  { Boolneg(Not, $2)}
-        | ID ASSIGN expr                            { Assign($1, $3) }
-        | ID LBRACK expr RBRACK ASSIGN expr  { ArrayAssign($1, $3, $6) }
-        | ID LBRACK expr RBRACK              { ArrayAccess($1, $3) }
-        | ID LPAREN actuals_opt RPAREN              { Call ($1, $3) }
-        | LPAREN expr RPAREN                        { $2 }
-        | ID ACCESS ID                              { Access ($1, $3) }
+        INT_LITERAL                             { IntLiteral($1) }
+        | NEG INT_LITERAL                       { NegIntLiteral($2) }
+        | STRING_LITERAL                        { StrLiteral($1) }
+        | END                                   { End }
+        | BOOL_LITERAL                          { BoolLiteral($1) }
+        | ID                                    { Id($1) }
+        | expr PLUS expr                        { Binop($1, Add, $3) }
+        | expr MINUS expr                       { Binop($1, Sub, $3) }
+        | expr TIMES expr                       { Binop($1, Mult, $3) }
+        | expr DIVIDE expr                      { Binop($1, Div, $3) }
+        | expr EQ expr                          { Binop($1, Equal, $3) }
+        | expr STREQ expr                       { Binop($1, StrEqual, $3)}
+        | expr NEQ expr                         { Binop($1, Neq, $3) }
+        | expr LT expr                          { Binop($1, Less, $3) }
+        | expr LEQ expr                         { Binop($1, Leq, $3) }
+        | expr GT expr                          { Binop($1, Greater, $3) }
+        | expr GEQ expr                         { Binop($1, Geq, $3) }
+        | expr AND expr                         { Binop($1, And, $3)}
+        | expr OR expr                          { Binop($1, Or, $3)}
+        | NOT expr                              { Boolneg(Not, $2)}
+        | ID ASSIGN expr                        { Assign($1, $3) }
+        | ID LBRACK expr RBRACK ASSIGN expr     { ArrayAssign($1, $3, $6) }
+        | ID LBRACK expr RBRACK                 { ArrayAccess($1, $3) }
+        | ID LPAREN actuals_opt RPAREN          { Call ($1, $3) }
+        | LPAREN expr RPAREN                    { $2 }
+        | ID ACCESS ID                          { Access ($1, $3) }
 

@@ -38,10 +38,10 @@ type stmt =
 type room_def = var_decl list
 
 type room_decl = 
-{
-        rname: string;
-        rbody: stmt list;
-}
+        {
+                rname: string;
+                rbody: stmt list;
+        }
 
 type start = string
 
@@ -55,29 +55,29 @@ type pred_stmt =
         }
        
 type func_decl = 
-{
-        freturntype: variable_type;
-        fname : string;
-        formals : var_decl list; 
-        locals: var_decl list;
-        body : stmt list;
-}
+        {       
+                freturntype: variable_type;
+                fname : string;
+                formals : var_decl list; 
+                locals: var_decl list;
+                body : stmt list;
+        }
 
 type npc_def = var_decl list
 
 type npc_decl = 
-{
-        nname: string;
-        nbody: stmt list;
-}
+        {
+                nname: string;
+                nbody: stmt list;
+        }
 
 type item_def = var_decl list
 
 type item_decl = 
-{
-        iname: string;
-        ibody: stmt list;
-}
+        {
+                iname: string;
+                ibody: stmt list;
+        }
 
 type basic_program = func_decl list
 
