@@ -66,7 +66,7 @@ let rec find_variable (scope : symbol_table) name =
 let find_room (env: translation_environment) (name) = 
     try 
         List.find (fun room_decl -> room_decl.rname = name) env.rooms
-    with Not_found-> raise (Failure ("undeclared identifier " ^ name))
+    with Not_found-> raise Not_found 
 
 let print_var_decls (decl_list: Ast.var_decl list) = 
     List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
@@ -81,7 +81,9 @@ let rec check_expr env = function
                 find_variable env.scope vname 
                 with Not_found -> 
                     (*TO DO - check that vname is a valid Room name before failing*)
-                    find_room env vname; Var(Ast.Void, vname) ) in
+                    (try find_room env vname with
+                    Not_found -> raise (Failure ("undeclared identifier " ^
+                    vname))); Var(Ast.Void, vname)) in
                 let (typ, vname) = get_var_type_name vdecl 
                 (*in (Ast.Id(vname), Ast.Void)*)
                 in (Ast.Id(vname), typ)
@@ -337,11 +339,8 @@ let check_room_decl (env: translation_environment) (room: Ast.room_decl) =
                 checked_room_decl (* return this *)
 
 let check_room_decls (env: translation_environment) rooms = 
-    try
         let checked_room_decls = List.map (fun unchecked -> check_room_decl env unchecked) rooms in
         checked_room_decls
-    with
-    | _-> raise (Failure "room decls didn't check out")
 
 
 (* fields in room_def are valid variable types *)
