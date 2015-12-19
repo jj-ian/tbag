@@ -241,7 +241,10 @@ type of function")
             if typ = Boolean then While(expr, check_stmt env stmt) 
             else raise (Failure "While statement must have a boolean expression
             conditional")
-        (*| Goto(rname)*)
+        | Goto(rname) ->
+            let rdecl = try find_room env rname with
+                        Not_found -> raise( Failure "Goto parameter name not a valid room.") 
+            in Goto(rname)
 
 let check_var_decl (env: translation_environment) vdecl = 
         let (typ, vname) = get_var_type_name vdecl in
