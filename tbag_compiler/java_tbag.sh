@@ -8,7 +8,13 @@ driverfile="Driver.java"
 # clean up all existing .java files
 rm -f Driver.java Item.java Npc.java Room.java *.class
 
-./tbag < $1 > ${basename}_compiler_output.txt 2>&1
+# add tbag standard library to the end of the file
+cat $1 > prog_w_stdlib.tbag
+cat lib/stdlib.tbag >> prog_w_stdlib.tbag
+
+#./tbag < $1 > ${basename}_compiler_output.txt 2>&1
+./tbag < prog_w_stdlib.tbag > ${basename}_compiler_output.txt 2>&1
+rm prog_w_stdlib.tbag
 
 if [ -f $driverfile ]; then
     rm ${basename}_compiler_output.txt

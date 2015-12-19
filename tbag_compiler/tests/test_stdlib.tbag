@@ -1,0 +1,7 @@
+true {
+	strPrintLine("hi");
+	intPrintLine(666);
+	boolPrintLine(true);
+	boolPrintLine(false);
+	endgame;
+}
