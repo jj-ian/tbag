@@ -43,6 +43,11 @@ let rec find_variable (scope : symbol_table) name =
         | _ ->  print_string "Variable not found";
                 raise Not_found
 
+let find_room (scope: symbol_table) (rd: Ast.room_decl) = 
+    try 
+        List.find (fun room_decl -> 
+            rd.name) scope.room_decls
+
 let find_function (scope : symbol_table) name = 
     try
         List.find( fun func_decl -> func_decl.fname = name ) scope.functions
@@ -196,7 +201,7 @@ type of function")
         (*| Goto(rname)*)
 
 let check_var_decl (env: translation_environment) vdecl = 
-        print_string"hello from check_var_decl";
+        (*print_string"hello from check_var_decl";*)
         (*Array_decl of variable_type * expr * string
         | Var of variable_type * string
         | VarInit of variable_type * string * expr*)
@@ -247,8 +252,7 @@ let check_func_decl (env: translation_environment) func_decl =
                          let typ = check_valid_type typ in 
                          env'.scope.variables <- Var(typ,
                          name)::env'.scope.variables; Var(typ, name)
-                   | _ -> raise (Failure ("Formal argument must be of type
-                     Var"))
+                   | _ -> raise (Failure ("Formal argument must be of type Var"))
                    ) func_decl.formals in
         let flocals = check_var_decls env' func_decl.locals in 
         let fbody = func_decl.body in 
@@ -275,6 +279,34 @@ let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match fiel
                 scope.room_def <- Ast.Var(t, name):: scope.room_def; (* side affect add room field to room_table *)
             Ast.Var(t, name) (*return this*)     
     | _ -> raise (Failure "room field not correct format. declare a type and name.")
+
+
+
+let process_room_decl (scope: symbol_table) (rfa: Ast.stmt) = match rfa with
+    (*check that the stmt is in the form of an expr*)
+    Expr(roomAssign) ->
+        match roomAssign with 
+            (* check that the expr is in the form of an assign*)
+            Assign(field, expr) ->
+                (* check that the fields correctly map to the stmt *)
+                let checked_field_nums = List.map2 (fun )
+            |_-> raise (Failure "room assignment not correct format.")
+    |_-> raise (Failure "room assignment not correct format.")
+
+
+let check_room_decls (env: translation_environment) (room: Ast.room_decl) = 
+    let (name, body) = room in (* body is a list of stmts*)
+        try let _ = find_variable env.scope vname in raise(Failure ("Variable with name " ^ vname ^
+        " exists."))
+        with Not_found ->
+        let checked_body = List.map ( fun unchecked -> process_room_decl env.scope unchecked) body in
+        let num_stmts = List.length(checked_body) in
+            if (num_stmts <> List.length(env.scope.room_def)) then
+                raise (Failure "number of room decl fields do not match definition.")
+            else 
+                checked_body (* return this *)
+
+
 
 
 (* fields in room_def are valid variable types *)
