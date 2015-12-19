@@ -68,6 +68,16 @@ let find_room (env: translation_environment) (name) =
         List.find (fun room_decl -> room_decl.rname = name) env.rooms
     with Not_found-> raise Not_found 
 
+let find_room_field (env: translation_environment) fieldName =
+     let field_decl = (try (List.find ( fun var_decl -> begin match var_decl with 
+                                            Var(t, s) -> s = fieldName 
+                                            |_ -> raise (Failure "should never reach here")
+                                            end ) env.room_def ) 
+                        with
+                            Not_found -> raise(Failure "room field referenced does not exist."))
+     in let (typ, n) = get_var_type_name field_decl in 
+     (typ, n)
+
 let print_var_decls (decl_list: Ast.var_decl list) = 
     List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
 
@@ -168,8 +178,12 @@ let rec check_expr env = function
        | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
       (* TODO: Access operator for rooms, need to check that the thing is in the
        * room_decl, which will be stored in the environment *)
-      (*| Ast.Access(rname, field) -> 
-            let rdecl = (try find_room env rname)*)
+       | Ast.Access(rname, field) -> 
+            let rdecl = (try find_room env rname with Not_found -> raise(Failure("Room" ^ 
+                rname ^ "does not exist."))) in 
+            let (ftyp, fname) = find_room_field env field in 
+            (Ast.Access(rname, field), ftyp)
+
 
 
 (* check formal arg list with expr list of called function *)
@@ -305,6 +319,7 @@ let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begi
     Ast.Expr(roomAssign) -> begin match roomAssign with (* check that the expr is in the form of an assign*)
         Ast.Assign(fieldname, expr) ->
            (* try *)
+            print_string fieldname;
             let rdecl = List.find(fun rdecl -> begin match rdecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
                     | Var(t, s) -> s = fieldname 
@@ -323,6 +338,7 @@ let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begi
 
 
 let check_room_decl (env: translation_environment) (room: Ast.room_decl) = 
+    print_string("reached checke_room_decl!");
     let name = room.rname in 
     let body = room.rbody in (* body is a list of stmts*)
         try let _ = find_room env name in raise(Failure ("Room with name " ^ name ^ " already exists."))
