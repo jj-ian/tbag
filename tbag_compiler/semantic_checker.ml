@@ -319,7 +319,6 @@ let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begi
     Ast.Expr(roomAssign) -> begin match roomAssign with (* check that the expr is in the form of an assign*)
         Ast.Assign(fieldname, expr) ->
            (* try *)
-            print_string fieldname;
             let rdecl = List.find(fun rdecl -> begin match rdecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
                     | Var(t, s) -> s = fieldname 
@@ -338,7 +337,6 @@ let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begi
 
 
 let check_room_decl (env: translation_environment) (room: Ast.room_decl) = 
-    print_string("reached checke_room_decl!");
     let name = room.rname in 
     let body = room.rbody in (* body is a list of stmts*)
         try let _ = find_room env name in raise(Failure ("Room with name " ^ name ^ " already exists."))
