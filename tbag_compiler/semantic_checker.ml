@@ -150,8 +150,7 @@ let rec check_expr env = function
                (*TODO: figure out why Call doesn't catch err in tests *)
                (* TODO: make sure recursive calls to function also match
                 * expr_list *)
-               print_string ("Currently checking " ^ fname);
-                let fdecl =  (try find_function env fname expr_list
+                let fdecl =  (try find_function_with_exprs env fname expr_list
                              with Not_found -> begin match env.current_func with 
                              Some(current_func) -> 
                                 if (current_func.fname = fname) then
@@ -168,36 +167,40 @@ let rec check_expr env = function
        * room_decl, which will be stored in the environment *)
 
 (* check formal arg list with expr list of called function *)
-and check_matching_args (env: translation_environment) ref_vars target_exprs =
+and check_matching_args_helper (env: translation_environment) ref_vars target_exprs =
     let result = true in
     let _ = (try List.map2 (
         fun r t -> let (rtyp, rname) = get_var_type_name r in 
                    let (texpr, ttyp) = check_expr env t in 
-                   print_valid_var_type ttyp; print_valid_var_type rtyp; if ttyp
-                   <> rtyp then raise Not_found) ref_vars target_exprs
+                   if ttyp <> rtyp then raise Not_found) ref_vars target_exprs
     with Invalid_argument(_) -> raise Not_found) in result
 
-and check_matching_args_result (env: translation_environment) ref_vars target_exprs =
-    let result = (try check_matching_args env ref_vars target_exprs with
+and check_matching_args (env: translation_environment) ref_vars target_exprs =
+    let result = (try check_matching_args_helper env ref_vars target_exprs with
     Not_found -> false) in result
 
-and find_function (env : translation_environment) name expr_list = 
-    (* modify to check return type and types of each param against existing func
-     * decls *)
-    (*
-                    let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
-                    let formals = fdecl.formals in
-                    print_var_decls formals; let (_, _) = List.map2 ( 
-                        fun args params ->
-                            print_string "Hello from List.map2!"; let (formaltyp, formalname) = get_var_type_name args in 
-                            let (pexpr, ptyp) = check_expr env params in
-                            if formaltyp = ptyp then pexpr
-                            else raise (Failure "Type mismatch between formal argument and parameter")
-                    ) formals, expr_list in
-      *)
+and find_function_with_exprs (env : translation_environment) name expr_list = 
     try
         List.find( fun func_decl -> func_decl.fname = name &&
-        check_matching_args_result env func_decl.formals expr_list) env.functions
+        check_matching_args env func_decl.formals expr_list) env.functions
+    with Not_found -> raise Not_found
+
+let check_matching_decls_helper (env: translation_environment) ref_vars target_decls =
+    let result = true in
+    let _ = (try List.map2 (
+        fun r t -> let (rtyp, rname) = get_var_type_name r in 
+                   let (ttyp, tname) = get_var_type_name t in 
+                   if ttyp <> rtyp then raise Not_found) ref_vars target_decls
+    with Invalid_argument(_) -> raise Not_found) in result
+
+let check_matching_decls (env: translation_environment) ref_vars target_decls =
+    let result = (try check_matching_decls_helper env ref_vars target_decls with
+    Not_found -> false) in result
+
+let find_function_with_decls (env : translation_environment) name decl_list = 
+    try
+        List.find( fun func_decl -> func_decl.fname = name &&
+        check_matching_decls env func_decl.formals decl_list) env.functions
     with Not_found -> raise Not_found
 
 let rec check_stmt env = function
@@ -255,11 +258,10 @@ let check_var_decls (env: translation_environment) var_decls =
  * statements inside the function, add the declared variables to the scope, have
  * a new scope for the function *)
 let check_func_decl (env: translation_environment) func_decl = 
-    if (List.exists(fun fdecl -> fdecl.fname = func_decl.fname) env.functions 
-        || func_decl.fname = "print")
-    then raise (Failure ("Function with " ^ func_decl.fname ^ " already
-    exists."))
-    else
+    try let _ = find_function_with_decls env func_decl.fname func_decl.formals in 
+    raise(Failure ("Function with name " ^ func_decl.fname ^ " and given
+    argument types exists"))
+    with Not_found -> 
         let scope' = { parent = Some(env.scope); variables = [];} in
         let env' = { env with scope = scope'; return_type =
             func_decl.freturntype; functions = env.functions; room_def =
