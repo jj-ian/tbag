@@ -1,3 +1,5 @@
+(* Authors: All *)
+
 { open Parser }
 
 rule token = parse

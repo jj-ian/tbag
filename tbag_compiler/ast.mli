@@ -1,3 +1,5 @@
+(* Authors: All *)
+
 type op = Add | Sub | Mult | Div | Equal | StrEqual | Neq | Less | Leq | Greater | Geq | And | Or | Not
 
 type variable_type =
@@ -19,8 +21,8 @@ type expr =
         | Binop of expr * op * expr 
         | Boolneg of op * expr
         | Call of string * expr list
-        | Access of string * string  (* foo.bar *)
-        | End (* should this be in stmt instead of in expr? *)
+        | Access of string * string 
+        | End 
 
 type var_decl =
         Array_decl of variable_type * expr * string
