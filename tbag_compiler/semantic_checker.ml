@@ -161,9 +161,29 @@ let rec check_expr env = function
                          end in
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
-               (* TODO: make sure recursive calls to function also match
+               (* TODO: make sure recursive calls to function also match:
                 * expr_list *)
-                let fdecl =  (try find_function_with_exprs env fname expr_list
+                if fname = "arr_len" && List.length expr_list = 1 then 
+                    let arr_name = 
+                      let e = List.hd expr_list in
+                      begin match e with 
+                        Ast.Id(vname) -> vname
+                      | _ -> raise (Failure("arr_len expects an array
+                      argument"))
+                        end in
+                     let arr_decl = (try find_variable env.scope arr_name
+                     with Not_found -> raise (Failure ("undeclared identifier " ^
+                    arr_name))) in
+                     let result = 
+                         begin match arr_decl with
+                         Ast.Array_decl(_,_,_) -> true
+                      | _ -> false
+                         end in
+                     if result then
+                    (Ast.Call(fname, expr_list), Ast.Int)
+                     else raise (Failure "arr_len expects an array
+                      argument")
+                 else let fdecl = (try find_function_with_exprs env fname expr_list
                              with Not_found -> begin match env.current_func with 
                              Some(current_func) -> 
                                 if (current_func.fname = fname) then
