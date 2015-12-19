@@ -6,24 +6,55 @@ open Ast
 type symbol_table = {
     parent : symbol_table option;
     mutable variables : var_decl list;
-    mutable functions : func_decl list;
-    mutable room_def: var_decl list;
-    mutable pred_stmts : pred_stmt list;
 } 
 
 type translation_environment = {
     scope : symbol_table;
     mutable return_type: variable_type;
+    mutable current_func: func_decl option;
     (*room : room_table;*)
+    mutable functions : func_decl list;
+    mutable room_def: var_decl list;
+    mutable pred_stmts : pred_stmt list;
+    mutable rooms: room_decl list;
 }
 
-let check_valid_type (v : Ast.variable_type) = match v with
-    Ast.Void -> Ast.Void
+let print_valid_var_type (v : Ast.variable_type) = match v with
+      Ast.Int -> print_string "Ast.Int"
+    | Ast.Void -> print_string "Ast.Void"
+    | Ast.String -> print_string "Ast.String"
+    | Ast.Boolean -> print_string "Ast.Boolean"
+    | Ast.Array(v, i) -> print_string "Ast.Array(v, i)"
+    | _ -> raise (Failure ("Invalid variable type used"))
+
+let print_valid_lit_type (v: Ast.expr) = match v with
+        IntLiteral(x) -> print_string "IntLiteral"
+        | NegIntLiteral(y) -> print_string "NegIntLiteral"
+        | StrLiteral(s) -> print_string "StrLiteral"
+        | BoolLiteral(b) -> print_string "BoolLiteral"
+        | _ -> print_string "not a literal"
+
+let check_valid_var_type (v : Ast.variable_type) = match v with
+      Ast.Int -> Ast.Int
+    | Ast.String -> Ast.String
+    | Ast.Boolean -> Ast.Boolean
+    | Ast.Array(v, i) -> Ast.Array(v, i)
+    | _ -> raise (Failure ("Invalid variable type used"))
+    (* vars can't be declared as "void" *)
+
+let check_valid_ret_type (v : Ast.variable_type) = match v with
+      Ast.Void -> Ast.Void
     | Ast.Int -> Ast.Int
     | Ast.String -> Ast.String
     | Ast.Boolean -> Ast.Boolean
     | Ast.Array(v, i) -> Ast.Array(v, i)
-    | _ -> raise (Failure ("Invalid type used"))
+
+let get_var_type_name var_decl = 
+    begin match var_decl with 
+    Array_decl(t, _, s) -> (t, s)
+    | Var(t, s) -> (t, s)
+    | VarInit(t, s, _) -> (t, s)
+    end 
 
 let rec find_variable (scope : symbol_table) name = 
     try 
@@ -38,32 +69,25 @@ let rec find_variable (scope : symbol_table) name =
     with Not_found ->
         match scope.parent with 
           Some(parent) -> find_variable parent name
-        | _ ->  print_string "Variable not found";
-                raise Not_found
+          | _ -> raise Not_found
 
-let find_function (scope : symbol_table) name = 
-    try
-        List.find( fun func_decl -> func_decl.fname = name ) scope.functions
-    with Not_found -> 
-        if name <> "print" then print_string "Function not found"; raise Not_found
+let find_room (env: translation_environment) (name) = 
+    try 
+        List.find (fun room_decl -> room_decl.rname = name) env.rooms
+    with Not_found-> raise Not_found
 
-let get_var_type_name var_decl = 
-    begin match var_decl with 
-    Array_decl(t, _, s) -> (t, s)
-    | Var(t, s) -> (t, s)
-    | VarInit(t, s, _) -> (t, s)
-    end 
+let print_var_decls (decl_list: Ast.var_decl list) = 
+    List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
 
 let rec check_expr env = function
         Ast.IntLiteral(v) -> (Ast.IntLiteral(v), Ast.Int)
         | Ast.NegIntLiteral(v) -> (Ast.NegIntLiteral(v), Ast.Int)
         | Ast.StrLiteral(v) -> (Ast.StrLiteral(v), Ast.String)
         | Ast.BoolLiteral(v) -> (Ast.BoolLiteral(v), Ast.Boolean)
-        | Ast.Id(vname) ->
+        | Ast.Id(vname) -> (*TO DO - check that vname is a valid Room name before failing*)
                 let vdecl = (try
                 find_variable env.scope vname 
-                with Not_found ->
-                    raise (Failure ("undeclared identifier " ^ vname))) in
+                with Not_found -> raise (Failure ("undeclared identifier " ^ vname))) in
                 let (typ, vname) = get_var_type_name vdecl
                 in (Ast.Id(vname), typ)
         | Ast.Binop(e1, op, e2) ->
@@ -71,55 +95,32 @@ let rec check_expr env = function
                 and (e2, t2) = check_expr env e2 in
                 let typ =
                 begin match op with
-                    Add -> 
+                   (Add | Sub | Mult | Div)  -> 
                         if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to + must both be Int")
-                  | Sub ->
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to - must both be Int")
-                  | Mult ->
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to * must both be Int")
-                  | Div ->
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to / must both be Int")
-                  | Equal ->
-                        if (t1 = t2) then Boolean 
-                        else raise (Failure "Types to == must be the same")
+                        else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
+                  | (Equal | Neq | Less | Leq | Greater | Geq) ->
+                        if (t1 = Int && t2 = Int) then Boolean 
+                        else raise (Failure "Types to integer comparison
+                        operators ==, !=, <, <=, >, >= must be the same")
                   | StrEqual ->
                         if (t1 = String && t2 = String) then Boolean
                         else raise (Failure "Types to ~~ must both be String")
-                  | Neq ->
-                        if (t1 = t2) then Boolean 
-                        else raise (Failure "Types to != must be the same")
-                  | Less ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to < must both be Int")
-                  | Leq ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to <= must both be Int")
-                  | Greater ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to > must both be Int")
-                  | Geq ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to >= must both be Int")
-                  | And ->
+                  | (And | Or) ->
                         if (t1 = Boolean && t2 = Boolean) then Boolean
-                        else raise (Failure "Types to AND must both be Boolean")
-                  | Or ->
-                        if (t1 = Boolean && t2 = Boolean) then Boolean
-                        else raise (Failure "Types to OR must both be Boolean")
+                        else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
                   | Not -> raise (Failure "NOT takes a single operand") 
-
                 end in (Ast.Binop(e1, op, e2), typ)
         | Ast.Assign(name, expr) ->
-                let vdecl = find_variable env.scope name in
+                let vdecl = (try find_variable env.scope name 
+                with Not_found -> raise (Failure ("undeclared identifier " ^
+                name))) in
                 let (typ, name) = get_var_type_name vdecl in
                 let (expr, typ) = check_expr env expr in
                 (Ast.Assign(name, expr), typ)
         | Ast.ArrayAssign(name, expr1, expr2) ->
-                let vdecl = find_variable env.scope name in
+                let vdecl = (try find_variable env.scope name 
+                with Not_found -> raise (Failure ("undeclared identifier " ^
+                name))) in
                 let (typ, name) = get_var_type_name vdecl in
                 let (pos, postyp) = check_expr env expr1 in
                 let (expr, exprtyp) = check_expr env expr2 in
@@ -130,7 +131,9 @@ let rec check_expr env = function
                 else raise (Failure "Positional array access specifier must be an
                     Integer")
         | Ast.ArrayAccess(name, expr) ->
-                let vdecl = find_variable env.scope name in
+                let vdecl = (try find_variable env.scope name 
+                with Not_found -> raise (Failure ("undeclared identifier " ^
+                name))) in
                 let (typ, name) = get_var_type_name vdecl in 
                 let (pos, postyp) = check_expr env expr in
                 if postyp = Int then (Ast.ArrayAccess(name, expr), typ)
@@ -141,38 +144,69 @@ let rec check_expr env = function
                 let op = begin match op with
                              Not -> op
                              | _ -> raise (Failure "All other operators besides
-                             NOT take two operators")
+                             NOT take two operands")
                          end in
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
-               (* TODO: put find_function in try/with block *)
-                let fdecl =  (try find_function env.scope fname 
-                             with Not_found ->
-                                 raise (Failure ("Function " ^ fname ^ " does
-                                 not exist."))) in
-                    let (typ, fname) = (fdecl.freturntype, fdecl.fname) in
-                    let formals = fdecl.formals in
-                    (* TODO: replace List.fold_left2 with List.map2 *)
-                    let (_, expr_list) = List.fold_left2 (
-                        fun a l1 l2 -> 
-                            let (formaltyp, formalname) = get_var_type_name l1 in 
-                            let (argexpr, argtyp) = check_expr env l2 in
-                            if formaltyp = argtyp then argexpr :: a
-                            else raise (Failure "Type mismatch between formal argument and parameter")
-                    ) [] formals, expr_list in
+               (*TODO: figure out why Call doesn't catch err in tests *)
+               (* TODO: make sure recursive calls to function also match
+                * expr_list *)
+                let fdecl =  (try find_function_with_exprs env fname expr_list
+                             with Not_found -> begin match env.current_func with 
+                             Some(current_func) -> 
+                                if (current_func.fname = fname) then
+                                    current_func 
+                                else 
+                                    raise (Failure ("Function " ^ fname ^ " does
+                                    not exist with the given parameters."))
+                            |_-> raise (Failure ("Function " ^ fname ^ " does
+                            not exist with the given parameters."))end) in
+                let typ = fdecl.freturntype in
                     (Ast.Call(fname, expr_list), typ)
        | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
       (* TODO: Access operator for rooms, need to check that the thing is in the
        * room_decl, which will be stored in the environment *)
 
+(* check formal arg list with expr list of called function *)
+and check_matching_args_helper (env: translation_environment) ref_vars target_exprs =
+    let result = true in
+    let _ = (try List.map2 (
+        fun r t -> let (rtyp, rname) = get_var_type_name r in 
+                   let (texpr, ttyp) = check_expr env t in 
+                   if ttyp <> rtyp then raise Not_found) ref_vars target_exprs
+    with Invalid_argument(_) -> raise Not_found) in result
+
+and check_matching_args (env: translation_environment) ref_vars target_exprs =
+    let result = (try check_matching_args_helper env ref_vars target_exprs with
+    Not_found -> false) in result
+
+and find_function_with_exprs (env : translation_environment) name expr_list = 
+    try
+        List.find( fun func_decl -> func_decl.fname = name &&
+        check_matching_args env func_decl.formals expr_list) env.functions
+    with Not_found -> raise Not_found
+
+let check_matching_decls_helper (env: translation_environment) ref_vars target_decls =
+    let result = true in
+    let _ = (try List.map2 (
+        fun r t -> let (rtyp, rname) = get_var_type_name r in 
+                   let (ttyp, tname) = get_var_type_name t in 
+                   if ttyp <> rtyp then raise Not_found) ref_vars target_decls
+    with Invalid_argument(_) -> raise Not_found) in result
+
+let check_matching_decls (env: translation_environment) ref_vars target_decls =
+    let result = (try check_matching_decls_helper env ref_vars target_decls with
+    Not_found -> false) in result
+
+let find_function_with_decls (env : translation_environment) name decl_list = 
+    try
+        List.find( fun func_decl -> func_decl.fname = name &&
+        check_matching_decls env func_decl.formals decl_list) env.functions
+    with Not_found -> raise Not_found
+
 let rec check_stmt env = function
         Block(stmt_list) -> 
-            (* We don't need this scope stuff because vars are not
-             * declared in this stmt type but keeping here for now *)
-            let scope' = { parent = Some(env.scope); variables = []; functions =
-                env.scope.functions; room_def = env.scope.room_def; pred_stmts = env.scope.pred_stmts;} in
-            let env' = { env with scope = scope';} in
-            let sl = List.map (fun s -> check_stmt env' s) stmt_list in scope'.variables <- List.rev scope'.variables; Block(sl)
+            let sl = List.map (fun s -> check_stmt env s) stmt_list in Block(sl)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
         | Return(expr) -> let (expr, typ) = check_expr env expr in 
           if typ = env.return_type then Return(expr)
@@ -206,15 +240,16 @@ let check_var_decl (env: translation_environment) vdecl =
             Array_decl(typ, expr, name) -> 
                     let (expr, exprtyp) = check_expr env expr in
                     if exprtyp = Int then 
-                    (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) else raise (Failure ("Array size must be integer"))
-              | Var(typ, name) -> let typ = check_valid_type typ in 
+                    (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) 
+                    else raise (Failure ("Array size must be integer"))
+              | Var(typ, name) -> let typ = check_valid_var_type typ in 
+                        (*we dont know why this isnt working*)
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
-              | VarInit(typ, name, expr) -> let typ = check_valid_type typ in 
+              | VarInit(typ, name, expr) -> let typ = check_valid_var_type typ in 
                     let (expr, exprtyp) = check_expr env expr in 
-                    if exprtyp = typ then (env.scope.variables <- VarInit (exprtyp,
-                    name,expr)::env.scope.variables; VarInit (exprtyp, name,
-                    expr)) else raise (Failure ("Type mismatch in variable
-                    initialization"))
+                    if exprtyp = typ then 
+                        (env.scope.variables <- VarInit (exprtyp,name,expr)::env.scope.variables; VarInit (exprtyp, name,expr)) 
+                    else raise (Failure ("Type mismatch in variable initialization"))
 
 let check_var_decls (env: translation_environment) var_decls = 
     let var_decls = List.map(fun vdecl -> check_var_decl env vdecl) var_decls in
@@ -224,55 +259,99 @@ let check_var_decls (env: translation_environment) var_decls =
  * statements inside the function, add the declared variables to the scope, have
  * a new scope for the function *)
 let check_func_decl (env: translation_environment) func_decl = 
-    if (List.exists(fun fdecl -> fdecl.fname = func_decl.fname)
-    env.scope.functions || func_decl.fname = "print")
-    then raise (Failure ("Function with " ^ func_decl.fname ^ " already
-    exists."))
-    else
-        let scope' = { parent = Some(env.scope); variables = []; functions =
-            env.scope.functions; room_def = env.scope.room_def; pred_stmts =
-                env.scope.pred_stmts;} in
-        let env' = { env with scope = scope'; return_type = func_decl.freturntype } in
+    try let _ = find_function_with_decls env func_decl.fname func_decl.formals in 
+    raise(Failure ("Function with name " ^ func_decl.fname ^ " and given
+    argument types exists"))
+    with Not_found -> 
+        let scope' = { parent = Some(env.scope); variables = [];} in
+        let env' = { env with scope = scope'; return_type =
+            func_decl.freturntype; functions = env.functions; room_def =
+                env.room_def; pred_stmts = env.pred_stmts; rooms =
+                    env.rooms; current_func = Some(func_decl)} in
         let fformals = List.map (
             fun f -> match f with 
                      Var(typ, name) ->
-                         let typ = check_valid_type typ in 
+                         let typ = check_valid_var_type typ in 
                          env'.scope.variables <- Var(typ,
                          name)::env'.scope.variables; Var(typ, name)
-                   | _ -> raise (Failure ("Formal argument must be of type
-                     Var"))
+                   | _ -> raise (Failure ("Formal argument must be of type Var"))
                    ) func_decl.formals in
         let flocals = check_var_decls env' func_decl.locals in 
         let fbody = func_decl.body in 
         let fbody = List.map (fun s -> check_stmt env' s) fbody in
-        let ffreturntype = check_valid_type func_decl.freturntype in
+        let ffreturntype = check_valid_ret_type func_decl.freturntype in
         let new_func_decl = { func_decl with  body = fbody; locals = flocals;
         formals = fformals; freturntype = ffreturntype; } in
-        env.scope.functions <- new_func_decl::env.scope.functions ; new_func_decl 
+        env.functions <- new_func_decl::env.functions ; new_func_decl 
 
 let check_func_decls env func_decls =
     let func_decls = List.map (fun f -> check_func_decl env f) func_decls in 
     func_decls
 
-let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match field with
+let process_room_field (field: Ast.var_decl) (env: translation_environment) = match field with
     Ast.Var(typ, name) -> 
-        let t = check_valid_type typ in
+        let t = check_valid_var_type typ in
             if (List.exists ( fun var_decl -> begin match var_decl with 
                                             Var(_, s) -> s = name 
                                             |_ -> raise (Failure "should never reach here")
-                                            end ) scope.room_def )
+                                            end ) env.room_def )
             then
                 raise (Failure "room fields names cannot repeat.")
             else
-                scope.room_def <- Ast.Var(t, name):: scope.room_def; (* side affect add room field to room_table *)
+                env.room_def <- Ast.Var(t, name):: env.room_def; (* side affect add room field to room_table *)
             Ast.Var(t, name) (*return this*)     
-    | _ -> raise (Failure "room field not correct format. declare a type and name.")
+    | _ -> raise (Failure "room field not correct format. declare a type and name.") 
+
+
+let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begin match rfa with
+    Ast.Expr(roomAssign) -> begin match roomAssign with (* check that the expr is in the form of an assign*)
+        Ast.Assign(fieldname, expr) ->
+           (* try *)
+            let rdecl = List.find(fun rdecl -> begin match rdecl with 
+                    Array_decl(_, _, s) -> "0" = fieldname
+                    | Var(t, s) -> s = fieldname 
+                    | VarInit(_, s, _) -> "0" = fieldname end) env.room_def in
+            (*with 
+                Not_found-> raise (Failure "field name in room decl does not exist.") in *)
+            let (room_decl_typ, _) = get_var_type_name rdecl in
+            (*CHECKING FOR ROOM DECL BODY EXPR RETURN TYPE HERE*)
+            let (_, typ) = check_expr env expr in
+                if ( typ <> room_decl_typ ) then 
+                    raise (Failure "room decl body does not match field type")
+                else 
+                    rfa (*return this*)
+        | _ -> raise (Failure "room assignment not correct format.") end
+    | _ -> raise (Failure "room assignment not correct format.") end
+
+
+let check_room_decl (env: translation_environment) (room: Ast.room_decl) = 
+    let name = room.rname in 
+    let body = room.rbody in (* body is a list of stmts*)
+        try let _ = find_room env name in raise(Failure ("Room with name " ^ name ^ " already exists."))
+        with Not_found ->
+        let checked_body = List.map ( fun unchecked -> process_room_decl_body env unchecked) body in
+        (* check that number of fields in room_def match with number of fields in room decl*)
+        let num_stmts = List.length(checked_body) in
+            if (num_stmts <> List.length(env.room_def)) then
+                raise (Failure "number of room decl fields do not match definition.")
+            else 
+                (* add the room_decls to the scope*)
+                let checked_room_decl = { rname = name; rbody = checked_body } in 
+                env.rooms <- checked_room_decl::env.rooms;
+                checked_room_decl (* return this *)
+
+let check_room_decls (env: translation_environment) rooms = 
+    try
+        let checked_room_decls = List.map (fun unchecked -> check_room_decl env unchecked) rooms in
+        checked_room_decls
+    with
+    | _-> raise (Failure "room decls didn't check out")
 
 
 (* fields in room_def are valid variable types *)
 let check_room_def (env: translation_environment) (r: Ast.room_def) = 
     try
-        let checked_fields = List.fold_left ( fun checked unchecked -> process_room_field unchecked env.scope :: checked ) [] r in
+        let checked_fields = List.map ( fun room_field -> process_room_field room_field env) r in
         checked_fields
     with
     | _ -> raise (Failure "room defs didn't check out")
@@ -280,17 +359,17 @@ let check_room_def (env: translation_environment) (r: Ast.room_def) =
 let check_pred_stmt (env: translation_environment) pstmt =
     (* check that the expr is a boolean expr, check all var decls, check all
      * stmts in body *)
-    let scope' = { parent = Some(env.scope); variables = []; functions =
-        env.scope.functions; room_def = env.scope.room_def; pred_stmts =
-            env.scope.pred_stmts;} in
-    let env' = { env with scope = scope'; } in
+    let scope' = { parent = Some(env.scope); variables = [];} in
+    let env' = { env with scope = scope'; functions =
+        env.functions; room_def = env.room_def; pred_stmts =
+            env.pred_stmts; rooms = env.rooms } in
     let (checked_pred, typ) = check_expr env pstmt.pred in
     if typ = Boolean then
         let checked_locals = check_var_decls env' pstmt.locals in
         let checked_body = List.map (fun s -> check_stmt env' s) pstmt.body in
         let new_pstmt = {pred = checked_pred; locals = checked_locals; body =
             checked_body;} in
-        env.scope.pred_stmts <- new_pstmt::env.scope.pred_stmts ; new_pstmt
+        env.pred_stmts <- new_pstmt::env.pred_stmts ; new_pstmt
     else raise (Failure "Expression in predicate statement conditional must be
     of type Boolean")
 
@@ -301,19 +380,44 @@ let check_pred_stmts (env: translation_environment) pstmts =
     let new_pstmts = List.map (fun s -> check_pred_stmt env s) pstmts in
     new_pstmts
 
+let find_adjacency (env : translation_environment) adj = 
+    if (List.exists (fun rdecl -> rdecl.rname = (List.nth adj 0)) env.rooms && 
+        List.exists (fun rdecl -> rdecl.rname = (List.nth adj 1)) env.rooms) then
+        adj
+    else raise (Failure "One of rooms in adjacency list not declared")
+
+
+let check_adj_decls (env: translation_environment) adecls = 
+    try
+        let checked_adjs = List.map ( fun adecl -> find_adjacency env adecl) adecls in
+        checked_adjs
+    with
+    | _ -> raise (Failure "adjacencies didn't check out")   
+
 let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
-       let print_func = { freturntype = Void; fname = "print"; formals = [];
-       locals = []; body = [];} in
-       let symbol_table = { parent = None; variables = []; functions =
-           [print_func]; room_def = []; pred_stmts = [];} in
+       let print_int = { freturntype = Void; fname = "print"; formals =
+           [Var(Ast.Int, "arg")]; locals = []; body = [];} in
+       let print_bool = { freturntype = Void; fname = "print"; formals =
+           [Var(Ast.Boolean, "arg")];locals = []; body = [];} in
+       let print_str = { freturntype = Void; fname = "print"; formals =
+           [Var(Ast.String, "arg")]; locals = []; body = [];} in
+       let print_funcs = [print_int; print_bool; print_str] in
+       (* adding name type String as default field in room_def*)
+       let room_name_field = Ast.Var(String, "name") in 
+       (* adding currentRoom as a global variable*)
+       let current_room = Ast.Var(String, "currentRoom") in
+       let symbol_table = { parent = None; variables = [current_room];} in
        let env = { scope = symbol_table; return_type =
-           Ast.Int} in
+           Ast.Int; functions = print_funcs; room_def = [room_name_field];
+           pred_stmts = []; rooms = []; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
-       let checked_funcs = check_func_decls env funcs in
+       let checked_room_decls = check_room_decls env room_decls in
+       let checked_adj_decls = check_adj_decls env adj_decls in
        let checked_var_decls = check_var_decls env var_decls in
+       let checked_funcs = check_func_decls env funcs in
        let checked_pred_stmts = check_pred_stmts env pred_stmts in
-    (checked_room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
+    (checked_room_def, checked_room_decls, checked_adj_decls, start, npc_defs, npc_decls, item_defs,
     item_decls, checked_var_decls, checked_pred_stmts, checked_funcs)
