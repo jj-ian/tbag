@@ -9,7 +9,7 @@ type symbol_table = {
     mutable functions : func_decl list;
     mutable room_def: var_decl list;
     mutable pred_stmts : pred_stmt list;
-
+    mutable rooms: room_decl list;
 } 
 
 type translation_environment = {
@@ -41,10 +41,10 @@ let rec find_variable (scope : symbol_table) name =
         match scope.parent with 
           Some(parent) -> find_variable parent name
 
-let find_room (scope: symbol_table) (rd: Ast.room_decl) = 
+let find_room (scope: symbol_table) (name) = 
     try 
-        List.find (fun room_decl -> 
-            rd.name) scope.room_decls
+        List.find (fun room_decl -> room_decl.rname = name) scope.rooms
+    with Not_found-> raise Not_found
 
 let find_function (scope : symbol_table) name = 
     try
@@ -156,7 +156,7 @@ let rec check_stmt env = function
             (* We don't need this scope stuff because vars are not
              * declared in this stmt type but keeping here for now *)
             let scope' = { parent = Some(env.scope); variables = []; functions =
-                env.scope.functions; room_def = env.scope.room_def; pred_stmts = env.scope.pred_stmts;} in
+                env.scope.functions; room_def = env.scope.room_def; pred_stmts = env.scope.pred_stmts; rooms = env.scope.rooms } in
             let env' = { env with scope = scope';} in
             let sl = List.map (fun s -> check_stmt env' s) stmt_list in scope'.variables <- List.rev scope'.variables; Block(sl)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
@@ -211,14 +211,14 @@ let check_var_decls (env: translation_environment) var_decls =
  * statements inside the function, add the declared variables to the scope, have
  * a new scope for the function *)
 let check_func_decl (env: translation_environment) func_decl = 
-    if (List.exists(fun fdecl -> fdecl.fname = func_decl.fname)
-    env.scope.functions || func_decl.fname = "print")
+    if (List.exists(fun fdecl -> fdecl.fname = func_decl.fname) env.scope.functions 
+        || func_decl.fname = "print")
     then raise (Failure ("Function with " ^ func_decl.fname ^ " already
     exists."))
     else
         let scope' = { parent = Some(env.scope); variables = []; functions =
             env.scope.functions; room_def = env.scope.room_def; pred_stmts =
-                env.scope.pred_stmts;} in
+                env.scope.pred_stmts; rooms = env.scope.rooms} in
         let env' = { env with scope = scope'; return_type = func_decl.freturntype; current_func = Some(func_decl)} in
         let fformals = List.map (
             fun f -> match f with 
@@ -252,35 +252,44 @@ let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match fiel
             else
                 scope.room_def <- Ast.Var(t, name):: scope.room_def; (* side affect add room field to room_table *)
             Ast.Var(t, name) (*return this*)     
-    | _ -> raise (Failure "room field not correct format. declare a type and name.")
+    | _ -> raise (Failure "room field not correct format. declare a type and name.") 
 
 
+let process_room_decl_body (scope: symbol_table) (rfa: Ast.stmt) = begin match rfa with
+    Ast.Expr(roomAssign) -> begin match roomAssign with (* check that the expr is in the form of an assign*)
+            Ast.Assign(fieldname, expr) ->
+                if (List.exists (fun rdecl -> rdecl.rname = fieldname) scope.rooms) then
+                        (*let (expr, typ) = check_expr scope expr in 
+                        Ast.Assign(fieldname, )*)
+                    rfa
+                else raise (Failure "field name in room decl does not exist.") 
+            | _ -> raise (Failure "room assignment not correct format.") end
+    | _ -> raise (Failure "room assignment not correct format.") end
+    (*warning being thrown here saying pattern moacthing not exhaustive not sure why *)
 
-let process_room_decl (scope: symbol_table) (rfa: Ast.stmt) = match rfa with
-    (*check that the stmt is in the form of an expr*)
-    Expr(roomAssign) ->
-        match roomAssign with 
-            (* check that the expr is in the form of an assign*)
-            Assign(field, expr) ->
-                (* check that the fields correctly map to the stmt *)
-                let checked_field_nums = List.map2 (fun )
-            |_-> raise (Failure "room assignment not correct format.")
-    |_-> raise (Failure "room assignment not correct format.")
 
-
-let check_room_decls (env: translation_environment) (room: Ast.room_decl) = 
-    let (name, body) = room in (* body is a list of stmts*)
-        try let _ = find_variable env.scope vname in raise(Failure ("Variable with name " ^ vname ^
-        " exists."))
+let process_room_decl (scope: symbol_table) (room: Ast.room_decl) = 
+    let name = room.rname in 
+    let body = room.rbody in (* body is a list of stmts*)
+        try let _ = find_room scope name in raise(Failure ("Room with name " ^ name ^ " already exists."))
         with Not_found ->
-        let checked_body = List.map ( fun unchecked -> process_room_decl env.scope unchecked) body in
+        let checked_body = List.map ( fun unchecked -> process_room_decl_body scope unchecked) body in
+        (* check that number of fields in room_def match with number of fields in room decl*)
         let num_stmts = List.length(checked_body) in
-            if (num_stmts <> List.length(env.scope.room_def)) then
+            if (num_stmts <> List.length(scope.room_def)) then
                 raise (Failure "number of room decl fields do not match definition.")
             else 
-                checked_body (* return this *)
+                (* add the room_decls to the scope*)
+                let checked_room_decl = { rname = name; rbody = checked_body } in 
+                scope.rooms <- checked_room_decl::scope.rooms ;
+                checked_room_decl (* return this *)
 
-
+let check_room_decls (env: translation_environment) rooms = 
+    try
+        let checked_room_decls = List.map (fun unchecked -> process_room_decl env.scope unchecked) rooms in
+        checked_room_decls
+    with
+    | _-> raise (Failure "room decls didn't check out")
 
 
 (* fields in room_def are valid variable types *)
@@ -296,7 +305,7 @@ let check_pred_stmt (env: translation_environment) pstmt =
      * stmts in body *)
     let scope' = { parent = Some(env.scope); variables = []; functions =
         env.scope.functions; room_def = env.scope.room_def; pred_stmts =
-            env.scope.pred_stmts;} in
+            env.scope.pred_stmts; rooms = env.scope.rooms} in
     let env' = { env with scope = scope'; } in
     let (checked_pred, typ) = check_expr env pstmt.pred in
     if typ = Boolean then
@@ -320,14 +329,15 @@ let check_program (p : Ast.program) =
        let print_func = { freturntype = Void; fname = "print"; formals = [];
        locals = []; body = [];} in
        let symbol_table = { parent = None; variables = []; functions =
-           [print_func]; room_def = []; pred_stmts = [];} in
+           [print_func]; room_def = []; pred_stmts = []; rooms = []} in
        let env = { scope = symbol_table; return_type =
            Ast.Int; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
+       let checked_room_decls = check_room_decls env room_decls in
        let checked_var_decls = check_var_decls env var_decls in
        let checked_funcs = check_func_decls env funcs in
        let checked_pred_stmts = check_pred_stmts env pred_stmts in
-    (checked_room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
+    (checked_room_def, checked_room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
     item_decls, checked_var_decls, checked_pred_stmts, checked_funcs)
