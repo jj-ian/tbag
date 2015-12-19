@@ -332,6 +332,21 @@ let check_pred_stmts (env: translation_environment) pstmts =
     let new_pstmts = List.map (fun s -> check_pred_stmt env s) pstmts in
     new_pstmts
 
+let find_adjacency (scope : symbol_table) adj = 
+    print_string "huh??";
+    if (List.exists (fun rdecl -> rdecl.rname = (List.nth adj 1)) scope.rooms && 
+        List.exists (fun rdecl -> rdecl.rname = (List.nth adj 2)) scope.rooms) then
+        adj
+     else raise (Failure "One of rooms in adjacency list not declared")
+
+
+let check_adj_decls (env: translation_environment) adecls = 
+    try
+        let checked_adjs = List.map ( fun adecl -> find_adjacency env.scope adecl) adecls in
+        checked_adjs
+    with
+    | _ -> raise (Failure "adjecencies didn't check out")   
+
 let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
        let print_func = { freturntype = Void; fname = "print"; formals = [];
@@ -346,8 +361,9 @@ let check_program (p : Ast.program) =
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
        let checked_room_decls = check_room_decls env room_decls in
+       let checked_adj_decls = check_adj_decls env adj_decls in
        let checked_var_decls = check_var_decls env var_decls in
        let checked_funcs = check_func_decls env funcs in
        let checked_pred_stmts = check_pred_stmts env pred_stmts in
-    (checked_room_def, checked_room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
+    (checked_room_def, checked_room_decls, checked_adj_decls, start, npc_defs, npc_decls, item_defs,
     item_decls, checked_var_decls, checked_pred_stmts, checked_funcs)
