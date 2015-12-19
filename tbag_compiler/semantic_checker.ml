@@ -258,9 +258,13 @@ let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match fiel
 let process_room_decl_body (scope: symbol_table) (rfa: Ast.stmt) = begin match rfa with
     Ast.Expr(roomAssign) -> begin match roomAssign with (* check that the expr is in the form of an assign*)
             Ast.Assign(fieldname, expr) ->
-                if (List.exists (fun rdecl -> rdecl.rname = fieldname) scope.rooms) then
+                if (List.exists (fun rdecl -> begin match rdecl with 
+                    Array_decl(_, _, s) -> "0" = fieldname
+                    | Var(_, s) -> s = fieldname 
+                    | VarInit(_, s, _) -> "0" = fieldname end) scope.room_def) then
                         (*let (expr, typ) = check_expr scope expr in 
                         Ast.Assign(fieldname, )*)
+                    (*print_string "this is the problem func!!";*)
                     rfa
                 else raise (Failure "field name in room decl does not exist.") 
             | _ -> raise (Failure "room assignment not correct format.") end
@@ -268,12 +272,15 @@ let process_room_decl_body (scope: symbol_table) (rfa: Ast.stmt) = begin match r
     (*warning being thrown here saying pattern moacthing not exhaustive not sure why *)
 
 
-let process_room_decl (scope: symbol_table) (room: Ast.room_decl) = 
+let check_room_decl (scope: symbol_table) (room: Ast.room_decl) = 
+    print_string "hello from check_room_decl";
     let name = room.rname in 
     let body = room.rbody in (* body is a list of stmts*)
         try let _ = find_room scope name in raise(Failure ("Room with name " ^ name ^ " already exists."))
         with Not_found ->
+        print_string "we got here yay";
         let checked_body = List.map ( fun unchecked -> process_room_decl_body scope unchecked) body in
+            print_string "do we get here?";
         (* check that number of fields in room_def match with number of fields in room decl*)
         let num_stmts = List.length(checked_body) in
             if (num_stmts <> List.length(scope.room_def)) then
@@ -281,12 +288,13 @@ let process_room_decl (scope: symbol_table) (room: Ast.room_decl) =
             else 
                 (* add the room_decls to the scope*)
                 let checked_room_decl = { rname = name; rbody = checked_body } in 
-                scope.rooms <- checked_room_decl::scope.rooms ;
+                scope.rooms <- checked_room_decl::scope.rooms;
+                print_string "adding a room decl to the scope";
                 checked_room_decl (* return this *)
 
 let check_room_decls (env: translation_environment) rooms = 
     try
-        let checked_room_decls = List.map (fun unchecked -> process_room_decl env.scope unchecked) rooms in
+        let checked_room_decls = List.map (fun unchecked -> check_room_decl env.scope unchecked) rooms in
         checked_room_decls
     with
     | _-> raise (Failure "room decls didn't check out")
@@ -328,8 +336,10 @@ let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
        let print_func = { freturntype = Void; fname = "print"; formals = [];
        locals = []; body = [];} in
+       (* adding name type String as default field in room_def*)
+       let room_name_field = Ast.Var(String, "name") in 
        let symbol_table = { parent = None; variables = []; functions =
-           [print_func]; room_def = []; pred_stmts = []; rooms = []} in
+           [print_func]; room_def = [room_name_field]; pred_stmts = []; rooms = []} in
        let env = { scope = symbol_table; return_type =
            Ast.Int; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
