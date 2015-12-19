@@ -384,15 +384,20 @@ let check_adj_decls (env: translation_environment) adecls =
 
 let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
-       let print_func = { freturntype = Void; fname = "print"; formals = [];
-       locals = []; body = [];} in
+       let print_int = { freturntype = Void; fname = "print"; formals =
+           [Var(Ast.Int, "arg")]; locals = []; body = [];} in
+       let print_bool = { freturntype = Void; fname = "print"; formals =
+           [Var(Ast.Boolean, "arg")];locals = []; body = [];} in
+       let print_str = { freturntype = Void; fname = "print"; formals =
+           [Var(Ast.String, "arg")]; locals = []; body = [];} in
+       let print_funcs = [print_int; print_bool; print_str] in
        (* adding name type String as default field in room_def*)
        let room_name_field = Ast.Var(String, "name") in 
        (* adding currentRoom as a global variable*)
        let current_room = Ast.Var(String, "currentRoom") in
        let symbol_table = { parent = None; variables = [current_room];} in
        let env = { scope = symbol_table; return_type =
-           Ast.Int; functions = [print_func]; room_def = [room_name_field];
+           Ast.Int; functions = print_funcs; room_def = [room_name_field];
            pred_stmts = []; rooms = []; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
              item_decls, var_decls, pred_stmts, funcs) = p in
