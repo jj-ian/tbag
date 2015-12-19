@@ -93,10 +93,16 @@ let rec check_expr env = function
                    (Add | Sub | Mult | Div)  -> 
                         if (t1 = Int && t2 = Int) then Int
                         else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
-                  | (Equal | Neq | Less | Leq | Greater | Geq) ->
+                  | (Equal | Neq) ->
+                        if (t1 = Int && t2 = Int) || (t1 = Boolean && t2 =
+                            Boolean) || (t1 = Void && t2 = Void) then Boolean  
+                        else raise (Failure "Types to equality operators ==, !=
+                            must be the same and be integers, booleans, or
+                            rooms") 
+                  | (Less | Leq | Greater | Geq) ->
                         if (t1 = Int && t2 = Int) then Boolean 
                         else raise (Failure "Types to integer comparison
-                        operators ==, !=, <, <=, >, >= must be the same")
+                        operators <, <=, >, >= must be integers")
                   | StrEqual ->
                         if (t1 = String && t2 = String) then Boolean
                         else raise (Failure "Types to ~~ must both be String")
