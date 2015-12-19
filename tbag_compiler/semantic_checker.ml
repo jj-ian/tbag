@@ -19,7 +19,7 @@ type translation_environment = {
     mutable rooms: room_decl list;
 }
 
-let print_valid_type (v : Ast.variable_type) = match v with
+let print_valid_var_type (v : Ast.variable_type) = match v with
       Ast.Int -> print_string "Ast.Int"
     | Ast.Void -> print_string "Ast.Void"
     | Ast.String -> print_string "Ast.String"
@@ -27,6 +27,12 @@ let print_valid_type (v : Ast.variable_type) = match v with
     | Ast.Array(v, i) -> print_string "Ast.Array(v, i)"
     | _ -> raise (Failure ("Invalid variable type used"))
 
+let print_valid_lit_type (v: Ast.expr) = match v with
+        IntLiteral(x) -> print_string "IntLiteral"
+        | NegIntLiteral(y) -> print_string "NegIntLiteral"
+        | StrLiteral(s) -> print_string "StrLiteral"
+        | BoolLiteral(b) -> print_string "BoolLiteral"
+        | _ -> print_string "not a literal"
 
 let check_valid_var_type (v : Ast.variable_type) = match v with
       Ast.Int -> Ast.Int
@@ -70,7 +76,7 @@ let find_room (env: translation_environment) (name) =
     with Not_found-> raise Not_found
 
 let print_var_decls (decl_list: Ast.var_decl list) = 
-    List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_type t) decl_list
+    List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
 
 let rec check_expr env = function
         Ast.IntLiteral(v) -> (Ast.IntLiteral(v), Ast.Int)
@@ -144,6 +150,7 @@ let rec check_expr env = function
                (*TODO: figure out why Call doesn't catch err in tests *)
                (* TODO: make sure recursive calls to function also match
                 * expr_list *)
+               print_string ("Currently checking " ^ fname);
                 let fdecl =  (try find_function env fname expr_list
                              with Not_found -> begin match env.current_func with 
                              Some(current_func) -> 
@@ -166,11 +173,13 @@ and check_matching_args (env: translation_environment) ref_vars target_exprs =
     let _ = (try List.map2 (
         fun r t -> let (rtyp, rname) = get_var_type_name r in 
                    let (texpr, ttyp) = check_expr env t in 
-                   if ttyp <> rtyp then raise (Failure "type mismatch between
-                   formal arguments and parameters")
-                   ) ref_vars target_exprs
-    with Invalid_argument(_) ->
-        raise (Failure "type mismatch between formal arguments and parameters")) in result
+                   print_valid_var_type ttyp; print_valid_var_type rtyp; if ttyp
+                   <> rtyp then raise Not_found) ref_vars target_exprs
+    with Invalid_argument(_) -> raise Not_found) in result
+
+and check_matching_args_result (env: translation_environment) ref_vars target_exprs =
+    let result = (try check_matching_args env ref_vars target_exprs with
+    Not_found -> false) in result
 
 and find_function (env : translation_environment) name expr_list = 
     (* modify to check return type and types of each param against existing func
@@ -188,7 +197,7 @@ and find_function (env : translation_environment) name expr_list =
       *)
     try
         List.find( fun func_decl -> func_decl.fname = name &&
-        check_matching_args env func_decl.formals expr_list) env.functions
+        check_matching_args_result env func_decl.formals expr_list) env.functions
     with Not_found -> raise Not_found
 
 let rec check_stmt env = function
