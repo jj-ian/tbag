@@ -66,8 +66,7 @@ let rec check_expr env = function
         | Ast.Id(vname) ->
                 let vdecl = (try
                 find_variable env.scope vname 
-                with Not_found ->
-                    raise (Failure ("undeclared identifier " ^ vname))) in
+                with Not_found -> raise (Failure ("undeclared identifier " ^ vname))) in
                 let (typ, vname) = get_var_type_name vdecl
                 in (Ast.Id(vname), typ)
         | Ast.Binop(e1, op, e2) ->
@@ -352,7 +351,9 @@ let check_program (p : Ast.program) =
        locals = []; body = [];} in
        (* adding name type String as default field in room_def*)
        let room_name_field = Ast.Var(String, "name") in 
-       let symbol_table = { parent = None; variables = []; functions =
+       (* adding currentRoom as a global variable*)
+       let current_room = Ast.Var(String, "currentRoom") in
+       let symbol_table = { parent = None; variables = [current_room]; functions =
            [print_func]; room_def = [room_name_field]; pred_stmts = []; rooms = []} in
        let env = { scope = symbol_table; return_type =
            Ast.Int; current_func = None } in
