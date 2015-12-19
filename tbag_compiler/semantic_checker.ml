@@ -74,7 +74,7 @@ let rec find_variable (scope : symbol_table) name =
 let find_room (env: translation_environment) (name) = 
     try 
         List.find (fun room_decl -> room_decl.rname = name) env.rooms
-    with Not_found-> raise Not_found
+    with Not_found-> raise (Failure ("undeclared identifier " ^ name))
 
 let print_var_decls (decl_list: Ast.var_decl list) = 
     List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
@@ -84,11 +84,14 @@ let rec check_expr env = function
         | Ast.NegIntLiteral(v) -> (Ast.NegIntLiteral(v), Ast.Int)
         | Ast.StrLiteral(v) -> (Ast.StrLiteral(v), Ast.String)
         | Ast.BoolLiteral(v) -> (Ast.BoolLiteral(v), Ast.Boolean)
-        | Ast.Id(vname) -> (*TO DO - check that vname is a valid Room name before failing*)
+        | Ast.Id(vname) -> 
                 let vdecl = (try
                 find_variable env.scope vname 
-                with Not_found -> raise (Failure ("undeclared identifier " ^ vname))) in
-                let (typ, vname) = get_var_type_name vdecl
+                with Not_found -> 
+                    (*TO DO - check that vname is a valid Room name before failing*)
+                    find_room env vname; Var(Ast.Int, vname) ) in
+                let (typ, vname) = get_var_type_name vdecl 
+                (*in (Ast.Id(vname), Ast.Void)*)
                 in (Ast.Id(vname), typ)
         | Ast.Binop(e1, op, e2) ->
                 let (e1, t1) = check_expr env e1
@@ -166,6 +169,9 @@ let rec check_expr env = function
        | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
       (* TODO: Access operator for rooms, need to check that the thing is in the
        * room_decl, which will be stored in the environment *)
+      (* | Ast.Access(room, field) -> 
+            let rdecl = (try find )*)
+
 
 (* check formal arg list with expr list of called function *)
 and check_matching_args_helper (env: translation_environment) ref_vars target_exprs =
@@ -406,11 +412,11 @@ let check_program (p : Ast.program) =
        (* adding name type String as default field in room_def*)
        let room_name_field = Ast.Var(String, "name") in 
        (* adding currentRoom as a global variable*)
-       let current_room = Ast.Var(String, "currentRoom") in
-       let symbol_table = { parent = None; variables = [current_room];} in
+       let current_room = { rname = "currentRoom" ; rbody = []} in
+       let symbol_table = { parent = None; variables = [];} in
        let env = { scope = symbol_table; return_type =
            Ast.Int; functions = print_funcs; room_def = [room_name_field];
-           pred_stmts = []; rooms = []; current_func = None } in
+           pred_stmts = []; rooms = [current_room]; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_defs, npc_decls, item_defs,
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
