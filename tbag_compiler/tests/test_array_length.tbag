@@ -1,0 +1,7 @@
+true {
+	int[3] a;
+	int b;
+	b = a.length;
+	print(b);
+	endgame;
+}

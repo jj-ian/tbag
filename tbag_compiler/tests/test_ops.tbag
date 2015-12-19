@@ -1,46 +1,28 @@
 true {
-  printLine(1 + 2);
-  printLine(1 - 2);
-  printLine(1 * 2);
-  printLine(100 / 2);
-  printLine(99);
-  printLine(1 == 2);
-  printLine(1 == 1);
-  printLine(99);
-  printLine(1 != 2);
-  printLine(1 != 1);
-  printLine(99);
-  printLine(1 < 2);
-  printLine(2 < 1);
-  printLine(99);
-  printLine(1 <= 2);
-  printLine(1 <= 1);
-  printLine(2 <= 1);
-  printLine(99);
-  printLine(1 > 2);
-  printLine(2 > 1);
-  printLine(99);
-  printLine(1 >= 2);
-  printLine(1 >= 1);
-  printLine(2 >= 1);
+  intPrintLine(1 + 2);
+  intPrintLine(1 - 2);
+  intPrintLine(1 * 2);
+  intPrintLine(100 / 2);
+  intPrintLine(99);
+  boolPrintLine(1 == 2);
+  boolPrintLine(1 == 1);
+  intPrintLine(99);
+  boolPrintLine(1 != 2);
+  boolPrintLine(1 != 1);
+  intPrintLine(99);
+  boolPrintLine(1 < 2);
+  boolPrintLine(2 < 1);
+  intPrintLine(99);
+  boolPrintLine(1 <= 2);
+  boolPrintLine(1 <= 1);
+  boolPrintLine(2 <= 1);
+  intPrintLine(99);
+  boolPrintLine(1 > 2);
+  boolPrintLine(2 > 1);
+  intPrintLine(99);
+  boolPrintLine(1 >= 2);
+  boolPrintLine(1 >= 1);
+  boolPrintLine(2 >= 1);
   endgame;
-}
-
-func int printLine(int a) {
-  print(a);
-  print("\n");
-  return 0;
-}
-
-func int printLine(string s) {
-  print(s);
-  print("\n");
-  return 0;
-}
-
-func int printLine(boolean b) {
-  print(b);
-  print("\n");
-  return 0;
 }
 

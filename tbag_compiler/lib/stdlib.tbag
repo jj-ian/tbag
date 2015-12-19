@@ -1,14 +1,14 @@
-func void printLine(int a) {
+func void intPrintLine(int a) {
 	print(a);
 	print("\n");
 }
 
-func void printLine(string s) {
+func void strPrintLine(string s) {
 	print(s);
 	print("\n");
 }
 
-func void printLine(boolean b) {
+func void boolPrintLine(boolean b) {
 	print(b);
 	print("\n");
 }
