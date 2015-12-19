@@ -255,46 +255,46 @@ let process_room_field (field: Ast.var_decl) (scope: symbol_table ) = match fiel
     | _ -> raise (Failure "room field not correct format. declare a type and name.") 
 
 
-let process_room_decl_body (scope: symbol_table) (rfa: Ast.stmt) = begin match rfa with
+let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begin match rfa with
     Ast.Expr(roomAssign) -> begin match roomAssign with (* check that the expr is in the form of an assign*)
-            Ast.Assign(fieldname, expr) ->
-                if (List.exists (fun rdecl -> begin match rdecl with 
+        Ast.Assign(fieldname, expr) ->
+           (* try *)
+            let rdecl = List.find(fun rdecl -> begin match rdecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
-                    | Var(_, s) -> s = fieldname 
-                    | VarInit(_, s, _) -> "0" = fieldname end) scope.room_def) then
-                        (*let (expr, typ) = check_expr scope expr in 
-                        Ast.Assign(fieldname, )*)
-                    (*print_string "this is the problem func!!";*)
-                    rfa
-                else raise (Failure "field name in room decl does not exist.") 
-            | _ -> raise (Failure "room assignment not correct format.") end
+                    | Var(t, s) -> s = fieldname 
+                    | VarInit(_, s, _) -> "0" = fieldname end) env.scope.room_def in
+            (*with 
+                Not_found-> raise (Failure "field name in room decl does not exist.") in *)
+            let (room_decl_typ, _) = get_var_type_name rdecl in
+            (*CHECKING FOR ROOM DECL BODY EXPR RETURN TYPE HERE*)
+            let (_, typ) = check_expr env expr in
+                if ( typ <> room_decl_typ ) then 
+                    raise (Failure "room decl body does not match field type")
+                else 
+                    rfa (*return this*)
+        | _ -> raise (Failure "room assignment not correct format.") end
     | _ -> raise (Failure "room assignment not correct format.") end
-    (*warning being thrown here saying pattern moacthing not exhaustive not sure why *)
 
 
-let check_room_decl (scope: symbol_table) (room: Ast.room_decl) = 
-    print_string "hello from check_room_decl";
+let check_room_decl (env: translation_environment) (room: Ast.room_decl) = 
     let name = room.rname in 
     let body = room.rbody in (* body is a list of stmts*)
-        try let _ = find_room scope name in raise(Failure ("Room with name " ^ name ^ " already exists."))
+        try let _ = find_room env.scope name in raise(Failure ("Room with name " ^ name ^ " already exists."))
         with Not_found ->
-        print_string "we got here yay";
-        let checked_body = List.map ( fun unchecked -> process_room_decl_body scope unchecked) body in
-            print_string "do we get here?";
+        let checked_body = List.map ( fun unchecked -> process_room_decl_body env unchecked) body in
         (* check that number of fields in room_def match with number of fields in room decl*)
         let num_stmts = List.length(checked_body) in
-            if (num_stmts <> List.length(scope.room_def)) then
+            if (num_stmts <> List.length(env.scope.room_def)) then
                 raise (Failure "number of room decl fields do not match definition.")
             else 
                 (* add the room_decls to the scope*)
                 let checked_room_decl = { rname = name; rbody = checked_body } in 
-                scope.rooms <- checked_room_decl::scope.rooms;
-                print_string "adding a room decl to the scope";
+                env.scope.rooms <- checked_room_decl::env.scope.rooms;
                 checked_room_decl (* return this *)
 
 let check_room_decls (env: translation_environment) rooms = 
     try
-        let checked_room_decls = List.map (fun unchecked -> check_room_decl env.scope unchecked) rooms in
+        let checked_room_decls = List.map (fun unchecked -> check_room_decl env unchecked) rooms in
         checked_room_decls
     with
     | _-> raise (Failure "room decls didn't check out")
