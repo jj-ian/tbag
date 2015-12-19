@@ -63,7 +63,7 @@ let rec check_expr env = function
         | Ast.NegIntLiteral(v) -> (Ast.NegIntLiteral(v), Ast.Int)
         | Ast.StrLiteral(v) -> (Ast.StrLiteral(v), Ast.String)
         | Ast.BoolLiteral(v) -> (Ast.BoolLiteral(v), Ast.Boolean)
-        | Ast.Id(vname) ->
+        | Ast.Id(vname) -> (*TO DO - check that vname is a valid Room name before failing*)
                 let vdecl = (try
                 find_variable env.scope vname 
                 with Not_found -> raise (Failure ("undeclared identifier " ^ vname))) in
