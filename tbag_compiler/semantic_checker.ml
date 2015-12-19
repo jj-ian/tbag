@@ -333,11 +333,10 @@ let check_pred_stmts (env: translation_environment) pstmts =
     new_pstmts
 
 let find_adjacency (scope : symbol_table) adj = 
-    print_string "huh??";
-    if (List.exists (fun rdecl -> rdecl.rname = (List.nth adj 1)) scope.rooms && 
-        List.exists (fun rdecl -> rdecl.rname = (List.nth adj 2)) scope.rooms) then
+    if (List.exists (fun rdecl -> rdecl.rname = (List.nth adj 0)) scope.rooms && 
+        List.exists (fun rdecl -> rdecl.rname = (List.nth adj 1)) scope.rooms) then
         adj
-     else raise (Failure "One of rooms in adjacency list not declared")
+    else raise (Failure "One of rooms in adjacency list not declared")
 
 
 let check_adj_decls (env: translation_environment) adecls = 
@@ -345,7 +344,7 @@ let check_adj_decls (env: translation_environment) adecls =
         let checked_adjs = List.map ( fun adecl -> find_adjacency env.scope adecl) adecls in
         checked_adjs
     with
-    | _ -> raise (Failure "adjecencies didn't check out")   
+    | _ -> raise (Failure "adjacencies didn't check out")   
 
 let check_program (p : Ast.program) =
         (* at the start symbol table is empty *)
