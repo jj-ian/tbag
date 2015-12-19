@@ -81,7 +81,7 @@ let rec check_expr env = function
                 find_variable env.scope vname 
                 with Not_found -> 
                     (*TO DO - check that vname is a valid Room name before failing*)
-                    find_room env vname; Var(Ast.Int, vname) ) in
+                    find_room env vname; Var(Ast.Void, vname) ) in
                 let (typ, vname) = get_var_type_name vdecl 
                 (*in (Ast.Id(vname), Ast.Void)*)
                 in (Ast.Id(vname), typ)
@@ -160,8 +160,8 @@ let rec check_expr env = function
        | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
       (* TODO: Access operator for rooms, need to check that the thing is in the
        * room_decl, which will be stored in the environment *)
-      (* | Ast.Access(room, field) -> 
-            let rdecl = (try find )*)
+      (*| Ast.Access(rname, field) -> 
+            let rdecl = (try find_room env rname)*)
 
 
 (* check formal arg list with expr list of called function *)
