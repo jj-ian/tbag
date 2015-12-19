@@ -75,47 +75,20 @@ let rec check_expr env = function
                 and (e2, t2) = check_expr env e2 in
                 let typ =
                 begin match op with
-                    Add -> 
+                   (Add | Sub | Mult | Div)  -> 
                         if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to + must both be Int")
-                  | Sub ->
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to - must both be Int")
-                  | Mult ->
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to * must both be Int")
-                  | Div ->
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to / must both be Int")
-                  | Equal ->
-                        if (t1 = t2) then Boolean 
-                        else raise (Failure "Types to == must be the same")
+                        else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
+                  | (Equal | Neq | Less | Leq | Greater | Geq) ->
+                        if (t1 = Int && t2 = Int) then Boolean 
+                        else raise (Failure "Types to integer comparison
+                        operators ==, !=, <, <=, >, >= must be the same")
                   | StrEqual ->
                         if (t1 = String && t2 = String) then Boolean
                         else raise (Failure "Types to ~~ must both be String")
-                  | Neq ->
-                        if (t1 = t2) then Boolean 
-                        else raise (Failure "Types to != must be the same")
-                  | Less ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to < must both be Int")
-                  | Leq ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to <= must both be Int")
-                  | Greater ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to > must both be Int")
-                  | Geq ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to >= must both be Int")
-                  | And ->
+                  | (And | Or) ->
                         if (t1 = Boolean && t2 = Boolean) then Boolean
-                        else raise (Failure "Types to AND must both be Boolean")
-                  | Or ->
-                        if (t1 = Boolean && t2 = Boolean) then Boolean
-                        else raise (Failure "Types to OR must both be Boolean")
+                        else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
                   | Not -> raise (Failure "NOT takes a single operand") 
-
                 end in (Ast.Binop(e1, op, e2), typ)
         | Ast.Assign(name, expr) ->
                 let vdecl = (try find_variable env.scope name 
@@ -151,11 +124,11 @@ let rec check_expr env = function
                 let op = begin match op with
                              Not -> op
                              | _ -> raise (Failure "All other operators besides
-                             NOT take two operators")
+                             NOT take two operands")
                          end in
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
-               (* TODO: put find_function in try/with block *)
+               (*TODO: figure out why Call doesn't catch err in tests *)
                 let fdecl =  (try find_function env.scope fname  
                              with Not_found -> begin match env.current_func with 
                              Some(current_func) -> 
