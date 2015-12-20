@@ -35,6 +35,8 @@ npc Cat {
 	hunger = 5;
 }
 
+boolean started = false;
+
 currentRoom.name == Cat.roomName {
 	print("you got eaten by the cat.\n");
 	endgame;
@@ -44,6 +46,11 @@ true {
 	printCurrentRoomInfo();
 	getInputForAdjacentRooms(currentRoom);
 	->input
+}
+
+NOT started {
+	strPrintLine("You're a mouse.");
+	started = true;
 }
 
 func void printCurrentRoomInfo() {
