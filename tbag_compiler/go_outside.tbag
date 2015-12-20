@@ -57,7 +57,7 @@ currentRoom == LivingRoom {
 	print("Currently in: ");
 	print(currentRoom.name);
 	print("\n");
-	get_input_from_options("Bedroom", "Outside");
+	getInputAdjacenctRooms();
 	->input
 	print("\n");
 }
@@ -73,5 +73,5 @@ currentRoom == Outside {
 finished {
 	print("Good job making it outside, lazybones.");
 	print("\n");
-	break;
+	endgame;
 }

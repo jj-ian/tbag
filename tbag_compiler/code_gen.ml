@@ -57,11 +57,13 @@ let rec expression = function
 	        | hd::tl                    -> ((expression hd) ^ "," ^ (expr_list tl))
 	        in (
 	                (
-                        if fname = "get_input_from_options" then
+                        if fname = "getInputFromOptions" then
                                 "promptForInput(new String[]{" ^ expr_list arg ^ "})"
+                        else if fname = "getInputAdjacenctRooms" then
+                                "getInputForAdjacentRooms(currentRoom)"
                         else if fname = "print" then
                                 ("System.out.print" ^ "(" ^ expr_list arg ^ ")")
-                        else if fname = "arr_len" then
+                        else if fname = "arrLen" then
                                 ((expr_list arg) ^ ".length")
                         else fname ^ "(" ^ expr_list arg ^ ")"
                     )

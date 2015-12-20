@@ -1,7 +1,7 @@
 true {
 	int[3] a;
 	int len;
-	len = arr_len(a);
+	len = arrLen(a);
 	print(len);
 	endgame;
 }

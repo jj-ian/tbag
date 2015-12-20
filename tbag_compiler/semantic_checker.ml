@@ -223,12 +223,12 @@ type")
        | Ast.Call(fname, expr_list) ->
                (* TODO: make sure recursive calls to function also match:
                 * expr_list *)
-                if fname = "arr_len" && List.length expr_list = 1 then 
+                if fname = "arrLen" && List.length expr_list = 1 then 
                     let arr_name = 
                       let e = List.hd expr_list in
                       begin match e with 
                         Ast.Id(vname) -> vname
-                      | _ -> raise (Failure("arr_len expects an array
+                      | _ -> raise (Failure("arrLen expects an array
                       argument"))
                         end in
                      let arr_decl = (try find_variable env.scope arr_name
@@ -236,11 +236,11 @@ type")
                     arr_name))) in
                      if var_is_array arr_decl then
                     (Ast.Call(fname, expr_list), Ast.Int)
-                     else raise (Failure "arr_len expects an array
+                     else raise (Failure "arrLen expects an array
                       argument")
-                 else if fname = "get_input_from_options" then 
+                 else if fname = "getInputFromOptions" then 
                      let _ = List.map(
-                         fun e -> if not (expr_is_strlit e) then raise (Failure("get_input_from_options expects 
+                         fun e -> if not (expr_is_strlit e) then raise (Failure("getInputFromOptions expects 
                       one or more string arguments"))) expr_list in
                     (Ast.Call(fname, expr_list), Ast.Void)
                  else
