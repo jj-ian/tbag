@@ -127,7 +127,7 @@ let find_item_field (env: translation_environment) fieldName =
      (typ, n)
 
 (* check that op matches with types of t1, t2 and return type of result *)
-let check_binop_type op t1 t2 = 
+let get_binop_type op t1 t2 = 
     begin match op with
         (Add | Sub | Mult | Div)  -> 
             if (t1 = Int && t2 = Int) then Int
@@ -161,17 +161,16 @@ let rec check_expr env = function
                 let vdecl = (try
                 find_variable env.scope vname 
                 with Not_found -> 
-                    (*TO DO - check that vname is a valid Room name before failing*)
-                    (try find_room env vname with
+                    let _ = (try find_room env vname with
                     Not_found -> raise (Failure ("undeclared identifier " ^
-                    vname))); Var(Ast.Void, vname)) in
+                    vname))) in
+                    Var(Ast.Void, vname)) in
                 let (typ, vname) = get_var_type_name vdecl 
-                (*in (Ast.Id(vname), Ast.Void)*)
                 in (Ast.Id(vname), typ)
         | Ast.Binop(e1, op, e2) ->
                 let (e1, t1) = check_expr env e1
                 and (e2, t2) = check_expr env e2 in
-                (Ast.Binop(e1, op, e2), check_binop_type op t1 t2)
+                (Ast.Binop(e1, op, e2), get_binop_type op t1 t2)
         | Ast.Assign(name, expr) ->
                 let vdecl = (try find_variable env.scope name 
                 with Not_found -> raise (Failure ("undeclared identifier " ^
@@ -282,9 +281,6 @@ type")
                 raise(Failure("Trying to access NPC " ^ name ^ " which does not exist."))) in 
             let (ftyp, fname) = find_npc_field env field in 
             (Ast.Access(name, field), ftyp)*)
-                        
-
-
 
 (* check formal arg list with expr list of called function *)
 and check_matching_args_helper (env: translation_environment) ref_vars target_exprs =
@@ -345,7 +341,7 @@ type of function")
         | Goto(rname) ->
             let rdecl = try find_room env rname with
                         Not_found -> raise( Failure "Goto parameter name not a valid room.") 
-            in Goto(rname)
+            in Goto(rdecl.rname)
 
 (* Variable checking, both global and local *)
 let check_var_decl (env: translation_environment) vdecl = 
