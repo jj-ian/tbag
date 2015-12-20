@@ -331,8 +331,8 @@ let check_var_decl (env: translation_environment) vdecl =
             match vdecl with 
             Array_decl(typ, expr, name) -> 
                     let (expr, exprtyp) = check_expr env expr in
-                    if exprtyp = Int then 
-                    (env.scope.variables <- Array_decl (exprtyp,expr,name)::env.scope.variables; Array_decl (exprtyp, expr,name)) 
+                    if exprtyp = Int then let typ = check_valid_var_type typ in
+                    (env.scope.variables <- Array_decl (typ,expr,name)::env.scope.variables; Array_decl (typ,expr,name)) 
                     else raise (Failure ("Array size must be integer"))
               | Var(typ, name) -> let typ = check_valid_var_type typ in 
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
