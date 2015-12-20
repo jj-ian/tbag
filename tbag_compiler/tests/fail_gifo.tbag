@@ -16,7 +16,7 @@ currentRoom == Closet {
 	print("Currently in: ");
 	print(currentRoom.name);
 	print("\n");
-	get_input_from_options("Bedroom", 1);
+	getInputFromOptions("Bedroom", 1);
 	->input
 	print("\n");
         endgame;

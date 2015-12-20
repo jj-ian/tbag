@@ -1,2 +1,2 @@
-Fatal error: exception Failure("get_input_from_options expects 
+Fatal error: exception Failure("getInputFromOptions expects 
                       one or more string arguments")
