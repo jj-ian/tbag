@@ -126,6 +126,30 @@ let find_item_field (env: translation_environment) fieldName =
      in let (typ, n) = get_var_type_name field_decl in 
      (typ, n)
 
+(* check that op matches with types of t1, t2 and return type of result *)
+let check_binop_type op t1 t2 = 
+    begin match op with
+        (Add | Sub | Mult | Div)  -> 
+            if (t1 = Int && t2 = Int) then Int
+            else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
+      | (Equal | Neq) ->
+            if (t1 = Int && t2 = Int) || (t1 = Boolean && t2 =
+                Boolean) || (t1 = Void && t2 = Void) then Boolean  
+            else raise (Failure "Types to equality operators ==, !=
+                        must be the same and be integers, booleans, or
+                        rooms") 
+     | (Less | Leq | Greater | Geq) ->
+            if (t1 = Int && t2 = Int) then Boolean 
+            else raise (Failure "Types to integer comparison
+                        operators <, <=, >, >= must be integers")
+     | StrEqual ->
+            if (t1 = String && t2 = String) then Boolean
+            else raise (Failure "Types to ~~ must both be String")
+     | (And | Or) ->
+            if (t1 = Boolean && t2 = Boolean) then Boolean
+            else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
+     | _ -> raise (Failure "Should not reach here") 
+    end
 
 (* Expr checking *)
 let rec check_expr env = function
@@ -147,29 +171,7 @@ let rec check_expr env = function
         | Ast.Binop(e1, op, e2) ->
                 let (e1, t1) = check_expr env e1
                 and (e2, t2) = check_expr env e2 in
-                let typ =
-                begin match op with
-                   (Add | Sub | Mult | Div)  -> 
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
-                  | (Equal | Neq) ->
-                        if (t1 = Int && t2 = Int) || (t1 = Boolean && t2 =
-                            Boolean) || (t1 = Void && t2 = Void) then Boolean  
-                        else raise (Failure "Types to equality operators ==, !=
-                            must be the same and be integers, booleans, or
-                            rooms") 
-                  | (Less | Leq | Greater | Geq) ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to integer comparison
-                        operators <, <=, >, >= must be integers")
-                  | StrEqual ->
-                        if (t1 = String && t2 = String) then Boolean
-                        else raise (Failure "Types to ~~ must both be String")
-                  | (And | Or) ->
-                        if (t1 = Boolean && t2 = Boolean) then Boolean
-                        else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
-                  | _ -> raise (Failure "Should not reach here") 
-                end in (Ast.Binop(e1, op, e2), typ)
+                (Ast.Binop(e1, op, e2), check_binop_type op t1 t2)
         | Ast.Assign(name, expr) ->
                 let vdecl = (try find_variable env.scope name 
                 with Not_found -> raise (Failure ("undeclared identifier " ^
