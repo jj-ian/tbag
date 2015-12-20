@@ -9,49 +9,55 @@
 		}
 
 	}
-
-	// public static void movePlayerToRoomPrintNameAndMessage(Room room) {
-	// 	currentRoom = room;
-	// 	System.out.println("You are now in " + room.name);
-	// 	System.out.println(room.message);			
-	// }
-
 	
 	// Prompts player for input and sets global var "input" to whatever player submitted, provided it's a valid input. 
 	// If invalid inputs are entered, it'll reprompt until player enters a valid input.
 	
 	// Arguments:
 	// String[] acceptableInputs -- the list of acceptable inputs
-	// boolean printAvailableInputs -- if true, it'll print the list of possible inputs. if false, it won't. enter false if you 
-	// want to provide functionality like cheat codes -- where there are valid inputs that you don't want to display to player
-	public static void promptForInput(String[] acceptableInputs, boolean printAvailableInputs) {
-		if (printAvailableInputs == true) {
-			System.out.println("Choose from one of the following options:");
-			for (String option : acceptableInputs) {
-				System.out.println(option);
-			}
+	public static void promptForInput(String[] acceptableInputs) {
+		System.out.println("Choose from one of the following options:");
+		for (String option : acceptableInputs) {
+			System.out.println(option);
 		}
-		
-		// transform to uppercase so inputs can be case insensitive
-		for (int i = 0; i < acceptableInputs.length; i++) {
-			acceptableInputs[i] = acceptableInputs[i];
+		// loop until player enters valid input
+
+		System.out.print("Input: ");
+		input = scanner.nextLine();
+		System.out.println("Input: " + input);
+		while(!Arrays.asList(acceptableInputs).contains(input)) {
+			System.out.println("Invalid Input. Try again.");
+			input = scanner.nextLine();
+			System.out.println("Input: " + input);
+
+		}				
+
+	}
+
+	// Gets all the adjacencies for the room entered as argument and displays these adjacencies to player.
+	// Prompts player for input and sets global var "input" to whatever player submitted, provided it's a valid adjacency.
+	// If invalid inputs are entered, it'll reprompt until player enters a valid input.
+	// pretty much exactly same as promptForInputs(), except it takes in a room as an argument instead of a list of strings
+		public static void getInputForAdjacentRooms(Room room) {
+		String[] acceptableInputs = new String[room.adjRooms.size()];
+		int i = 0;
+		for(Room r : room.adjRooms) {
+			acceptableInputs[i] = r.name;
+			i++;
+		}
+
+		System.out.println("Choose from one of the following options:");
+		for (String option : acceptableInputs) {
+				System.out.println(option);
 		}
 
 		// loop until player enters valid input
 		input = scanner.nextLine();
+		System.out.println("Input: " + input);
 		while(!Arrays.asList(acceptableInputs).contains(input)) {
-			System.out.println("Invalid Input");
+			System.out.println("Invalid Input. Try again.");
 			input = scanner.nextLine();
-		}				
+			System.out.println("Input: " + input);
 
-	}
-	
-	// same as above, but if no printAvailableInputs argument is specified, then it defaults to true -- print available inputs 
-	public static void promptForInput(String[] acceptableInputs) {
-		promptForInput(acceptableInputs, true);
-	}
-	public static void displayAdj(Room room) {
-			for(Room r : room.adjRooms) {
-				System.out.print(r.name + " ");
-			}
 		}	
+	}
