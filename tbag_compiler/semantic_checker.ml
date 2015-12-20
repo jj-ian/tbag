@@ -87,6 +87,11 @@ let rec find_variable (scope : symbol_table) name =
           Some(parent) -> find_variable parent name
           | _ -> raise Not_found
 
+let get_var_if_exists (scope : symbol_table) name = 
+    let var_decl = (try find_variable scope name with
+    Not_found -> raise (Failure ("undeclared identifier " ^
+                    name))) in var_decl
+
 let find_room (env: translation_environment) (name) = 
     try 
         List.find (fun room_decl -> room_decl.rname = name) env.rooms
@@ -178,9 +183,7 @@ let rec check_expr env = function
                 and (e2, t2) = check_expr env e2 in
                 (Ast.Binop(e1, op, e2), get_binop_type op t1 t2)
         | Ast.Assign(name, expr) ->
-                let vdecl = (try find_variable env.scope name 
-                with Not_found -> raise (Failure ("undeclared identifier " ^
-                name))) in
+                let vdecl = get_var_if_exists env.scope name in
                 let (vtyp, name) = get_var_type_name vdecl in
                 let (expr, etyp) = check_expr env expr in
                 if not (var_is_array vdecl) then 
@@ -189,9 +192,7 @@ let rec check_expr env = function
                 else raise (Failure "Left hand side of assignment statement must
                 be a non-array variable")
         | Ast.ArrayAssign(name, expr1, expr2) ->
-                let vdecl = (try find_variable env.scope name 
-                with Not_found -> raise (Failure ("undeclared identifier " ^
-                name))) in
+                let vdecl = get_var_if_exists env.scope name in
                 let (typ, name) = get_var_type_name vdecl in
                 let (pos, postyp) = check_expr env expr1 in
                 let (expr, exprtyp) = check_expr env expr2 in
@@ -205,9 +206,7 @@ let rec check_expr env = function
                 else raise (Failure "Positional array access specifier must be an
                     Integer")
         | Ast.ArrayAccess(name, expr) ->
-                let vdecl = (try find_variable env.scope name 
-                with Not_found -> raise (Failure ("undeclared identifier " ^
-                name))) in
+                let vdecl = get_var_if_exists env.scope name in
                 let (typ, name) = get_var_type_name vdecl in 
                 let (pos, postyp) = check_expr env expr in
                 if postyp = Int then 
@@ -233,9 +232,7 @@ type")
                       | _ -> raise (Failure("arrLen expects an array
                       argument"))
                         end in
-                     let arr_decl = (try find_variable env.scope arr_name
-                     with Not_found -> raise (Failure ("undeclared identifier " ^
-                    arr_name))) in
+                     let arr_decl = get_var_if_exists env.scope arr_name in
                      if var_is_array arr_decl then
                     (Ast.Call(fname, expr_list), Ast.Int)
                      else raise (Failure "arrLen expects an array
