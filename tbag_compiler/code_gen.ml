@@ -116,8 +116,10 @@ let rec vdecl_list = function
         | hd::tl        -> "\t" ^ (vdecl hd) ^ (vdecl_list tl)
 
 let global_vdecl = function
-        Array_decl(var_type, expr, str) ->      ((data_type var_type) ^ "[] " ^
-                                                str ^ "= new " ^ (data_type var_type) ^ "[" ^ (expression expr) ^ "]")
+        Array_decl(var_type, expr, str) ->      ("static " ^ (data_type var_type) ^ "[] " ^
+                                                str ^ "= new " ^ (data_type
+                                                var_type) ^ "[" ^ (expression
+                                                expr) ^ "];\n")
         | Var(vtype, id)                ->      "public static " ^ (data_type vtype) ^ " " ^ id ^ ";\n"
         | VarInit(vtype, id, expr)      ->      "public static " ^ (data_type vtype) ^ " " ^ id ^
                 " = " ^ expression_with_semi expr
