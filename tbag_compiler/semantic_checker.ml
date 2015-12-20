@@ -432,13 +432,14 @@ let process_room_field (field: Ast.var_decl) (env: translation_environment) = ma
 let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begin match rfa with
     Ast.Expr(roomAssign) -> begin match roomAssign with (* check that the expr is in the form of an assign*)
         Ast.Assign(fieldname, expr) ->
-           (* try *)
-            let rdecl = List.find(fun rdecl -> begin match rdecl with 
+            let rdecl = 
+            (try List.find(fun rdecl -> begin match rdecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
                     | Var(t, s) -> s = fieldname 
-                    | VarInit(_, s, _) -> "0" = fieldname end) env.room_def in
-            (*with 
-                Not_found-> raise (Failure "field name in room decl does not exist.") in *)
+                    | VarInit(_, s, _) -> "0" = fieldname end) env.room_def
+            with 
+                Not_found-> raise (Failure "field name in room decl does not
+                exist.")) in 
             let (room_decl_typ, _) = get_var_type_name rdecl in
             (*CHECKING FOR ROOM DECL BODY EXPR RETURN TYPE HERE*)
             let (_, typ) = check_expr env expr in
