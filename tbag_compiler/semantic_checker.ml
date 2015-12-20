@@ -181,9 +181,11 @@ let rec check_expr env = function
                 let vdecl = (try find_variable env.scope name 
                 with Not_found -> raise (Failure ("undeclared identifier " ^
                 name))) in
-                let (typ, name) = get_var_type_name vdecl in
-                let (expr, typ) = check_expr env expr in
-                if not (var_is_array vdecl) then (Ast.Assign(name, expr), typ)
+                let (vtyp, name) = get_var_type_name vdecl in
+                let (expr, etyp) = check_expr env expr in
+                if not (var_is_array vdecl) then 
+                    if vtyp = etyp then (Ast.Assign(name, expr), vtyp)
+                    else raise (Failure "Type mismatch in assignment statement")
                 else raise (Failure "Left hand side of assignment statement must
                 be a non-array variable")
         | Ast.ArrayAssign(name, expr1, expr2) ->

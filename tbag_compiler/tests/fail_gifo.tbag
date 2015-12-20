@@ -1,0 +1,24 @@
+room {}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+Closet <-> Bedroom;
+
+start { Bedroom }
+
+currentRoom == Closet {
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
+	get_input_from_options("Bedroom", 1);
+	->input
+	print("\n");
+        endgame;
+}
+

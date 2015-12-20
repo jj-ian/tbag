@@ -1,0 +1,5 @@
+true {
+        int x = gcd("yo", 14);
+	endgame;
+}
+
