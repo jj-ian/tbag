@@ -243,6 +243,16 @@ type")
                          fun e -> if not (expr_is_strlit e) then raise (Failure("getInputFromOptions expects 
                       one or more string arguments"))) expr_list in
                     (Ast.Call(fname, expr_list), Ast.Void)
+                 else if fname = "getInputAdjacentRooms" then
+                     let rname = 
+                      let e = List.hd expr_list in
+                      begin match e with 
+                        Ast.Id(vname) -> vname
+                      | _ -> raise (Failure("getInputAdjacentRooms expects a room argument"))
+                        end in
+                       let rdecl = (try find_room env rname with 
+                            Not_found -> raise (Failure ("undeclared identifier " ^ rname))) in
+                        (Ast.Call(fname, expr_list), Ast.Void)
                  else
                      let fdecl = (try find_function_with_exprs env fname expr_list
                              with Not_found -> begin match env.current_func with 
@@ -642,6 +652,8 @@ let check_program (p : Ast.program) =
        let print_str = { freturntype = Void; fname = "print"; formals =
            [Var(Ast.String, "arg")]; locals = []; body = [];} in
        let print_funcs = [print_int; print_bool; print_str] in
+       (*let get_adj_func =  { freturntype = Void; fname = "getInputAdjacentRooms"; formals = [Ast.room_decl];
+            locals = []; body = []} in*)
        (* adding name type String as default field in room_def*)
        let name_field = Ast.Var(String, "name") in 
        (* adding currentRoom as a global variable*)
