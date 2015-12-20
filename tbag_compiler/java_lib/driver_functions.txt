@@ -37,7 +37,7 @@
 	// Prompts player for input and sets global var "input" to whatever player submitted, provided it's a valid adjacency.
 	// If invalid inputs are entered, it'll reprompt until player enters a valid input.
 	// pretty much exactly same as promptForInputs(), except it takes in a room as an argument instead of a list of strings
-		public static void getInputForAdjacentRooms(Room room) {
+		public static void getInputAdjacentRooms(Room room) {
 		String[] acceptableInputs = new String[room.adjRooms.size()];
 		int i = 0;
 		for(Room r : room.adjRooms) {

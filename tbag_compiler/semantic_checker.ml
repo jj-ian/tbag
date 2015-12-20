@@ -250,7 +250,7 @@ type")
                         Ast.Id(vname) -> vname
                       | _ -> raise (Failure("getInputAdjacentRooms expects a room argument"))
                         end in
-                       let rdecl = (try find_room env rname with 
+                       let _ = (try find_room env rname with 
                             Not_found -> raise (Failure ("undeclared identifier " ^ rname))) in
                         (Ast.Call(fname, expr_list), Ast.Void)
                  else
