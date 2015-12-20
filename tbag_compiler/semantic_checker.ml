@@ -54,13 +54,6 @@ let get_var_type_name var_decl =
     | VarInit(t, s, _) -> (t, s)
     end 
 
-let var_is_array var_decl = 
-    begin match var_decl with 
-    Array_decl(_, _, _) -> true 
-    | Var(_, _) -> false 
-    | VarInit(_, _, _) -> false 
-    end 
-
 let print_var_decls (decl_list: Ast.var_decl list) = 
     List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
 
@@ -235,11 +228,12 @@ type")
                  else if fname = "get_input_from_options" then 
                      let _ = List.map(
                          fun e -> begin match e with
-                         Ast.Id(rname) -> (try find_room env rname with
+                         Ast.Id(rname) -> (*(try find_room env rname with
                          Not_found -> raise(Failure("Room" ^ rname ^ "does not
-                         exist.")))
-                      | _ -> raise (Failure("get_input_from_options expects 
-                      one or more room arguments"))
+                         exist.")))*)
+                            ignore(rname)
+                        | _ -> raise (Failure("get_input_from_options expects 
+                      one or more string arguments"))
                          end ) expr_list in
                     (Ast.Call(fname, expr_list), Ast.Void)
                  else
@@ -340,8 +334,8 @@ type of function")
             conditional")
         | Goto(rname) ->
             let rdecl = try find_room env rname with
-                        Not_found -> raise( Failure "Goto parameter name not a valid room.") 
-            in Goto(rdecl.rname)
+                    Not_found -> raise( Failure "Goto parameter name not a valid room.") 
+            in Goto(rname)
 
 (* Variable checking, both global and local *)
 let check_var_decl (env: translation_environment) vdecl = 
@@ -645,10 +639,14 @@ let check_program (p : Ast.program) =
        let name_field = Ast.Var(String, "name") in 
        (* adding currentRoom as a global variable*)
        let current_room = { rname = "currentRoom" ; rbody = []} in
-       let symbol_table = { parent = None; variables = [];} in
+       let input = Var(Ast.String, "input") in
+       let dummy_room = { rname = "input" ; rbody = [] } in 
+       let dummy_npc = { nname = "input"; nbody = [] } in
+       let dummy_item = { iname = "input"; ibody = [] } in
+       let symbol_table = { parent = None; variables = [input];} in
        let env = { scope = symbol_table; return_type =
-           Ast.Int; functions = print_funcs; room_def = [name_field]; rooms = [current_room]; npc_def = []; npcs = [];
-           item_def = []; items = []; pred_stmts = []; current_func = None } in
+           Ast.Int; functions = print_funcs; room_def = [name_field]; rooms = [current_room; dummy_room]; npc_def = []; npcs = [dummy_npc];
+           item_def = []; items = [dummy_item]; pred_stmts = []; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_def, npc_decls, item_def,
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in
