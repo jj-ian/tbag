@@ -3,12 +3,15 @@ boolean lol = false;
 string[3] answer;
 int[26] guessed;
 
+
 NOT started {
+	
 	answer[0] = "C";
 	answer[1] = "A";
 	answer[2] = "T";
 
 	strPrintLine("You're a mouse.");
+
 	started = true;
 }
 /*
