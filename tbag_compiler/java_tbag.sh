@@ -17,7 +17,6 @@ cat lib/stdlib.tbag >> prog_w_stdlib.tbag
 rm prog_w_stdlib.tbag
 
 if [ -f $driverfile ]; then
-    rm ${basename}_compiler_output.txt
 
     javac Driver.java
 
@@ -31,4 +30,5 @@ else
     cat ${basename}_compiler_output.txt
 fi
 
+rm ${basename}_compiler_output.txt
 rm -f Driver.java Item.java Npc.java Room.java *.class
