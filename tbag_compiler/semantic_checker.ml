@@ -183,7 +183,18 @@ let rec check_expr env = function
                     (Ast.Call(fname, expr_list), Ast.Int)
                      else raise (Failure "arr_len expects an array
                       argument")
-                 else let fdecl = (try find_function_with_exprs env fname expr_list
+                 else if fname = "get_input_from_options" then 
+                     let _ = List.map(
+                         fun e -> begin match e with
+                         Ast.Id(rname) -> (try find_room env rname with
+                         Not_found -> raise(Failure("Room" ^ rname ^ "does not
+                         exist.")))
+                      | _ -> raise (Failure("get_input_from_options expects 
+                      one or more room arguments"))
+                         end ) expr_list in
+                    (Ast.Call(fname, expr_list), Ast.Void)
+                 else
+                     let fdecl = (try find_function_with_exprs env fname expr_list
                              with Not_found -> begin match env.current_func with 
                              Some(current_func) -> 
                                 if (current_func.fname = fname) then
