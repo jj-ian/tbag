@@ -194,12 +194,7 @@ let rec check_expr env = function
                     Integer")
         | Ast.Boolneg(op, expr) ->
                 let (expr, typ) = check_expr env expr in
-                if typ == Boolean then
-                    let op = begin match op with
-                             Not -> op
-                           | _ -> raise (Failure "Should not reach here")
-                         end in
-                (Ast.Boolneg(op, expr), typ)
+                if typ == Boolean then (Ast.Boolneg(op, expr), typ)
                 else
                     raise (Failure "Type to unary boolean NOT operator must be
                     boolean")
