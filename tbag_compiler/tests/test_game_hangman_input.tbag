@@ -3,6 +3,7 @@ boolean lol = false;
 string[3] answer;
 int[26] guessed;
 
+string letter;
 
 NOT started {
 	
@@ -13,8 +14,9 @@ NOT started {
 	strPrintLine("You're a mouse.");
 
 	started = true;
+	letter = "C";
 }
-/*
+
 true {
 	print("Guess a letter.");
 	getInputFromOptions("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
@@ -25,17 +27,52 @@ true {
 	} else {
 		strPrintLine("not already guessed");
 	}
-}*/
+/*
+	string letter;
+	letter = "C";*/
+	
+	/*
+	int a;
+	a = intFromLetter(letter);
+	print(a);*/
+
+	intPrintLine(intFromLetter(letter));
+	test2();
+
+}
 
 lol {
 	endgame;
 }
 
+/*
 func boolean hasLetterBeenGuessedBefore(string letter) {
 	if (guessed[intFromLetter(letter)] == 1) {
 		return true;
 	} else {
 		return false;
 	}
+
+	int a;
+	a = intFromLetter(letter);
+	print(a);
+	return false;
+
+}*/
+
+func int test2() {
+	test();
+	return 1;
 }
+
+func int test() {
+	/*intPrintLine(22222222222222);
+	strPrintLine("hi");*/
+	strPrintLine("hi");
+	print("lololoolol");
+	return 1;
+	
+}
+
+
 

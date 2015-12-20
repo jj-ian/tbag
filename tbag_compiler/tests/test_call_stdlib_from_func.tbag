@@ -1,0 +1,9 @@
+true {
+	test();
+	endgame;
+}
+
+func int test() {
+	strPrintLine("hi");
+}
+
