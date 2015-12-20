@@ -1,0 +1,2 @@
+Fatal error: exception Failure("Types to integer comparison
+                        operators <, <=, >, >= must be integers")
