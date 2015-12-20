@@ -1,7 +1,6 @@
 boolean started = false;
 
-/* @brian @greg -- the below makes java throw an error bc the compiled java file doesn't have semicolons after the array declarations */
-string[10] answer;
+string[3] answer;
 string[26] guessed;
 
 true {
@@ -10,7 +9,9 @@ true {
 }
 
 NOT started {
-	strPrintLine("You're a mouse.");
+	answer[0] = "C";
+	answer[1] = "A";
+	answer[3] = "T";
 	started = true;
 }
 
