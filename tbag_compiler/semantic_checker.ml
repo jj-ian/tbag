@@ -54,6 +54,19 @@ let get_var_type_name var_decl =
     | VarInit(t, s, _) -> (t, s)
     end 
 
+let var_is_array var_decl = 
+    begin match var_decl with 
+    Array_decl(_, _, _) -> true 
+    | Var(_, _) -> false 
+    | VarInit(_, _, _) -> false 
+    end 
+
+let expr_is_strlit expr = 
+    begin match expr with 
+     StrLiteral(_) -> true
+   | _ -> false
+    end 
+
 let print_var_decls (decl_list: Ast.var_decl list) = 
     List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
 
@@ -119,6 +132,30 @@ let find_item_field (env: translation_environment) fieldName =
      in let (typ, n) = get_var_type_name field_decl in 
      (typ, n)
 
+(* check that op matches with types of t1, t2 and return type of result *)
+let get_binop_type op t1 t2 = 
+    begin match op with
+        (Add | Sub | Mult | Div)  -> 
+            if (t1 = Int && t2 = Int) then Int
+            else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
+      | (Equal | Neq) ->
+            if (t1 = Int && t2 = Int) || (t1 = Boolean && t2 =
+                Boolean) || (t1 = Void && t2 = Void) then Boolean  
+            else raise (Failure "Types to equality operators ==, !=
+                        must be the same and be integers, booleans, or
+                        rooms") 
+     | (Less | Leq | Greater | Geq) ->
+            if (t1 = Int && t2 = Int) then Boolean 
+            else raise (Failure "Types to integer comparison
+                        operators <, <=, >, >= must be integers")
+     | StrEqual ->
+            if (t1 = String && t2 = String) then Boolean
+            else raise (Failure "Types to ~~ must both be String")
+     | (And | Or) ->
+            if (t1 = Boolean && t2 = Boolean) then Boolean
+            else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
+     | _ -> raise (Failure "Should not reach here") 
+    end
 
 (* Expr checking *)
 let rec check_expr env = function
@@ -130,46 +167,25 @@ let rec check_expr env = function
                 let vdecl = (try
                 find_variable env.scope vname 
                 with Not_found -> 
-                    (*TO DO - check that vname is a valid Room name before failing*)
-                    (try find_room env vname with
+                    let _ = (try find_room env vname with
                     Not_found -> raise (Failure ("undeclared identifier " ^
-                    vname))); Var(Ast.Void, vname)) in
+                    vname))) in
+                    Var(Ast.Void, vname)) in
                 let (typ, vname) = get_var_type_name vdecl 
-                (*in (Ast.Id(vname), Ast.Void)*)
                 in (Ast.Id(vname), typ)
         | Ast.Binop(e1, op, e2) ->
                 let (e1, t1) = check_expr env e1
                 and (e2, t2) = check_expr env e2 in
-                let typ =
-                begin match op with
-                   (Add | Sub | Mult | Div)  -> 
-                        if (t1 = Int && t2 = Int) then Int
-                        else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
-                  | (Equal | Neq) ->
-                        if (t1 = Int && t2 = Int) || (t1 = Boolean && t2 =
-                            Boolean) || (t1 = Void && t2 = Void) then Boolean  
-                        else raise (Failure "Types to equality operators ==, !=
-                            must be the same and be integers, booleans, or
-                            rooms") 
-                  | (Less | Leq | Greater | Geq) ->
-                        if (t1 = Int && t2 = Int) then Boolean 
-                        else raise (Failure "Types to integer comparison
-                        operators <, <=, >, >= must be integers")
-                  | StrEqual ->
-                        if (t1 = String && t2 = String) then Boolean
-                        else raise (Failure "Types to ~~ must both be String")
-                  | (And | Or) ->
-                        if (t1 = Boolean && t2 = Boolean) then Boolean
-                        else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
-                  | Not -> raise (Failure "Should not reach here") 
-                end in (Ast.Binop(e1, op, e2), typ)
+                (Ast.Binop(e1, op, e2), get_binop_type op t1 t2)
         | Ast.Assign(name, expr) ->
                 let vdecl = (try find_variable env.scope name 
                 with Not_found -> raise (Failure ("undeclared identifier " ^
                 name))) in
                 let (typ, name) = get_var_type_name vdecl in
                 let (expr, typ) = check_expr env expr in
-                (Ast.Assign(name, expr), typ)
+                if not (var_is_array vdecl) then (Ast.Assign(name, expr), typ)
+                else raise (Failure "Left hand side of assignment statement must
+                be a non-array variable")
         | Ast.ArrayAssign(name, expr1, expr2) ->
                 let vdecl = (try find_variable env.scope name 
                 with Not_found -> raise (Failure ("undeclared identifier " ^
@@ -178,9 +194,12 @@ let rec check_expr env = function
                 let (pos, postyp) = check_expr env expr1 in
                 let (expr, exprtyp) = check_expr env expr2 in
                 if postyp = Int then
-                    if typ = exprtyp then (Ast.ArrayAssign(name, pos, expr), typ)
-                    else raise (Failure "Right hand side of assignment statement does
+                    if var_is_array vdecl then
+                        if typ = exprtyp then (Ast.ArrayAssign(name, pos, expr), typ)
+                        else raise (Failure "Right hand side of assignment statement does
                     not match type of array")
+                    else raise (Failure "Left hand side of array assignment must
+                    be an array")
                 else raise (Failure "Positional array access specifier must be an
                     Integer")
         | Ast.ArrayAccess(name, expr) ->
@@ -189,17 +208,15 @@ let rec check_expr env = function
                 name))) in
                 let (typ, name) = get_var_type_name vdecl in 
                 let (pos, postyp) = check_expr env expr in
-                if postyp = Int then (Ast.ArrayAccess(name, expr), typ)
+                if postyp = Int then 
+                    if var_is_array vdecl then (Ast.ArrayAccess(name, expr), typ)
+                    else raise (Failure "Array access must be used on an array
+type")
                 else raise (Failure "Positional array access specifier must be an
                     Integer")
         | Ast.Boolneg(op, expr) ->
                 let (expr, typ) = check_expr env expr in
-                if typ == Boolean then
-                    let op = begin match op with
-                             Not -> op
-                           | _ -> raise (Failure "Should not reach here")
-                         end in
-                (Ast.Boolneg(op, expr), typ)
+                if typ == Boolean then (Ast.Boolneg(op, expr), typ)
                 else
                     raise (Failure "Type to unary boolean NOT operator must be
                     boolean")
@@ -217,24 +234,14 @@ let rec check_expr env = function
                      let arr_decl = (try find_variable env.scope arr_name
                      with Not_found -> raise (Failure ("undeclared identifier " ^
                     arr_name))) in
-                     let result = 
-                         begin match arr_decl with
-                         Ast.Array_decl(_,_,_) -> true
-                      | _ -> false
-                         end in
-                     if result then
+                     if var_is_array arr_decl then
                     (Ast.Call(fname, expr_list), Ast.Int)
                      else raise (Failure "arr_len expects an array
                       argument")
                  else if fname = "get_input_from_options" then 
                      let _ = List.map(
-                         fun e -> begin match e with
-                         Ast.Id(rname) -> (try find_room env rname with
-                         Not_found -> raise(Failure("Room" ^ rname ^ "does not
-                         exist.")))
-                      | _ -> raise (Failure("get_input_from_options expects 
-                      one or more room arguments"))
-                         end ) expr_list in
+                         fun e -> if not (expr_is_strlit e) then raise (Failure("get_input_from_options expects 
+                      one or more string arguments"))) expr_list in
                     (Ast.Call(fname, expr_list), Ast.Void)
                  else
                      let fdecl = (try find_function_with_exprs env fname expr_list
@@ -275,9 +282,6 @@ let rec check_expr env = function
                 raise(Failure("Trying to access NPC " ^ name ^ " which does not exist."))) in 
             let (ftyp, fname) = find_npc_field env field in 
             (Ast.Access(name, field), ftyp)*)
-                        
-
-
 
 (* check formal arg list with expr list of called function *)
 and check_matching_args_helper (env: translation_environment) ref_vars target_exprs =
@@ -337,8 +341,8 @@ type of function")
             conditional")
         | Goto(rname) ->
             let rdecl = try find_room env rname with
-                        Not_found -> raise( Failure "Goto parameter name not a valid room.") 
-            in Goto(rname)
+                    Not_found -> raise( Failure "Goto parameter name not a valid room.") 
+            in Goto(rdecl.rname)
 
 (* Variable checking, both global and local *)
 let check_var_decl (env: translation_environment) vdecl = 
@@ -642,10 +646,14 @@ let check_program (p : Ast.program) =
        let name_field = Ast.Var(String, "name") in 
        (* adding currentRoom as a global variable*)
        let current_room = { rname = "currentRoom" ; rbody = []} in
-       let symbol_table = { parent = None; variables = [];} in
+       let input = Var(Ast.String, "input") in
+       let dummy_room = { rname = "input" ; rbody = [] } in 
+       let dummy_npc = { nname = "input"; nbody = [] } in
+       let dummy_item = { iname = "input"; ibody = [] } in
+       let symbol_table = { parent = None; variables = [input];} in
        let env = { scope = symbol_table; return_type =
-           Ast.Int; functions = print_funcs; room_def = [name_field]; rooms = [current_room]; npc_def = []; npcs = [];
-           item_def = []; items = []; pred_stmts = []; current_func = None } in
+           Ast.Int; functions = print_funcs; room_def = [name_field]; rooms = [current_room; dummy_room]; npc_def = []; npcs = [dummy_npc];
+           item_def = []; items = [dummy_item]; pred_stmts = []; current_func = None } in
         let (room_def, room_decls, adj_decls, start, npc_def, npc_decls, item_def,
              item_decls, var_decls, pred_stmts, funcs) = p in
        let checked_room_def = check_room_def env room_def in

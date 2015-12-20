@@ -1,0 +1,18 @@
+room {}
+
+room Closet { 
+	name = "Closet";
+}
+
+room LivingRoom {
+	name = "Living Room";
+}
+
+Closet <-> LivingRoom;
+
+start { Closet }
+
+currentRoom == "hello" {
+	print("\n");
+        endgame;
+}

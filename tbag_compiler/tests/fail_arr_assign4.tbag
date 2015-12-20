@@ -1,0 +1,10 @@
+true {
+        testvar();
+        endgame;
+}
+
+func int testvar() {
+        int i;
+        int j = i [0];
+        return 0;
+}

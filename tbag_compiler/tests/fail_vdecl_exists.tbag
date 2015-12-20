@@ -1,0 +1,4 @@
+true{
+	string a = "blah";
+	string a = "huh";
+}

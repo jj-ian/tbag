@@ -1,0 +1,24 @@
+room {
+        string place;
+        void nonsense;
+}
+
+room Test {
+        name = "Test";
+        place = "here";
+        nonsense = huh;
+}
+
+room Test2 {
+        name = "Test2";
+        place = "there";
+        nonsense = wha;
+}
+
+Test <-> Test2;
+
+start { Test }
+
+true {
+        endgame;
+}

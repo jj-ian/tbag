@@ -1,0 +1,2 @@
+Fatal error: exception Failure("Left hand side of assignment statement must
+                be a non-array variable")

@@ -1,0 +1,9 @@
+a {
+        endgame;
+}
+
+func int test() {
+        int a = 8;
+}
+
+

@@ -1,0 +1,2 @@
+Fatal error: exception Failure("Left hand side of array assignment must
+                    be an array")
