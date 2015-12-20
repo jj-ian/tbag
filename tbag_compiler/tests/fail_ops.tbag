@@ -1,0 +1,11 @@
+true {
+  printLine("hello" + 2);
+  endgame;
+}
+
+func int printLine(string b) {
+  print(b);
+  print("\n");
+  return 0;
+}
+

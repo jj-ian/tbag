@@ -1,0 +1,3 @@
+Fatal error: exception Failure("Types to equality operators ==, !=
+                            must be the same and be integers, booleans, or
+                            rooms")

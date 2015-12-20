@@ -1,0 +1,2 @@
+Fatal error: exception Failure("Right hand side of assignment statement does
+                    not match type of array")

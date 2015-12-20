@@ -161,7 +161,7 @@ let rec check_expr env = function
                   | (And | Or) ->
                         if (t1 = Boolean && t2 = Boolean) then Boolean
                         else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
-                  | Not -> raise (Failure "NOT takes a single operand") 
+                  | Not -> raise (Failure "Should not reach here") 
                 end in (Ast.Binop(e1, op, e2), typ)
         | Ast.Assign(name, expr) ->
                 let vdecl = (try find_variable env.scope name 
@@ -197,8 +197,7 @@ let rec check_expr env = function
                 if typ == Boolean then
                     let op = begin match op with
                              Not -> op
-                           | _ -> raise (Failure "All other operators besides
-                             NOT take two operands")
+                           | _ -> raise (Failure "Should not reach here")
                          end in
                 (Ast.Boolneg(op, expr), typ)
                 else
