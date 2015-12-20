@@ -1,2 +1,2 @@
-Fatal error: exception Failure("Function arr_len does
+Fatal error: exception Failure("Function arrLen does
                             not exist with the given parameters.")
