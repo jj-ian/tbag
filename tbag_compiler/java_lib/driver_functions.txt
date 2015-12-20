@@ -22,7 +22,6 @@
 		}
 		// loop until player enters valid input
 
-		System.out.print("Input: ");
 		input = scanner.nextLine();
 		System.out.println("Input: " + input);
 		while(!Arrays.asList(acceptableInputs).contains(input)) {

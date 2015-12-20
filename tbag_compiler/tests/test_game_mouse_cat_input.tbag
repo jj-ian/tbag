@@ -37,9 +37,9 @@ npc Cat {
 
 boolean started = false;
 
-currentRoom.name == Cat.roomName {
-	print("you got eaten by the cat.\n");
-	endgame;
+NOT started {
+	strPrintLine("You're a mouse.");
+	started = true;
 }
 
 true {
@@ -48,9 +48,9 @@ true {
 	->input
 }
 
-NOT started {
-	strPrintLine("You're a mouse.");
-	started = true;
+currentRoom.name ~~ Cat.roomName {
+	print("you got eaten by the cat.\n");
+	endgame;
 }
 
 func void printCurrentRoomInfo() {

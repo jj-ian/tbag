@@ -1,12 +1,12 @@
 boolean started = false;
-
 /* @brian @greg -- the below makes java throw an error bc the compiled java file doesn't have semicolons after the array declarations */
 string[10] answer;
 string[26] guessed;
 
 true {
 	print("Guess a letter.");
-	input = get_input_from_options("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+	get_input_from_options("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+	endgame;
 }
 
 NOT started {
