@@ -334,7 +334,11 @@ type of function")
             conditional")
         | Goto(rname) ->
             let rdecl = try find_room env rname with
+<<<<<<< a3c37f4a27eb1df4ecc84f62c2e21a4e216ec6e5
                     Not_found -> raise( Failure "Goto parameter name not a valid room.") 
+=======
+                        Not_found -> raise( Failure "Goto parameter name not a valid room.") 
+>>>>>>> Rmed goto edit
             in Goto(rname)
 
 (* Variable checking, both global and local *)
