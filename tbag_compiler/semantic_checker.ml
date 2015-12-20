@@ -54,6 +54,13 @@ let get_var_type_name var_decl =
     | VarInit(t, s, _) -> (t, s)
     end 
 
+let var_is_array var_decl = 
+    begin match var_decl with 
+    Array_decl(_, _, _) -> true 
+    | Var(_, _) -> false 
+    | VarInit(_, _, _) -> false 
+    end 
+
 let print_var_decls (decl_list: Ast.var_decl list) = 
     List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
 
@@ -161,7 +168,7 @@ let rec check_expr env = function
                   | (And | Or) ->
                         if (t1 = Boolean && t2 = Boolean) then Boolean
                         else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
-                  | Not -> raise (Failure "Should not reach here") 
+                  | _ -> raise (Failure "Should not reach here") 
                 end in (Ast.Binop(e1, op, e2), typ)
         | Ast.Assign(name, expr) ->
                 let vdecl = (try find_variable env.scope name 
@@ -169,7 +176,9 @@ let rec check_expr env = function
                 name))) in
                 let (typ, name) = get_var_type_name vdecl in
                 let (expr, typ) = check_expr env expr in
-                (Ast.Assign(name, expr), typ)
+                if not (var_is_array vdecl) then (Ast.Assign(name, expr), typ)
+                else raise (Failure "Left hand side of assignment statement must
+                be a non-array variable")
         | Ast.ArrayAssign(name, expr1, expr2) ->
                 let vdecl = (try find_variable env.scope name 
                 with Not_found -> raise (Failure ("undeclared identifier " ^
@@ -178,9 +187,12 @@ let rec check_expr env = function
                 let (pos, postyp) = check_expr env expr1 in
                 let (expr, exprtyp) = check_expr env expr2 in
                 if postyp = Int then
-                    if typ = exprtyp then (Ast.ArrayAssign(name, pos, expr), typ)
-                    else raise (Failure "Right hand side of assignment statement does
+                    if var_is_array vdecl then
+                        if typ = exprtyp then (Ast.ArrayAssign(name, pos, expr), typ)
+                        else raise (Failure "Right hand side of assignment statement does
                     not match type of array")
+                    else raise (Failure "Left hand side of array assignment must
+                    be an array")
                 else raise (Failure "Positional array access specifier must be an
                     Integer")
         | Ast.ArrayAccess(name, expr) ->
@@ -189,7 +201,10 @@ let rec check_expr env = function
                 name))) in
                 let (typ, name) = get_var_type_name vdecl in 
                 let (pos, postyp) = check_expr env expr in
-                if postyp = Int then (Ast.ArrayAccess(name, expr), typ)
+                if postyp = Int then 
+                    if var_is_array vdecl then (Ast.ArrayAccess(name, expr), typ)
+                    else raise (Failure "Array access must be used on an array
+type")
                 else raise (Failure "Positional array access specifier must be an
                     Integer")
         | Ast.Boolneg(op, expr) ->
@@ -212,12 +227,7 @@ let rec check_expr env = function
                      let arr_decl = (try find_variable env.scope arr_name
                      with Not_found -> raise (Failure ("undeclared identifier " ^
                     arr_name))) in
-                     let result = 
-                         begin match arr_decl with
-                         Ast.Array_decl(_,_,_) -> true
-                      | _ -> false
-                         end in
-                     if result then
+                     if var_is_array arr_decl then
                     (Ast.Call(fname, expr_list), Ast.Int)
                      else raise (Failure "arr_len expects an array
                       argument")
