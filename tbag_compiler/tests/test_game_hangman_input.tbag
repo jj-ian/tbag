@@ -8,6 +8,7 @@ NOT started {
 	answer[1] = "A";
 	answer[2] = "T";
 
+
 	strPrintLine("You're a mouse.");
 	started = true;
 }
@@ -26,6 +27,7 @@ true {
 
 lol {
 	endgame;
+
 }
 
 func boolean hasLetterBeenGuessedBefore(string letter) {
