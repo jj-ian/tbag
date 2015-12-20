@@ -20,7 +20,6 @@ type translation_environment = {
 
 let print_valid_var_type (v : Ast.variable_type) = match v with
       Ast.Int -> print_string "Ast.Int"
-    | Ast.Void -> print_string "Ast.Void"
     | Ast.String -> print_string "Ast.String"
     | Ast.Boolean -> print_string "Ast.Boolean"
     | Ast.Array(v, i) -> print_string "Ast.Array(v, i)"
@@ -154,12 +153,16 @@ let rec check_expr env = function
                     Integer")
         | Ast.Boolneg(op, expr) ->
                 let (expr, typ) = check_expr env expr in
-                let op = begin match op with
+                if typ == Boolean then
+                    let op = begin match op with
                              Not -> op
-                             | _ -> raise (Failure "All other operators besides
+                           | _ -> raise (Failure "All other operators besides
                              NOT take two operands")
                          end in
                 (Ast.Boolneg(op, expr), typ)
+                else
+                    raise (Failure "Type to unary boolean NOT operator must be
+                    boolean")
        | Ast.Call(fname, expr_list) ->
                (* TODO: make sure recursive calls to function also match:
                 * expr_list *)
@@ -197,8 +200,9 @@ let rec check_expr env = function
                      let fdecl = (try find_function_with_exprs env fname expr_list
                              with Not_found -> begin match env.current_func with 
                              Some(current_func) -> 
-                                if (current_func.fname = fname) then
-                                    current_func 
+                                if (current_func.fname = fname &&
+                                check_matching_args env current_func.formals
+                                expr_list) then current_func 
                                 else 
                                     raise (Failure ("Function " ^ fname ^ " does
                                     not exist with the given parameters."))
@@ -311,9 +315,7 @@ let check_func_decl (env: translation_environment) func_decl =
     with Not_found -> 
         let scope' = { parent = Some(env.scope); variables = [];} in
         let env' = { env with scope = scope'; return_type =
-            func_decl.freturntype; functions = env.functions; room_def =
-                env.room_def; pred_stmts = env.pred_stmts; rooms =
-                    env.rooms; current_func = Some(func_decl)} in
+            func_decl.freturntype; current_func = Some(func_decl)} in
         let fformals = List.map (
             fun f -> match f with 
                      Var(typ, name) ->
