@@ -54,6 +54,19 @@ let get_var_type_name var_decl =
     | VarInit(t, s, _) -> (t, s)
     end 
 
+let var_is_array var_decl = 
+    begin match var_decl with 
+    Array_decl(_, _, _) -> true 
+    | Var(_, _) -> false 
+    | VarInit(_, _, _) -> false 
+    end 
+
+let expr_is_strlit expr = 
+    begin match expr with 
+     StrLiteral(_) -> true
+   | _ -> false
+    end 
+
 let print_var_decls (decl_list: Ast.var_decl list) = 
     List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
 
@@ -227,14 +240,8 @@ type")
                       argument")
                  else if fname = "get_input_from_options" then 
                      let _ = List.map(
-                         fun e -> begin match e with
-                         Ast.Id(rname) -> (*(try find_room env rname with
-                         Not_found -> raise(Failure("Room" ^ rname ^ "does not
-                         exist.")))*)
-                            ignore(rname)
-                        | _ -> raise (Failure("get_input_from_options expects 
-                      one or more string arguments"))
-                         end ) expr_list in
+                         fun e -> if not (expr_is_strlit e) then raise (Failure("get_input_from_options expects 
+                      one or more string arguments"))) expr_list in
                     (Ast.Call(fname, expr_list), Ast.Void)
                  else
                      let fdecl = (try find_function_with_exprs env fname expr_list
@@ -334,12 +341,8 @@ type of function")
             conditional")
         | Goto(rname) ->
             let rdecl = try find_room env rname with
-<<<<<<< a3c37f4a27eb1df4ecc84f62c2e21a4e216ec6e5
                     Not_found -> raise( Failure "Goto parameter name not a valid room.") 
-=======
-                        Not_found -> raise( Failure "Goto parameter name not a valid room.") 
->>>>>>> Rmed goto edit
-            in Goto(rname)
+            in Goto(rdecl.rname)
 
 (* Variable checking, both global and local *)
 let check_var_decl (env: translation_environment) vdecl = 
