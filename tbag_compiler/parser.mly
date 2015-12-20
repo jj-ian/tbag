@@ -1,4 +1,4 @@
-(* Authors: All *)
+/* Authors: All */
 
 %{ open Ast %}
 
