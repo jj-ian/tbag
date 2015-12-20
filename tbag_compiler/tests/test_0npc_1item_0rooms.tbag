@@ -9,6 +9,5 @@ item Purse {
 true {
 	print("You have a ");
 	print(Purse.name);
-
 	endgame;
 }
