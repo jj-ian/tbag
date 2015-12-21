@@ -1,7 +1,4 @@
 open Ast
-(* TODO: pred_stmt checking, adj_decl checking, room/item/npc_decl checking,
- * room/item/npc_def checking, start checking, Access operator of expr*)
-(*type room_table = var_decl list;*)
 
 (* environment *)
 type symbol_table = {
@@ -89,7 +86,7 @@ let require_bools tlist str =
 let require_eq tlist str = 
     let typ = List.hd tlist in
     let _ = List.map(
-        fun t ->  if typ <> t then raise (Failure(str)) 
+        fun t -> if typ <> t then raise (Failure(str))
     ) tlist in
     true
 
@@ -245,8 +242,6 @@ type")
                     boolean" in
                 (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
-               (* TODO: make sure recursive calls to function also match:
-                * expr_list *)
                 if fname = "arrLen" && List.length expr_list = 1 then 
                     let arr_name = 
                       let e = List.hd expr_list in
@@ -288,31 +283,21 @@ type")
                             not exist with the given parameters."))end) in
                 let typ = fdecl.freturntype in
                     (Ast.Call(fname, expr_list), typ)
-       | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
-      (* TODO: Access operator for rooms, need to check that the thing is in the
-       * room_decl, which will be stored in the environment *)
+       | Ast.End -> (Ast.End, Ast.Int) (* This type is meaningless *)
        | Ast.Access(name, field) -> 
-            (*print_string "trying to access name field";*)
             try let _ =  find_room env name in 
                 let (ftyp, fname) = find_room_field env field in 
                     (Ast.Access(name, field), ftyp)
             with Not_found -> 
                 try let _ = find_npc env name in 
-                    (*print_string "didn't find the room name in access... trying to find npc";*)
                     let (ftyp, fname) = find_npc_field env field in 
                         (Ast.Access(name, field), ftyp)
                 with Not_found -> 
                     try let _ = find_item env name in 
-                    (*print_string "didn't find the npc name in access... trying to find item";*)
                         let (ftyp, fname) = find_item_field env field in 
                             (Ast.Access(name, field), ftyp)
                     with Not_found -> 
                         raise(Failure("Trying to access field " ^ field ^ ", which does not exist for that structure."))
-
-            (*let ndecl = (try find_npc env name with Not_found -> 
-                raise(Failure("Trying to access NPC " ^ name ^ " which does not exist."))) in 
-            let (ftyp, fname) = find_npc_field env field in 
-            (Ast.Access(name, field), ftyp)*)
 
 (* check formal arg list with expr list of called function *)
 and check_matching_args_helper (env: translation_environment) ref_vars target_exprs =
@@ -638,9 +623,6 @@ let check_pred_stmt (env: translation_environment) pstmt =
         checked_body;} in
     env.pred_stmts <- new_pstmt::env.pred_stmts ; new_pstmt
 
-(* do we need to store the pred_stmts so that we can prevent multiple pred_stmts
- * with the same condition? Would we compare the exprs in that case? Decompose
- * expr into all possible boolean exprs, compare operands and operator*)
 let check_pred_stmts (env: translation_environment) pstmts = 
     let new_pstmts = List.map (fun s -> check_pred_stmt env s) pstmts in
     new_pstmts
@@ -669,8 +651,6 @@ let check_program (p : Ast.program) =
        let print_str = { freturntype = Void; fname = "print"; formals =
            [Var(Ast.String, "arg")]; locals = []; body = [];} in
        let print_funcs = [print_int; print_bool; print_str] in
-       (*let get_adj_func =  { freturntype = Void; fname = "getInputAdjacentRooms"; formals = [Ast.room_decl];
-            locals = []; body = []} in*)
        (* adding name type String as default field in room_def*)
        let name_field = Ast.Var(String, "name") in 
        (* adding currentRoom as a global variable*)
