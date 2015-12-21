@@ -1,0 +1,15 @@
+int i = 0;
+
+true {
+	whileTest();
+	endgame;
+}
+
+func void whileTest() {
+	while (i) {
+		print(i);
+		print("\n");
+		i = i + 1;
+	}
+	print(666);
+}

@@ -1,0 +1,15 @@
+true {
+	testif();
+	endgame;
+}
+
+
+func int testif() {
+	if ("hello") {
+		print("true ");
+	}
+	else {}
+	print("hi");
+	return 0;
+}
+
