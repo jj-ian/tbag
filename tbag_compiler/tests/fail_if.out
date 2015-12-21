@@ -1,2 +1,2 @@
-Fatal error: exception Failure("If statement must have a boolean expression
-            conditional")
+Fatal error: exception Failure("Expression in if statement conditional must be
+    of type Boolean")

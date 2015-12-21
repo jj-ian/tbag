@@ -339,8 +339,7 @@ let find_function_with_decls (env : translation_environment) name decl_list =
 
 (* Stmt checking*)
 let rec check_stmt env = function
-        Block(stmt_list) -> 
-            let sl = List.map (fun s -> check_stmt env s) stmt_list in Block(sl)
+        Block(stmt_list) -> Block(check_stmts env stmt_list)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
         | Return(expr) -> let (expr, typ) = check_expr env expr in 
           let _ = require_eq [typ;env.return_type] "Return type of expression does not match return
@@ -348,18 +347,22 @@ type of function" in
           Return(expr)
         | If(expr, stmt1, stmt2) ->
             let (expr, typ) = check_expr env expr in
-            let _ = require_bools [typ] "If statement must have a boolean expression
-            conditional" in
+            let _ = require_bools [typ] "Expression in if statement conditional must be
+    of type Boolean" in
             If(expr, check_stmt env stmt1, check_stmt env stmt2) 
         | While(expr, stmt) -> 
             let (expr, typ) = check_expr env expr in
-            let _ = require_bools [typ] "While statement must have a boolean expression
-            conditional" in
+            let _ = require_bools [typ] "Expression in while statement conditional must be
+    of type Boolean" in
             While(expr, check_stmt env stmt) 
         | Goto(rname) ->
             let rdecl = try find_room env rname with
                     Not_found -> raise( Failure "Goto parameter name not a valid room.") 
             in Goto(rdecl.rname)
+
+and check_stmts (env: translation_environment) stmt_list = 
+    let stmt_list = List.map (fun s -> check_stmt env s) stmt_list in
+    stmt_list
 
 (* Variable checking, both global and local *)
 let check_var_decl (env: translation_environment) vdecl = 
@@ -397,17 +400,10 @@ let check_func_decl (env: translation_environment) func_decl =
         let scope' = { parent = Some(env.scope); variables = [];} in
         let env' = { env with scope = scope'; return_type =
             func_decl.freturntype; current_func = Some(func_decl)} in
-        let fformals = List.map (
-            fun f -> match f with 
-                     Var(typ, name) ->
-                         let typ = check_valid_var_type typ in 
-                         env'.scope.variables <- Var(typ,
-                         name)::env'.scope.variables; Var(typ, name)
-                   | _ -> raise (Failure ("Formal argument must be of type Var"))
-                   ) func_decl.formals in
+        let fformals = check_var_decls env' func_decl.formals in
         let flocals = check_var_decls env' func_decl.locals in 
         let fbody = func_decl.body in 
-        let fbody = List.map (fun s -> check_stmt env' s) fbody in
+        let fbody = check_stmts env' fbody in
         let ffreturntype = func_decl.freturntype in
         let new_func_decl = { func_decl with  body = fbody; locals = flocals;
         formals = fformals; freturntype = ffreturntype; } in
@@ -613,7 +609,7 @@ let check_pred_stmt (env: translation_environment) pstmt =
     let _ = require_bools [typ] "Expression in predicate statement conditional must be
     of type Boolean" in 
     let checked_locals = check_var_decls env' pstmt.locals in
-    let checked_body = List.map (fun s -> check_stmt env' s) pstmt.body in
+    let checked_body = check_stmts env' pstmt.body in
     let new_pstmt = {pred = checked_pred; locals = checked_locals; body =
         checked_body;} in
     env.pred_stmts <- new_pstmt::env.pred_stmts ; new_pstmt
