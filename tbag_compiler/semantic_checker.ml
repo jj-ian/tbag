@@ -538,11 +538,8 @@ let check_npc_decls (env: translation_environment) npcs =
 
 
 let check_npc_def (env: translation_environment) (n: Ast.npc_def) = 
-    try
         let checked_fields = List.map ( fun npc_field -> process_npc_field npc_field env) n in
         checked_fields
-    with
-    | _ -> raise (Failure "npc defs didn't check out")
 
 
 (* Item checking*)
@@ -600,11 +597,9 @@ let check_item_decls (env: translation_environment) items =
 
 
 let check_item_def (env: translation_environment) (i: Ast.item_def) = 
-    try
         let checked_fields = List.map ( fun item_field -> process_item_field item_field env) i in
         checked_fields
-    with
-    | _ -> raise (Failure "item defs didn't check out")
+
 
 (* Predicate checking *)
 let check_pred_stmt (env: translation_environment) pstmt =
