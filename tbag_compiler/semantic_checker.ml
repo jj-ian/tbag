@@ -217,7 +217,7 @@ type")
                     Integer")
         | Ast.Boolneg(op, expr) ->
                 let (expr, typ) = check_expr env expr in
-                if typ == Boolean then (Ast.Boolneg(op, expr), typ)
+                if typ = Boolean then (Ast.Boolneg(op, expr), typ)
                 else
                     raise (Failure "Type to unary boolean NOT operator must be
                     boolean")
@@ -242,11 +242,10 @@ type")
                          fun e -> if not (expr_is_strlit e) then raise (Failure("getInputFromOptions expects 
                       one or more string arguments"))) expr_list in
                     (Ast.Call(fname, expr_list), Ast.Void)
-                 else if fname = "getInputAdjacentRooms" then
+                 else if fname = "getInputAdjacentRooms" && List.length expr_list = 1 then
                      let rname = 
-                      let e = List.hd expr_list in
-                      begin match e with 
-                        Ast.Id(vname) -> vname
+                      begin match List.hd expr_list with 
+                        Ast.Id(r) -> r 
                       | _ -> raise (Failure("getInputAdjacentRooms expects a room argument"))
                         end in
                        let _ = (try find_room env rname with 
