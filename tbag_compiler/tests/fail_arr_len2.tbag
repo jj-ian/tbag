@@ -1,0 +1,8 @@
+true {
+	int a;
+        int b;
+	int len;
+	len = arrLen(a, b);
+	print(len);
+	endgame;
+}

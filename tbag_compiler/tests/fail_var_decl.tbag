@@ -1,0 +1,9 @@
+true {
+        testvar();
+        endgame;
+}
+
+func int testvar() {
+        void i;
+        return 0;
+}

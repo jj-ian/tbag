@@ -1,0 +1,73 @@
+room {
+        int num_cats;
+}
+
+room Closet { 
+	name = "Closet";
+        num_dogs = 4;
+}
+
+room Bedroom {
+	name = "Bedroom";
+        num_dogs = 4;
+}
+
+
+room LivingRoom {
+	name = "Living Room";
+        num_dogs = 4;
+}
+
+room Outside {
+	name = "Outside";
+        num_dogs = 4;
+}
+
+Closet <-> Bedroom;
+Bedroom <-> LivingRoom;
+
+start { Bedroom }
+
+boolean madeItOutside = false;
+
+currentRoom == Bedroom {
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
+	get_input_from_options("Closet", "LivingRoom");
+	->input
+	print("\n");
+}
+
+currentRoom == Closet {
+	string testName = currentRoom.name;
+	print("Currently in: ");
+	print(testName);
+	print("\n");
+	get_input_from_options("Bedroom");
+	->input
+	print("\n");
+}
+
+currentRoom == LivingRoom {
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
+	get_input_from_options("Bedroom", "Outside");
+	->input
+	print("\n");
+}
+
+currentRoom == Outside {
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
+	print("\n");
+	madeItOutside = true;
+}
+
+madeItOutside {
+	print("Good job making it outside, lazybones.");
+	print("\n");
+	endgame;
+}
