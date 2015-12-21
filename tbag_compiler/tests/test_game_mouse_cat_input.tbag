@@ -1,86 +1,40 @@
 room {}
 
-room Great_Hall { 
-	name = "Great_Hall";
+room Closet { 
+	name = "Closet";
 }
 
-room Throne_Room {
-	name = "Throne_Room";
+room Bedroom {
+	name = "Bedroom";
 }
 
-room East_Chamber {
-	name = "East_Chamber";
-}
-
-room West_Chamber {
-	name = "West_Chamber";
+room Wall {
+	name = "Wall";
 }
 
 room Kitchen {
 	name = "Kitchen";
 }
 
-room Private_Bedroom {
-	name = "Private_Bedroom";
-}
+Closet <-> Bedroom;
+Closet <-> Wall;
+Kitchen <-> Wall;
+Kitchen <-> Bedroom;
 
-room Stairs {
-	name = "Stairs";
-}
-
-room Library {
-	name = "Library";
-}
-
-Throne_Room <-> Great_Hall;
-West_Chamber <-> Great_Hall;
-East_Chamber <-> Great_Hall;
-Great_Hall <-> Stairs;
-Stairs <-> Bedroom;
-West_Chamber <-> Kitchen;
-Library <-> East_Chamber;
-
-start { Great_Hall }
+start { Closet }
 
 npc {
-	string name;
 	string roomName;
-	string message;
 }
 
-npc Tubbs {
-	name = "King Tubbs";
-	roomName = "East_Chamber";
-	message = "hi";
-}
-
-npc Pickles {
-	name = "Duke Pickles";
-	roomName = "West_Chamber";
-	message = "lol";
-}
-
-npc Marshmallow {
-	name = "Lady Marshmallow";
-	roomName = "East_Chamber";
-	message = 
-}
-
-item {
-	string name;
-}
-
-item Key {
-	name = "Key";
-	roomName = "East_Chamber";
+npc Cat {
+	roomName = "Bedroom";
 }
 
 boolean started = false;
-int week = 1;
 
 NOT started {
-	strPrintLine("King Tubbs, the great monarch of the Cat Kingdom, has recently discovered a sunbeam of sensational quality!");
-	strPrintLine("He has, understandably, requested a seven week sabbatical.");
+	strPrintLine("You're a mouse.");
 	started = true;
 }
 
@@ -90,7 +44,7 @@ true {
 	->input
 }
 
-currentRoom.name ~~ Pickles.roomName {
+currentRoom.name ~~ Cat.roomName {
 	print("you got eaten by the cat.\n");
 	endgame;
 }
@@ -98,6 +52,7 @@ currentRoom.name ~~ Pickles.roomName {
 #import stdlib
 
 func void printCurrentRoomInfo() {
-	print("You're in the ");
-	strPrintLine(currentRoom.name);
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
 }
