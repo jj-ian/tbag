@@ -1,13 +1,11 @@
 Currently in: Bedroom
 Choose from one of the following options:
-Closet
-LivingRoom
+Closet    LivingRoom    
 Input: LivingRoom
 
 Currently in: Living Room
 Choose from one of the following options:
-Bedroom
-Outside
+Bedroom    Outside    
 Input: Outside
 
 Currently in: Outside

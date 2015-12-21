@@ -1,28 +1,253 @@
-Guess a letter.Choose from one of the following options:
-A
-B
-C
-D
-E
-F
-G
-H
-I
-J
-K
-L
-M
-N
-O
-P
-Q
-R
-S
-T
-U
-V
-W
-X
-Y
-Z
-Input: P
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: M
+
+
+
+ _________     
+|         |    
+|         O    
+|           
+|              
+|              
+|              
+
+
+
+_ _ _ _ _ _ _ _ _ _ 
+
+Already Guessed : M 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: D
+
+
+
+ _________     
+|         |    
+|         O    
+|        /   
+|              
+|              
+|              
+
+
+
+_ _ _ _ _ _ _ _ _ _ 
+
+Already Guessed : D M 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: T
+
+
+
+ _________     
+|         |    
+|         O    
+|        /   
+|              
+|              
+|              
+
+
+
+_ _ T _ _ _ _ _ _ _ 
+
+Already Guessed : D M T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: I
+
+
+
+ _________     
+|         |    
+|         O    
+|        /   
+|              
+|              
+|              
+
+
+
+_ I T _ _ _ I _ _ _ 
+
+Already Guessed : D I M T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: E
+
+
+
+ _________     
+|         |    
+|         O    
+|        /   
+|              
+|              
+|              
+
+
+
+_ I T _ _ _ I _ E _ 
+
+Already Guessed : D E I M T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: H
+
+
+
+ _________     
+|         |    
+|         O    
+|        /   
+|              
+|              
+|              
+
+
+
+H I T _ H H I _ E _ 
+
+Already Guessed : D E H I M T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: B
+
+
+
+ _________     
+|         |    
+|         O    
+|        /|   
+|              
+|              
+|              
+
+
+
+H I T _ H H I _ E _ 
+
+Already Guessed : B D E H I M T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: C
+
+
+
+ _________     
+|         |    
+|         O    
+|        /|   
+|              
+|              
+|              
+
+
+
+H I T C H H I _ E _ 
+
+Already Guessed : B C D E H I M T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: R
+
+
+
+ _________     
+|         |    
+|         O    
+|        /|   
+|              
+|              
+|              
+
+
+
+H I T C H H I _ E R 
+
+Already Guessed : B C D E H I M R T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: F
+
+
+
+ _________     
+|         |    
+|         O    
+|        /|\  
+|              
+|              
+|              
+
+
+
+H I T C H H I _ E R 
+
+Already Guessed : B C D E F H I M R T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: G
+
+
+
+ _________     
+|         |    
+|         O    
+|        /|\  
+|        /     
+|              
+|              
+
+
+
+H I T C H H I _ E R 
+
+Already Guessed : B C D E F G H I M R T 
+
+
+Guess a letter. Choose from one of the following options:
+A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
+Input: K
+
+
+
+ _________     
+|         |    
+|         O    
+|        /|\  
+|        /     
+|              
+|              
+
+
+
+H I T C H H I K E R 
+
+Already Guessed : B C D E F G H I K M R T 
+
+
+WOO!!!! YOU WON!!!!!!!!

@@ -14,34 +14,64 @@ func void boolPrintLine(boolean b) {
 }
 
 func int intFromLetter(string letter) {
-	if (letter ~~ "A") { return 0; } else {}
-	if (letter ~~ "B") { return 1; } else {}
-	if (letter ~~ "C") { return 2; } else {}
-	if (letter ~~ "D") { return 3; } else {}
-	if (letter ~~ "E") { return 4; } else {}
-	if (letter ~~ "F") { return 5; } else {}
-	if (letter ~~ "G") { return 6; } else {}
-	if (letter ~~ "H") { return 7; } else {}
-	if (letter ~~ "I") { return 8; } else {}
-	if (letter ~~ "J") { return 9; } else {}
-	if (letter ~~ "K") { return 10; } else {}
-	if (letter ~~ "L") { return 11; } else {}
-	if (letter ~~ "M") { return 12; } else {}
-	if (letter ~~ "N") { return 13; } else {}
-	if (letter ~~ "O") { return 14; } else {}
-	if (letter ~~ "P") { return 15; } else {}
-	if (letter ~~ "Q") { return 16; } else {}
-	if (letter ~~ "R") { return 17; } else {}
-	if (letter ~~ "S") { return 18; } else {}
-	if (letter ~~ "T") { return 19; } else {}
-	if (letter ~~ "U") { return 20; } else {}
-	if (letter ~~ "V") { return 21; } else {}
-	if (letter ~~ "W") { return 22; } else {}
-	if (letter ~~ "X") { return 23; } else {}
-	if (letter ~~ "Y") { return 24; } else {}
-	if (letter ~~ "Z") { return 25; } else {}
+if (letter ~~ "A") { return 0; } else {}
+if (letter ~~ "B") { return 1; } else {}
+if (letter ~~ "C") { return 2; } else {}
+if (letter ~~ "D") { return 3; } else {}
+if (letter ~~ "E") { return 4; } else {}
+if (letter ~~ "F") { return 5; } else {}
+if (letter ~~ "G") { return 6; } else {}
+if (letter ~~ "H") { return 7; } else {}
+if (letter ~~ "I") { return 8; } else {}
+if (letter ~~ "J") { return 9; } else {}
+if (letter ~~ "K") { return 10; } else {}
+if (letter ~~ "L") { return 11; } else {}
+if (letter ~~ "M") { return 12; } else {}
+if (letter ~~ "N") { return 13; } else {}
+if (letter ~~ "O") { return 14; } else {}
+if (letter ~~ "P") { return 15; } else {}
+if (letter ~~ "Q") { return 16; } else {}
+if (letter ~~ "R") { return 17; } else {}
+if (letter ~~ "S") { return 18; } else {}
+if (letter ~~ "T") { return 19; } else {}
+if (letter ~~ "U") { return 20; } else {}
+if (letter ~~ "V") { return 21; } else {}
+if (letter ~~ "W") { return 22; } else {}
+if (letter ~~ "X") { return 23; } else {}
+if (letter ~~ "Y") { return 24; } else {}
+if (letter ~~ "Z") { return 25; } else {}
 	
 	return neg 1;
+}
+
+func string letterFromInt(int i) {
+if (i == 0) { return "A"; } else {}
+if (i == 1) { return "B"; } else {}
+if (i == 2) { return "C"; } else {}
+if (i == 3) { return "D"; } else {}
+if (i == 4) { return "E"; } else {}
+if (i == 5) { return "F"; } else {}
+if (i == 6) { return "G"; } else {}
+if (i == 7) { return "H"; } else {}
+if (i == 8) { return "I"; } else {}
+if (i == 9) { return "J"; } else {}
+if (i == 10) { return "K"; } else {}
+if (i == 11) { return "L"; } else {}
+if (i == 12) { return "M"; } else {}
+if (i == 13) { return "N"; } else {}
+if (i == 14) { return "O"; } else {}
+if (i == 15) { return "P"; } else {}
+if (i == 16) { return "Q"; } else {}
+if (i == 17) { return "R"; } else {}
+if (i == 18) { return "S"; } else {}
+if (i == 19) { return "T"; } else {}
+if (i == 20) { return "U"; } else {}
+if (i == 21) { return "V"; } else {}
+if (i == 22) { return "W"; } else {}
+if (i == 23) { return "X"; } else {}
+if (i == 24) { return "Y"; } else {}
+if (i == 25) { return "Z"; } else {}
+return "_";
 }
 
 #import stdlib
