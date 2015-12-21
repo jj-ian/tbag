@@ -1,7 +1,4 @@
 open Ast
-(* TODO: pred_stmt checking, adj_decl checking, room/item/npc_decl checking,
- * room/item/npc_def checking, start checking, Access operator of expr*)
-(*type room_table = var_decl list;*)
 
 (* environment *)
 type symbol_table = {
@@ -22,21 +19,6 @@ type translation_environment = {
     mutable items: item_decl list;
     mutable pred_stmts : pred_stmt list;
 }
-
-(* error checking functions *)
-let print_valid_var_type (v : Ast.variable_type) = match v with
-      Ast.Int -> print_string "Ast.Int"
-    | Ast.String -> print_string "Ast.String"
-    | Ast.Boolean -> print_string "Ast.Boolean"
-    | Ast.Array(v, i) -> print_string "Ast.Array(v, i)"
-    | _ -> raise (Failure ("Invalid variable type used"))
-
-let print_valid_lit_type (v: Ast.expr) = match v with
-        IntLiteral(x) -> print_string "IntLiteral"
-        | NegIntLiteral(y) -> print_string "NegIntLiteral"
-        | StrLiteral(s) -> print_string "StrLiteral"
-        | BoolLiteral(b) -> print_string "BoolLiteral"
-        | _ -> print_string "not a literal"
 
 (* helper functions *)
 let check_valid_var_type (v : Ast.variable_type) = match v with
@@ -67,8 +49,46 @@ let expr_is_strlit expr =
    | _ -> false
     end 
 
-let print_var_decls (decl_list: Ast.var_decl list) = 
-    List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
+(* type enforcement functions *)
+
+let require_integers tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            Int -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
+
+let require_strings tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            String -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
+
+let require_voids tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            Void -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
+
+let require_bools tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            Boolean -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
+
+let require_eq tlist str = 
+    let typ = List.hd tlist in
+    let _ = List.map(
+        fun t -> if typ <> t then raise (Failure(str))
+    ) tlist in
+    true
 
 
 (* find functions *)
@@ -141,24 +161,28 @@ let find_item_field (env: translation_environment) fieldName =
 let get_binop_type op t1 t2 = 
     begin match op with
         (Add | Sub | Mult | Div)  -> 
-            if (t1 = Int && t2 = Int) then Int
-            else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
+            let _ = require_integers [t1;t2] "Types to arithmetic operators +, -, *, /
+            must both be Int" in
+            Int
       | (Equal | Neq) ->
-            if (t1 = Int && t2 = Int) || (t1 = Boolean && t2 =
-                Boolean) || (t1 = Void && t2 = Void) then Boolean  
-            else raise (Failure "Types to equality operators ==, !=
+              let _ = 
+                  (try require_integers[t1;t2]  ""
+                   with _ -> try require_bools[t1;t2] ""
+                       with _ -> require_voids[t1;t2] "Types to equality operators ==, !=
                         must be the same and be integers, booleans, or
-                        rooms") 
+                        rooms" ) in
+              Boolean
+
      | (Less | Leq | Greater | Geq) ->
-            if (t1 = Int && t2 = Int) then Boolean 
-            else raise (Failure "Types to integer comparison
-                        operators <, <=, >, >= must be integers")
+             let _ = require_integers [t1;t2] "Types to integer comparison
+                        operators <, <=, >, >= must be integers" in
+             Boolean
      | StrEqual ->
-            if (t1 = String && t2 = String) then Boolean
-            else raise (Failure "Types to ~~ must both be String")
+             let _ = require_strings [t1;t2] "Types to ~~ must both be String"
+             in Boolean
      | (And | Or) ->
-            if (t1 = Boolean && t2 = Boolean) then Boolean
-            else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
+             let _ = require_bools [t1;t2] "Types to binary boolean operators AND, OR must both be Boolean" in
+             Boolean
      | _ -> raise (Failure "Should not reach here") 
     end
 
@@ -187,8 +211,7 @@ let rec check_expr env = function
                 let (vtyp, name) = get_var_type_name vdecl in
                 let (expr, etyp) = check_expr env expr in
                 if not (var_is_array vdecl) then 
-                    if vtyp = etyp then (Ast.Assign(name, expr), vtyp)
-                    else raise (Failure "Type mismatch in assignment statement")
+                    let _ = require_eq [vtyp;etyp] "Type mismatch in assignment statement" in (Ast.Assign(name, expr), vtyp)
                 else raise (Failure "Left hand side of assignment statement must
                 be a non-array variable")
         | Ast.ArrayAssign(name, expr1, expr2) ->
@@ -196,34 +219,29 @@ let rec check_expr env = function
                 let (typ, name) = get_var_type_name vdecl in
                 let (pos, postyp) = check_expr env expr1 in
                 let (expr, exprtyp) = check_expr env expr2 in
-                if postyp = Int then
+                let _ = require_integers [postyp] "Positional array access specifier must be an
+                    Integer" in
                     if var_is_array vdecl then
-                        if typ = exprtyp then (Ast.ArrayAssign(name, pos, expr), typ)
-                        else raise (Failure "Right hand side of assignment statement does
-                    not match type of array")
+                        let _ = require_eq [typ;exprtyp] "Right hand side of assignment statement does
+                    not match type of array" in
+                        (Ast.ArrayAssign(name, pos, expr), typ)
                     else raise (Failure "Left hand side of array assignment must
                     be an array")
-                else raise (Failure "Positional array access specifier must be an
-                    Integer")
         | Ast.ArrayAccess(name, expr) ->
                 let vdecl = get_var_if_exists env.scope name in
                 let (typ, name) = get_var_type_name vdecl in 
                 let (pos, postyp) = check_expr env expr in
-                if postyp = Int then 
-                    if var_is_array vdecl then (Ast.ArrayAccess(name, expr), typ)
-                    else raise (Failure "Array access must be used on an array
+                let _ = require_integers [postyp] "Positional array access specifier must be an
+                    Integer" in
+                if var_is_array vdecl then (Ast.ArrayAccess(name, expr), typ)
+                else raise (Failure "Array access must be used on an array
 type")
-                else raise (Failure "Positional array access specifier must be an
-                    Integer")
         | Ast.Boolneg(op, expr) ->
                 let (expr, typ) = check_expr env expr in
-                if typ == Boolean then (Ast.Boolneg(op, expr), typ)
-                else
-                    raise (Failure "Type to unary boolean NOT operator must be
-                    boolean")
+                let _ = require_bools [typ] "Type to unary boolean NOT operator must be
+                    boolean" in
+                (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
-               (* TODO: make sure recursive calls to function also match:
-                * expr_list *)
                 if fname = "arrLen" && List.length expr_list = 1 then 
                     let arr_name = 
                       let e = List.hd expr_list in
@@ -242,11 +260,10 @@ type")
                          fun e -> if not (expr_is_strlit e) then raise (Failure("getInputFromOptions expects 
                       one or more string arguments"))) expr_list in
                     (Ast.Call(fname, expr_list), Ast.Void)
-                 else if fname = "getInputAdjacentRooms" then
+                 else if fname = "getInputAdjacentRooms" && List.length expr_list = 1 then
                      let rname = 
-                      let e = List.hd expr_list in
-                      begin match e with 
-                        Ast.Id(vname) -> vname
+                      begin match List.hd expr_list with 
+                        Ast.Id(r) -> r 
                       | _ -> raise (Failure("getInputAdjacentRooms expects a room argument"))
                         end in
                        let _ = (try find_room env rname with 
@@ -266,31 +283,21 @@ type")
                             not exist with the given parameters."))end) in
                 let typ = fdecl.freturntype in
                     (Ast.Call(fname, expr_list), typ)
-       | Ast.End -> (Ast.End, Ast.Int) (* This type is BS; will remove later *)
-      (* TODO: Access operator for rooms, need to check that the thing is in the
-       * room_decl, which will be stored in the environment *)
+       | Ast.End -> (Ast.End, Ast.Int) (* This type is meaningless *)
        | Ast.Access(name, field) -> 
-            (*print_string "trying to access name field";*)
             try let _ =  find_room env name in 
                 let (ftyp, fname) = find_room_field env field in 
                     (Ast.Access(name, field), ftyp)
             with Not_found -> 
                 try let _ = find_npc env name in 
-                    (*print_string "didn't find the room name in access... trying to find npc";*)
                     let (ftyp, fname) = find_npc_field env field in 
                         (Ast.Access(name, field), ftyp)
                 with Not_found -> 
                     try let _ = find_item env name in 
-                    (*print_string "didn't find the npc name in access... trying to find item";*)
                         let (ftyp, fname) = find_item_field env field in 
                             (Ast.Access(name, field), ftyp)
                     with Not_found -> 
                         raise(Failure("Trying to access field " ^ field ^ ", which does not exist for that structure."))
-
-            (*let ndecl = (try find_npc env name with Not_found -> 
-                raise(Failure("Trying to access NPC " ^ name ^ " which does not exist."))) in 
-            let (ftyp, fname) = find_npc_field env field in 
-            (Ast.Access(name, field), ftyp)*)
 
 (* check formal arg list with expr list of called function *)
 and check_matching_args_helper (env: translation_environment) ref_vars target_exprs =
@@ -298,7 +305,8 @@ and check_matching_args_helper (env: translation_environment) ref_vars target_ex
     let _ = (try List.map2 (
         fun r t -> let (rtyp, rname) = get_var_type_name r in 
                    let (texpr, ttyp) = check_expr env t in 
-                   if ttyp <> rtyp then raise Not_found) ref_vars target_exprs
+                   try require_eq [ttyp;rtyp] "";
+                   with _ -> raise Not_found) ref_vars target_exprs
     with Invalid_argument(_) -> raise Not_found) in result
 
 and check_matching_args (env: translation_environment) ref_vars target_exprs =
@@ -316,7 +324,7 @@ let check_matching_decls_helper (env: translation_environment) ref_vars target_d
     let _ = (try List.map2 (
         fun r t -> let (rtyp, rname) = get_var_type_name r in 
                    let (ttyp, tname) = get_var_type_name t in 
-                   if ttyp <> rtyp then raise Not_found) ref_vars target_decls
+                   require_eq[ttyp;rtyp] "";) ref_vars target_decls
     with Invalid_argument(_) -> raise Not_found) in result
 
 let check_matching_decls (env: translation_environment) ref_vars target_decls =
@@ -335,19 +343,19 @@ let rec check_stmt env = function
             let sl = List.map (fun s -> check_stmt env s) stmt_list in Block(sl)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
         | Return(expr) -> let (expr, typ) = check_expr env expr in 
-          if typ = env.return_type then Return(expr)
-          else raise (Failure "Return type of expression does not match return
-type of function")
+          let _ = require_eq [typ;env.return_type] "Return type of expression does not match return
+type of function" in
+          Return(expr)
         | If(expr, stmt1, stmt2) ->
             let (expr, typ) = check_expr env expr in
-            if typ = Boolean then If(expr, check_stmt env stmt1, check_stmt env stmt2) 
-            else raise (Failure "If statement must have a boolean expression
-            conditional")
+            let _ = require_bools [typ] "If statement must have a boolean expression
+            conditional" in
+            If(expr, check_stmt env stmt1, check_stmt env stmt2) 
         | While(expr, stmt) -> 
             let (expr, typ) = check_expr env expr in
-            if typ = Boolean then While(expr, check_stmt env stmt) 
-            else raise (Failure "While statement must have a boolean expression
-            conditional")
+            let _ = require_bools [typ] "While statement must have a boolean expression
+            conditional" in
+            While(expr, check_stmt env stmt) 
         | Goto(rname) ->
             let rdecl = try find_room env rname with
                     Not_found -> raise( Failure "Goto parameter name not a valid room.") 
@@ -366,16 +374,15 @@ let check_var_decl (env: translation_environment) vdecl =
             match vdecl with 
             Array_decl(typ, expr, name) -> 
                     let (expr, exprtyp) = check_expr env expr in
-                    if exprtyp = Int then let typ = check_valid_var_type typ in
+                    let _ = require_integers [exprtyp] "Array size must be integer" in 
+                    let typ = check_valid_var_type typ in
                     (env.scope.variables <- Array_decl (typ,expr,name)::env.scope.variables; Array_decl (typ,expr,name)) 
-                    else raise (Failure ("Array size must be integer"))
               | Var(typ, name) -> let typ = check_valid_var_type typ in 
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
               | VarInit(typ, name, expr) -> let typ = check_valid_var_type typ in 
                     let (expr, exprtyp) = check_expr env expr in 
-                    if exprtyp = typ then 
+                    let _ = require_eq [exprtyp;typ] "Type mismatch in variable initialization" in 
                         (env.scope.variables <- VarInit (exprtyp,name,expr)::env.scope.variables; VarInit (exprtyp, name,expr)) 
-                    else raise (Failure ("Type mismatch in variable initialization"))
 
 let check_var_decls (env: translation_environment) var_decls = 
     let var_decls = List.map(fun vdecl -> check_var_decl env vdecl) var_decls in
@@ -440,10 +447,8 @@ let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begi
             let (room_decl_typ, _) = get_var_type_name rdecl in
             (*CHECKING FOR ROOM DECL BODY EXPR RETURN TYPE HERE*)
             let (_, typ) = check_expr env expr in
-                if ( typ <> room_decl_typ ) then 
-                    raise (Failure "room decl body does not match field type")
-                else 
-                    rfa (*return this*)
+            let _ = require_eq [typ;room_decl_typ] "room decl body does not match field type" in
+            rfa (*return this*)
         | _ -> raise (Failure "room assignment not correct format.") end
     | _ -> raise (Failure "room assignment not correct format.") end
 
@@ -495,21 +500,18 @@ let process_npc_field (field: Ast.var_decl) (env: translation_environment) = mat
 let process_npc_decl_body (env: translation_environment) (nfa: Ast.stmt) = begin match nfa with
     Ast.Expr(npcAssign) -> begin match npcAssign with (* check that the expr is in the form of an assign*)
         Ast.Assign(fieldname, expr) ->
-           (* try *)
-            (*print_string "do i reach process_npc_decl_body?";*)
-            let ndecl = List.find(fun ndecl -> begin match ndecl with 
+            let ndecl = 
+                (try List.find(fun ndecl -> begin match ndecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
                     | Var(t, s) -> s = fieldname 
-                    | VarInit(_, s, _) -> "0" = fieldname end) env.npc_def in
-            (*with 
-                Not_found-> raise (Failure "field name in room decl does not exist.") in *)
+                    | VarInit(_, s, _) -> "0" = fieldname end) env.npc_def 
+                 with 
+                Not_found-> raise (Failure "field name in npc decl does not
+                exist.")) in 
             let (npc_decl_typ, _) = get_var_type_name ndecl in
-            (*CHECKING FOR ROOM DECL BODY EXPR RETURN TYPE HERE*)
             let (_, typ) = check_expr env expr in
-                if ( typ <> npc_decl_typ ) then 
-                    raise (Failure "npc decl body does not match field type")
-                else 
-                    nfa (*return this*)
+                let _ = require_eq [typ;npc_decl_typ] "npc decl body does not match field type" in 
+                nfa (*return this*)
         | _ -> raise (Failure "npc assignment not correct format.") end
     | _ -> raise (Failure "npc assignment not correct format.") end
 
@@ -536,11 +538,8 @@ let check_npc_decls (env: translation_environment) npcs =
 
 
 let check_npc_def (env: translation_environment) (n: Ast.npc_def) = 
-    try
         let checked_fields = List.map ( fun npc_field -> process_npc_field npc_field env) n in
         checked_fields
-    with
-    | _ -> raise (Failure "npc defs didn't check out")
 
 
 (* Item checking*)
@@ -561,16 +560,17 @@ let process_item_field (field: Ast.var_decl) (env: translation_environment) = ma
 let process_item_decl_body (env: translation_environment) (ifa: Ast.stmt) = begin match ifa with
     Ast.Expr(itemAssign) -> begin match itemAssign with (* check that the expr is in the form of an assign*)
         Ast.Assign(fieldname, expr) ->
-            let idecl = List.find(fun idecl -> begin match idecl with 
+            let idecl = 
+                (try List.find(fun idecl -> begin match idecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
                     | Var(t, s) -> s = fieldname 
-                    | VarInit(_, s, _) -> "0" = fieldname end) env.item_def in
+                    | VarInit(_, s, _) -> "0" = fieldname end) env.item_def
+                    with Not_found -> raise (Failure "field name in npc decl does not
+                exist.")) in
             let (item_decl_typ, _) = get_var_type_name idecl in
             let (_, typ) = check_expr env expr in
-                if ( typ <> item_decl_typ ) then 
-                    raise (Failure "item decl body does not match field type")
-                else 
-                    ifa (*return this*)
+            let _ = require_eq[typ;item_decl_typ] "item decl body does not match field type" in 
+            ifa (*return this*)
         | _ -> raise (Failure "item assignment not correct format.") end
     | _ -> raise (Failure "item assignment not correct format.") end
 
@@ -597,11 +597,9 @@ let check_item_decls (env: translation_environment) items =
 
 
 let check_item_def (env: translation_environment) (i: Ast.item_def) = 
-    try
         let checked_fields = List.map ( fun item_field -> process_item_field item_field env) i in
         checked_fields
-    with
-    | _ -> raise (Failure "item defs didn't check out")
+
 
 (* Predicate checking *)
 let check_pred_stmt (env: translation_environment) pstmt =
@@ -612,18 +610,14 @@ let check_pred_stmt (env: translation_environment) pstmt =
         env.functions; room_def = env.room_def; pred_stmts =
             env.pred_stmts; rooms = env.rooms } in
     let (checked_pred, typ) = check_expr env pstmt.pred in
-    if typ = Boolean then
-        let checked_locals = check_var_decls env' pstmt.locals in
-        let checked_body = List.map (fun s -> check_stmt env' s) pstmt.body in
-        let new_pstmt = {pred = checked_pred; locals = checked_locals; body =
-            checked_body;} in
-        env.pred_stmts <- new_pstmt::env.pred_stmts ; new_pstmt
-    else raise (Failure "Expression in predicate statement conditional must be
-    of type Boolean")
+    let _ = require_bools [typ] "Expression in predicate statement conditional must be
+    of type Boolean" in 
+    let checked_locals = check_var_decls env' pstmt.locals in
+    let checked_body = List.map (fun s -> check_stmt env' s) pstmt.body in
+    let new_pstmt = {pred = checked_pred; locals = checked_locals; body =
+        checked_body;} in
+    env.pred_stmts <- new_pstmt::env.pred_stmts ; new_pstmt
 
-(* do we need to store the pred_stmts so that we can prevent multiple pred_stmts
- * with the same condition? Would we compare the exprs in that case? Decompose
- * expr into all possible boolean exprs, compare operands and operator*)
 let check_pred_stmts (env: translation_environment) pstmts = 
     let new_pstmts = List.map (fun s -> check_pred_stmt env s) pstmts in
     new_pstmts
@@ -652,8 +646,6 @@ let check_program (p : Ast.program) =
        let print_str = { freturntype = Void; fname = "print"; formals =
            [Var(Ast.String, "arg")]; locals = []; body = [];} in
        let print_funcs = [print_int; print_bool; print_str] in
-       (*let get_adj_func =  { freturntype = Void; fname = "getInputAdjacentRooms"; formals = [Ast.room_decl];
-            locals = []; body = []} in*)
        (* adding name type String as default field in room_def*)
        let name_field = Ast.Var(String, "name") in 
        (* adding currentRoom as a global variable*)

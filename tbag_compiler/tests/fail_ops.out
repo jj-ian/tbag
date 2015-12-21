@@ -1,1 +1,2 @@
-Fatal error: exception Failure("Types to arithmetic operators +, -, *, / must both be Int")
+Fatal error: exception Failure("Types to arithmetic operators +, -, *, /
+            must both be Int")
