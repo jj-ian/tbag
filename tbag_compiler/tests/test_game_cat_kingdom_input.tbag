@@ -43,28 +43,84 @@ Library <-> East_Chamber;
 start { Great_Hall }
 
 npc {
+	int id;
 	string name;
 	string roomName;
 	string message;
+	string goodResponse;
+	string evilResponse;
+	string goodResult;
+	string badResult;
 }
 
 npc Tubbs {
+	id = 0;
 	name = "King Tubbs";
 	roomName = "East_Chamber";
 	message = "hi";
+	goodResponse = "";
+	evilResponse = "";
+	goodResult = "";
+	badResult = "";
 }
 
 npc Pickles {
+	id = 1;
 	name = "Duke Pickles";
 	roomName = "West_Chamber";
-	message = "i'm pickin\n";
+	message = "Your greatness, welcome to the treasury. I am your financial advisor.\n I stand here amongst our hoard of cheese chunks to determine the general \"cheesiness\" of our monarchy.\n Feel free to drop in any time and ask how things are going, yes.\n";
+	goodResponse = ""; evilResponse = ""; goodResult = ""; badResult = "";
 }
 
 npc Marshmallow {
+	id = 2;
 	name = "Lady Marshmallow";
 	roomName = "East_Chamber";
-	message = "rmm marsh\n";
+	message = "Hello, my new and temporary liege. I am your kingdom advisor.\n It is my job to advise you on the health and happiness of your kingdom.\n My own health and happiness is irrelevant.\n Please, see me again some time.\n";
+	goodResponse = ""; evilResponse = ""; goodResult = ""; badResult = "";
+
 }
+
+npc Pumpkin {
+	id = 3;
+	name = "Pumpkin";
+	roomName = "Throne_Room";
+	message = "Help, please! My bakery is on fire! All of hte cakes and pies and pastries are burning!\n";
+	goodResponse = "I will send help right away!\n"; 
+	evilResponse = "More things should be on fire!\n"; 
+	goodResult = "You put out the fire.\n todo"; 
+	badResult = "You set various local businesses on fire. No one is happy about this.\n";
+
+}
+
+npc Snowball {
+	id = 4;
+	name = "Snowball";
+	roomName = "Throne_Room";
+	message = "MY FARMS! SOMEONE HAS STOLEN MY FARMS!\n todo";
+	goodResponse = "My soldiers will investigate!\n";
+	evilResponse = "My \"soldiers\" will \"investigate\"!\n";
+	goodResult = "Your soldiers found the farms.\n todo";
+	badResult = "Your soldiers burn all the farms everywhere. Nobody is happy about this.\n";
+}
+
+npc Patches {
+	id = 5;
+	name = "Patches";
+	roomName = "Throne_Room";
+	message = "Help! It's terrible! The kingdom is out of potatoes! They are my favorite!\n";
+	goodResponse = "I shall open the reserves!\n";
+	evilResponse = "BAN POTATOES.";
+	goodResult = "You throw what quickly becomes the world's greatest mashed potato party.\n";
+	badResult = "Potatoes were made illegal, thus solving the crisis.\n";
+
+}
+/* tornado eivl response -- u send soldiers to knock it down even more*/
+/* lonely evil response -- u start a royal pizza bagel budget*/
+/* the peasants are miserable. but most of them aren't dead, so at least thats something*/
+/*look at this hoard! this delicious cheesy hoard!*/
+/*libray - every book was burned. the librarians cried for days*/
+npc 
 
 item {
 	string name;
@@ -75,6 +131,15 @@ item Key {
 	name = "Key";
 	roomName = "East_Chamber";
 }
+
+/* to easily access the db */
+string[10] catNames;
+string[10] catRoomNames;
+string[10] catMessages;
+string[10] goodResponses;
+string[10] evilResponses;
+string[10] goodResults;
+string[10] badResults;
 
 boolean started = false;
 int week = 1;
@@ -87,6 +152,56 @@ int stateOfKingdom = 5;
 int lengthSabbatical = 3;
 
 NOT started {
+
+	catNames[0] = Tubbs.name; catNames[1] = Pickles.name;
+	catNames[2] = Marshmallow.name;
+	catNames[3] = Pumpkin.name;
+	catNames[4] = Snowball.name;
+	catNames[5] = Patches.name;
+
+
+	catRoomNames[0] = Tubbs.roomName;
+	catRoomNames[1] = Pickles.roomName;
+	catRoomNames[2] = Marshmallow.roomName;
+	catRoomNames[3] = Pumpkin.roomName;
+	catRoomNames[4] = Snowball.roomName;
+	catRoomNames[5] = Patches.roomName;
+
+
+	catMessages[0] = Tubbs.message;
+	catMessages[1] = Pickles.message;
+	catMessages[2] = Marshmallow.message;
+	catMessages[3] = Pumpkin.message;
+	catMessages[4] = Snowball.message;
+	catMessages[5] = Patches.message;
+
+goodResponses[0] = Tubbs.goodResponse;
+goodResponses[1] = Pickles.goodResponse;
+goodResponses[2] = Marshmallow.goodResponse;
+goodResponses[3] = Pumpkin.goodResponse;
+goodResponses[4] = Snowball.goodResponse;
+goodResponses[5] = Patches.goodResponse;
+
+evilResponses[0] = Tubbs.evilResponse;
+evilResponses[1] = Pickles.evilResponse;
+evilResponses[2] = Marshmallow.evilResponse;
+evilResponses[3] = Pumpkin.evilResponse;
+evilResponses[4] = Snowball.evilResponse;
+evilResponses[5] = Patches.evilResponse;
+
+goodResults[0] = Tubbs.goodResult;
+goodResults[1] = Pickles.goodResult;
+goodResults[2] = Marshmallow.goodResult;
+goodResults[3] = Pumpkin.goodResult;
+goodResults[4] = Snowball.goodResult;
+goodResults[5] = Patches.goodResult;
+badResults[0] = Tubbs.badResult;
+badResults[1] = Pickles.badResult;
+badResults[2] = Marshmallow.badResult;
+badResults[3] = Pumpkin.badResult;
+badResults[4] = Snowball.badResult;
+badResults[5] = Patches.badResult;
+
 	strPrintLine("King Tubbs, the great monarch of the Cat Kingdom, has recently discovered a sunbeam of sensational quality!");
 	print("He has, understandably, requested a ");
 	print(lengthSabbatical);
@@ -110,7 +225,9 @@ currentRoom.name ~~ Pickles.roomName {
 }
 
 currentRoom.name ~~ Pickles.roomName AND input ~~ "Yes" {
-	print(Pickles.message);
+	print(Pickles.name);
+	strPrintLine(" says: ");
+	strPrintLine(Pickles.message);	
 	spokeToPickles = true;
 }
 
@@ -124,7 +241,9 @@ currentRoom.name ~~ Marshmallow.roomName {
 }
 
 currentRoom.name ~~ Marshmallow.roomName AND input ~~ "Yes" {
-	print(Marshmallow.message);
+	print(Marshmallow.name);
+	strPrintLine(" says: ");
+	strPrintLine(Marshmallow.message);
 	spokeToMarshmallow = true;
 }
 
@@ -138,21 +257,28 @@ NOT (input ~~ Throne_Room.name) {
 	->input
 }
 
-(input ~~ Throne_Room.name) AND (spokeToMarshmallow AND spokeToPickles) {
+ input ~~ Throne_Room.name {
+ 	if (spokeToMarshmallow AND spokeToPickles) {
 		strPrintLine("2");
 
 	-> input
-}
-
-(input ~~ Throne_Room.name) AND (NOT spokeToMarshmallow OR NOT spokeToPickles) {
-		strPrintLine("3");
+	} else {
+				strPrintLine("3");
 
 	strPrintLine("Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!");
+	}	
+}
+
+currentRoom == Throne_Room {
+	strPrintLine("YOUR CAT SUBJECTS HAVE SOME IMPORTANT REQUESTS!");
+		strPrintLine("YOUR CAT SUBJECTS HAVE EVEN MORE REQUESTS!");
+
 
 }
 
+week > lengthSabbatical {
+	print("todo endgame stuff");
 
-NOT started {
 	endgame;
 }
 
@@ -163,3 +289,12 @@ func void printCurrentRoomInfo() {
 	print(currentRoom.name);
 	strPrintLine(".\n");
 }
+
+func string picklesMessages(int cheeseCubes) {
+	if (cheeseCubes < 2) {
+		return "";
+	} else {}
+	return "";
+}
+
+
