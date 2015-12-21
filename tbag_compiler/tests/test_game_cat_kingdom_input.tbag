@@ -85,11 +85,11 @@ npc Pumpkin {
 	id = 3;
 	name = "Pumpkin";
 	roomName = "Throne_Room";
-	message = "Help, please! My bakery is on fire! All of hte cakes and pies and pastries are burning!\n";
-	goodResponse = "I will send help right away!\n"; 
-	evilResponse = "More things should be on fire!\n"; 
-	goodResult = "You put out the fire.\n todo"; 
-	badResult = "You set various local businesses on fire. No one is happy about this.\n";
+	message = "Excuse me, monarch, leader...\nI have a humble request...\nWould you be willing...\nTo sing to my stupid cat baby?\n";
+	goodResponse = "Sure?\n"; 
+	evilResponse = "IT'S MY BABY NOW!\n"; 
+	goodResult = "You sing to the baby. It doesn't seem to care all that much.\n"; 
+	badResult = "You eventually get bored of the baby and give it to someone else.\n";
 
 }
 
@@ -97,11 +97,11 @@ npc Snowball {
 	id = 4;
 	name = "Snowball";
 	roomName = "Throne_Room";
-	message = "MY FARMS! SOMEONE HAS STOLEN MY FARMS!\n todo";
-	goodResponse = "My soldiers will investigate!\n";
-	evilResponse = "My \"soldiers\" will \"investigate\"!\n";
-	goodResult = "Your soldiers found the farms.\n todo";
-	badResult = "Your soldiers burn all the farms everywhere. Nobody is happy about this.\n";
+	message = "A cat baby is lost in the spooky forest!\nI know because it sent me this baby note, via forest squirrel!\n";
+	goodResponse = "I will organize a search party!\n";
+	evilResponse = "I will organize a snake party!\n";
+	goodResult = "They find a baby, and a dozen or so other babies.\n";
+	badResult = "You party with some snakes. What a night! The baby is never heard from again.\n";
 }
 
 npc Patches {
@@ -113,6 +113,14 @@ npc Patches {
 	evilResponse = "BAN POTATOES.";
 	goodResult = "You throw what quickly becomes the world's greatest mashed potato party.\n";
 	badResult = "Potatoes were made illegal, thus solving the crisis.\n";
+
+}
+
+npc Smokey {
+
+}
+
+npc Ginger {
 
 }
 /* tornado eivl response -- u send soldiers to knock it down even more*/
