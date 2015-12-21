@@ -1,0 +1,60 @@
+room {}
+
+room Closet { 
+	name = "Closet";
+}
+
+room Bedroom {
+	name = "Bedroom";
+}
+
+room Wall {
+	name = "Wall";
+}
+
+room Kitchen {
+	name = "Kitchen";
+}
+
+Closet <-> Bedroom;
+Closet <-> Wall;
+Kitchen <-> Wall;
+Kitchen <-> Bedroom;
+
+start { Closet }
+
+npc {
+	string name;
+	string roomName;
+	int hunger; 
+}
+
+npc Cat {
+	name = "Tubbs";
+	roomName = "Bedroom";
+	hunger = 5;
+}
+
+boolean started = false;
+
+currentRoom.name == Cat.roomName {
+	print("you got eaten by the cat.\n");
+	endgame;
+}
+
+true {
+	printCurrentRoomInfo();
+	getInputForAdjacentRooms(currentRoom);
+	->input
+}
+
+NOT started {
+	strPrintLine("You're a mouse.");
+	started = true;
+}
+
+func void printCurrentRoomInfo() {
+	print("Currently in: ");
+	print(currentRoom.name);
+	print("\n");
+}

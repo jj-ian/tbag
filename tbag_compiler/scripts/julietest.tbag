@@ -1,0 +1,12 @@
+true {
+    print("trolololol");
+}
+
+#import stdlib
+#import graphicslib
+#import lollib
+
+func int lolol() {
+    print("fuckkkkkk me");
+    return 0;
+}

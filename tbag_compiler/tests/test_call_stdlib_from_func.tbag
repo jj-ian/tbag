@@ -1,0 +1,11 @@
+true {
+	test();
+	endgame;
+}
+
+#import stdlib
+
+func void test() {
+	strPrintLine("hi");
+}
+
