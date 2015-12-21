@@ -86,6 +86,14 @@ let require_bools tlist str =
     ) tlist in
     true
 
+let require_eq tlist str = 
+    let typ = List.hd tlist in
+    let _ = List.map(
+        fun t ->  if typ <> t then raise (Failure(str)) 
+    ) tlist in
+    true
+
+
 (* find functions *)
 let rec find_variable (scope : symbol_table) name = 
     try 
@@ -206,8 +214,7 @@ let rec check_expr env = function
                 let (vtyp, name) = get_var_type_name vdecl in
                 let (expr, etyp) = check_expr env expr in
                 if not (var_is_array vdecl) then 
-                    if vtyp = etyp then (Ast.Assign(name, expr), vtyp)
-                    else raise (Failure "Type mismatch in assignment statement")
+                    let _ = require_eq [vtyp;etyp] "Type mismatch in assignment statement" in (Ast.Assign(name, expr), vtyp)
                 else raise (Failure "Left hand side of assignment statement must
                 be a non-array variable")
         | Ast.ArrayAssign(name, expr1, expr2) ->
@@ -215,31 +222,28 @@ let rec check_expr env = function
                 let (typ, name) = get_var_type_name vdecl in
                 let (pos, postyp) = check_expr env expr1 in
                 let (expr, exprtyp) = check_expr env expr2 in
-                if postyp = Int then
+                let _ = require_integers [postyp] "Positional array access specifier must be an
+                    Integer" in
                     if var_is_array vdecl then
-                        if typ = exprtyp then (Ast.ArrayAssign(name, pos, expr), typ)
-                        else raise (Failure "Right hand side of assignment statement does
-                    not match type of array")
+                        let _ = require_eq [typ;exprtyp] "Right hand side of assignment statement does
+                    not match type of array" in
+                        (Ast.ArrayAssign(name, pos, expr), typ)
                     else raise (Failure "Left hand side of array assignment must
                     be an array")
-                else raise (Failure "Positional array access specifier must be an
-                    Integer")
         | Ast.ArrayAccess(name, expr) ->
                 let vdecl = get_var_if_exists env.scope name in
                 let (typ, name) = get_var_type_name vdecl in 
                 let (pos, postyp) = check_expr env expr in
-                if postyp = Int then 
-                    if var_is_array vdecl then (Ast.ArrayAccess(name, expr), typ)
-                    else raise (Failure "Array access must be used on an array
+                let _ = require_integers [postyp] "Positional array access specifier must be an
+                    Integer" in
+                if var_is_array vdecl then (Ast.ArrayAccess(name, expr), typ)
+                else raise (Failure "Array access must be used on an array
 type")
-                else raise (Failure "Positional array access specifier must be an
-                    Integer")
         | Ast.Boolneg(op, expr) ->
                 let (expr, typ) = check_expr env expr in
-                if typ = Boolean then (Ast.Boolneg(op, expr), typ)
-                else
-                    raise (Failure "Type to unary boolean NOT operator must be
-                    boolean")
+                let _ = require_bools [typ] "Type to unary boolean NOT operator must be
+                    boolean" in
+                (Ast.Boolneg(op, expr), typ)
        | Ast.Call(fname, expr_list) ->
                (* TODO: make sure recursive calls to function also match:
                 * expr_list *)
@@ -353,19 +357,19 @@ let rec check_stmt env = function
             let sl = List.map (fun s -> check_stmt env s) stmt_list in Block(sl)
         | Expr(expr) -> let (expr, _) = check_expr env expr in Expr(expr)
         | Return(expr) -> let (expr, typ) = check_expr env expr in 
-          if typ = env.return_type then Return(expr)
-          else raise (Failure "Return type of expression does not match return
-type of function")
+          let _ = require_eq [typ;env.return_type] "Return type of expression does not match return
+type of function" in
+          Return(expr)
         | If(expr, stmt1, stmt2) ->
             let (expr, typ) = check_expr env expr in
-            if typ = Boolean then If(expr, check_stmt env stmt1, check_stmt env stmt2) 
-            else raise (Failure "If statement must have a boolean expression
-            conditional")
+            let _ = require_bools [typ] "If statement must have a boolean expression
+            conditional" in
+            If(expr, check_stmt env stmt1, check_stmt env stmt2) 
         | While(expr, stmt) -> 
             let (expr, typ) = check_expr env expr in
-            if typ = Boolean then While(expr, check_stmt env stmt) 
-            else raise (Failure "While statement must have a boolean expression
-            conditional")
+            let _ = require_bools [typ] "While statement must have a boolean expression
+            conditional" in
+            While(expr, check_stmt env stmt) 
         | Goto(rname) ->
             let rdecl = try find_room env rname with
                     Not_found -> raise( Failure "Goto parameter name not a valid room.") 
@@ -384,16 +388,15 @@ let check_var_decl (env: translation_environment) vdecl =
             match vdecl with 
             Array_decl(typ, expr, name) -> 
                     let (expr, exprtyp) = check_expr env expr in
-                    if exprtyp = Int then let typ = check_valid_var_type typ in
+                    let _ = require_integers [exprtyp] "Array size must be integer" in 
+                    let typ = check_valid_var_type typ in
                     (env.scope.variables <- Array_decl (typ,expr,name)::env.scope.variables; Array_decl (typ,expr,name)) 
-                    else raise (Failure ("Array size must be integer"))
               | Var(typ, name) -> let typ = check_valid_var_type typ in 
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
               | VarInit(typ, name, expr) -> let typ = check_valid_var_type typ in 
                     let (expr, exprtyp) = check_expr env expr in 
-                    if exprtyp = typ then 
+                    let _ = require_eq [exprtyp;typ] "Type mismatch in variable initialization" in 
                         (env.scope.variables <- VarInit (exprtyp,name,expr)::env.scope.variables; VarInit (exprtyp, name,expr)) 
-                    else raise (Failure ("Type mismatch in variable initialization"))
 
 let check_var_decls (env: translation_environment) var_decls = 
     let var_decls = List.map(fun vdecl -> check_var_decl env vdecl) var_decls in
@@ -458,10 +461,8 @@ let process_room_decl_body (env: translation_environment) (rfa: Ast.stmt) = begi
             let (room_decl_typ, _) = get_var_type_name rdecl in
             (*CHECKING FOR ROOM DECL BODY EXPR RETURN TYPE HERE*)
             let (_, typ) = check_expr env expr in
-                if ( typ <> room_decl_typ ) then 
-                    raise (Failure "room decl body does not match field type")
-                else 
-                    rfa (*return this*)
+            let _ = require_eq [typ;room_decl_typ] "room decl body does not match field type" in
+            rfa (*return this*)
         | _ -> raise (Failure "room assignment not correct format.") end
     | _ -> raise (Failure "room assignment not correct format.") end
 
