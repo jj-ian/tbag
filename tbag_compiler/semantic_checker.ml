@@ -514,21 +514,18 @@ let process_npc_field (field: Ast.var_decl) (env: translation_environment) = mat
 let process_npc_decl_body (env: translation_environment) (nfa: Ast.stmt) = begin match nfa with
     Ast.Expr(npcAssign) -> begin match npcAssign with (* check that the expr is in the form of an assign*)
         Ast.Assign(fieldname, expr) ->
-           (* try *)
-            (*print_string "do i reach process_npc_decl_body?";*)
-            let ndecl = List.find(fun ndecl -> begin match ndecl with 
+            let ndecl = 
+                (try List.find(fun ndecl -> begin match ndecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
                     | Var(t, s) -> s = fieldname 
-                    | VarInit(_, s, _) -> "0" = fieldname end) env.npc_def in
-            (*with 
-                Not_found-> raise (Failure "field name in room decl does not exist.") in *)
+                    | VarInit(_, s, _) -> "0" = fieldname end) env.npc_def 
+                 with 
+                Not_found-> raise (Failure "field name in npc decl does not
+                exist.")) in 
             let (npc_decl_typ, _) = get_var_type_name ndecl in
-            (*CHECKING FOR ROOM DECL BODY EXPR RETURN TYPE HERE*)
             let (_, typ) = check_expr env expr in
-                if ( typ <> npc_decl_typ ) then 
-                    raise (Failure "npc decl body does not match field type")
-                else 
-                    nfa (*return this*)
+                let _ = require_eq [typ;npc_decl_typ] "npc decl body does not match field type" in 
+                nfa (*return this*)
         | _ -> raise (Failure "npc assignment not correct format.") end
     | _ -> raise (Failure "npc assignment not correct format.") end
 
@@ -580,16 +577,17 @@ let process_item_field (field: Ast.var_decl) (env: translation_environment) = ma
 let process_item_decl_body (env: translation_environment) (ifa: Ast.stmt) = begin match ifa with
     Ast.Expr(itemAssign) -> begin match itemAssign with (* check that the expr is in the form of an assign*)
         Ast.Assign(fieldname, expr) ->
-            let idecl = List.find(fun idecl -> begin match idecl with 
+            let idecl = 
+                (try List.find(fun idecl -> begin match idecl with 
                     Array_decl(_, _, s) -> "0" = fieldname
                     | Var(t, s) -> s = fieldname 
-                    | VarInit(_, s, _) -> "0" = fieldname end) env.item_def in
+                    | VarInit(_, s, _) -> "0" = fieldname end) env.item_def
+                    with Not_found -> raise (Failure "field name in npc decl does not
+                exist.")) in
             let (item_decl_typ, _) = get_var_type_name idecl in
             let (_, typ) = check_expr env expr in
-                if ( typ <> item_decl_typ ) then 
-                    raise (Failure "item decl body does not match field type")
-                else 
-                    ifa (*return this*)
+            let _ = require_eq[typ;item_decl_typ] "item decl body does not match field type" in 
+            ifa (*return this*)
         | _ -> raise (Failure "item assignment not correct format.") end
     | _ -> raise (Failure "item assignment not correct format.") end
 
@@ -631,14 +629,13 @@ let check_pred_stmt (env: translation_environment) pstmt =
         env.functions; room_def = env.room_def; pred_stmts =
             env.pred_stmts; rooms = env.rooms } in
     let (checked_pred, typ) = check_expr env pstmt.pred in
-    if typ = Boolean then
-        let checked_locals = check_var_decls env' pstmt.locals in
-        let checked_body = List.map (fun s -> check_stmt env' s) pstmt.body in
-        let new_pstmt = {pred = checked_pred; locals = checked_locals; body =
-            checked_body;} in
-        env.pred_stmts <- new_pstmt::env.pred_stmts ; new_pstmt
-    else raise (Failure "Expression in predicate statement conditional must be
-    of type Boolean")
+    let _ = require_bools [typ] "Expression in predicate statement conditional must be
+    of type Boolean" in 
+    let checked_locals = check_var_decls env' pstmt.locals in
+    let checked_body = List.map (fun s -> check_stmt env' s) pstmt.body in
+    let new_pstmt = {pred = checked_pred; locals = checked_locals; body =
+        checked_body;} in
+    env.pred_stmts <- new_pstmt::env.pred_stmts ; new_pstmt
 
 (* do we need to store the pred_stmts so that we can prevent multiple pred_stmts
  * with the same condition? Would we compare the exprs in that case? Decompose
