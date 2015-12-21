@@ -320,7 +320,8 @@ and check_matching_args_helper (env: translation_environment) ref_vars target_ex
     let _ = (try List.map2 (
         fun r t -> let (rtyp, rname) = get_var_type_name r in 
                    let (texpr, ttyp) = check_expr env t in 
-                   if ttyp <> rtyp then raise Not_found) ref_vars target_exprs
+                   try require_eq [ttyp;rtyp] "";
+                   with _ -> raise Not_found) ref_vars target_exprs
     with Invalid_argument(_) -> raise Not_found) in result
 
 and check_matching_args (env: translation_environment) ref_vars target_exprs =
@@ -338,7 +339,7 @@ let check_matching_decls_helper (env: translation_environment) ref_vars target_d
     let _ = (try List.map2 (
         fun r t -> let (rtyp, rname) = get_var_type_name r in 
                    let (ttyp, tname) = get_var_type_name t in 
-                   if ttyp <> rtyp then raise Not_found) ref_vars target_decls
+                   require_eq[ttyp;rtyp] "";) ref_vars target_decls
     with Invalid_argument(_) -> raise Not_found) in result
 
 let check_matching_decls (env: translation_environment) ref_vars target_decls =
