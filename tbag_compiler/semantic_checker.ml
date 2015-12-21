@@ -21,7 +21,7 @@ type translation_environment = {
 }
 
 (* helper functions *)
-let check_valid_var_type (v : Ast.variable_type) = match v with
+let check_type_not_void (v : Ast.variable_type) = match v with
       Ast.Int -> Ast.Int
     | Ast.String -> Ast.String
     | Ast.Boolean -> Ast.Boolean
@@ -325,7 +325,8 @@ let check_matching_decls_helper (env: translation_environment) ref_vars target_d
     let _ = (try List.map2 (
         fun r t -> let (rtyp, rname) = get_var_type_name r in 
                    let (ttyp, tname) = get_var_type_name t in 
-                   require_eq[ttyp;rtyp] "";) ref_vars target_decls
+                   try require_eq [ttyp;rtyp] "";
+                   with _ -> raise Not_found) ref_vars target_decls
     with Invalid_argument(_) -> raise Not_found) in result
 
 let check_matching_decls (env: translation_environment) ref_vars target_decls =
@@ -379,11 +380,11 @@ let check_var_decl (env: translation_environment) vdecl =
             Array_decl(typ, expr, name) -> 
                     let (expr, exprtyp) = check_expr env expr in
                     let _ = require_integers [exprtyp] "Array size must be integer" in 
-                    let typ = check_valid_var_type typ in
+                    let typ = check_type_not_void typ in
                     (env.scope.variables <- Array_decl (typ,expr,name)::env.scope.variables; Array_decl (typ,expr,name)) 
-              | Var(typ, name) -> let typ = check_valid_var_type typ in 
+              | Var(typ, name) -> let typ = check_type_not_void typ in 
                      env.scope.variables <- Var(typ, name)::env.scope.variables; Var(typ, name)
-              | VarInit(typ, name, expr) -> let typ = check_valid_var_type typ in 
+              | VarInit(typ, name, expr) -> let typ = check_type_not_void typ in 
                     let (expr, exprtyp) = check_expr env expr in 
                     let _ = require_eq [exprtyp;typ] "Type mismatch in variable initialization" in 
                         (env.scope.variables <- VarInit (exprtyp,name,expr)::env.scope.variables; VarInit (exprtyp, name,expr)) 
@@ -417,7 +418,7 @@ let check_func_decls env func_decls =
 (* Room checking*)
 let process_room_field (field: Ast.var_decl) (env: translation_environment) = match field with
     Ast.Var(typ, name) -> 
-        let t = check_valid_var_type typ in
+        let t = check_type_not_void typ in
             if (List.exists ( fun var_decl -> begin match var_decl with 
                                             Var(_, s) -> s = name 
                                             |_ -> raise (Failure "should never reach here")
@@ -481,7 +482,7 @@ let check_room_def (env: translation_environment) (r: Ast.room_def) =
 (* NPC checking*)
 let process_npc_field (field: Ast.var_decl) (env: translation_environment) = match field with
     Ast.Var(typ, name) -> 
-        let t = check_valid_var_type typ in
+        let t = check_type_not_void typ in
             if (List.exists ( fun var_decl -> begin match var_decl with 
                                             Var(_, s) -> s = name 
                                             |_ -> raise (Failure "should never reach here")
@@ -542,7 +543,7 @@ let check_npc_def (env: translation_environment) (n: Ast.npc_def) =
 (* Item checking*)
 let process_item_field (field: Ast.var_decl) (env: translation_environment) = match field with
     Ast.Var(typ, name) -> 
-        let t = check_valid_var_type typ in
+        let t = check_type_not_void typ in
             if (List.exists ( fun var_decl -> begin match var_decl with 
                                             Var(_, s) -> s = name 
                                             |_ -> raise (Failure "should never reach here")
