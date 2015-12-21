@@ -23,21 +23,6 @@ type translation_environment = {
     mutable pred_stmts : pred_stmt list;
 }
 
-(* error checking functions *)
-let print_valid_var_type (v : Ast.variable_type) = match v with
-      Ast.Int -> print_string "Ast.Int"
-    | Ast.String -> print_string "Ast.String"
-    | Ast.Boolean -> print_string "Ast.Boolean"
-    | Ast.Array(v, i) -> print_string "Ast.Array(v, i)"
-    | _ -> raise (Failure ("Invalid variable type used"))
-
-let print_valid_lit_type (v: Ast.expr) = match v with
-        IntLiteral(x) -> print_string "IntLiteral"
-        | NegIntLiteral(y) -> print_string "NegIntLiteral"
-        | StrLiteral(s) -> print_string "StrLiteral"
-        | BoolLiteral(b) -> print_string "BoolLiteral"
-        | _ -> print_string "not a literal"
-
 (* helper functions *)
 let check_valid_var_type (v : Ast.variable_type) = match v with
       Ast.Int -> Ast.Int
@@ -67,9 +52,39 @@ let expr_is_strlit expr =
    | _ -> false
     end 
 
-let print_var_decls (decl_list: Ast.var_decl list) = 
-    List.map(fun p -> let (t, _) = get_var_type_name p in print_valid_var_type t) decl_list
+(* type enforcement functions *)
 
+let require_integers tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            Int -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
+
+let require_strings tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            String -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
+
+let require_voids tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            Void -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
+
+let require_bools tlist str = 
+    let _ = List.map(
+        fun t ->  match t with 
+            Boolean -> true
+          | _ -> raise (Failure(str))
+    ) tlist in
+    true
 
 (* find functions *)
 let rec find_variable (scope : symbol_table) name = 
@@ -141,24 +156,28 @@ let find_item_field (env: translation_environment) fieldName =
 let get_binop_type op t1 t2 = 
     begin match op with
         (Add | Sub | Mult | Div)  -> 
-            if (t1 = Int && t2 = Int) then Int
-            else raise (Failure "Types to arithmetic operators +, -, *, / must both be Int")
+            let _ = require_integers [t1;t2] "Types to arithmetic operators +, -, *, /
+            must both be Int" in
+            Int
       | (Equal | Neq) ->
-            if (t1 = Int && t2 = Int) || (t1 = Boolean && t2 =
-                Boolean) || (t1 = Void && t2 = Void) then Boolean  
-            else raise (Failure "Types to equality operators ==, !=
+              let _ = 
+                  (try require_integers[t1;t2]  ""
+                   with _ -> try require_bools[t1;t2] ""
+                       with _ -> require_voids[t1;t2] "Types to equality operators ==, !=
                         must be the same and be integers, booleans, or
-                        rooms") 
+                        rooms" ) in
+              Boolean
+
      | (Less | Leq | Greater | Geq) ->
-            if (t1 = Int && t2 = Int) then Boolean 
-            else raise (Failure "Types to integer comparison
-                        operators <, <=, >, >= must be integers")
+             let _ = require_integers [t1;t2] "Types to integer comparison
+                        operators <, <=, >, >= must be integers" in
+             Boolean
      | StrEqual ->
-            if (t1 = String && t2 = String) then Boolean
-            else raise (Failure "Types to ~~ must both be String")
+             let _ = require_strings [t1;t2] "Types to ~~ must both be String"
+             in Boolean
      | (And | Or) ->
-            if (t1 = Boolean && t2 = Boolean) then Boolean
-            else raise (Failure "Types to binary boolean operators AND, OR must both be Boolean")
+             let _ = require_bools [t1;t2] "Types to binary boolean operators AND, OR must both be Boolean" in
+             Boolean
      | _ -> raise (Failure "Should not reach here") 
     end
 
