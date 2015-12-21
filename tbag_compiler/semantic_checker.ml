@@ -255,7 +255,8 @@ type")
                     (Ast.Call(fname, expr_list), Ast.Int)
                      else raise (Failure "arrLen expects an array
                       argument")
-                 else if fname = "getInputFromOptions" then 
+                 else if fname = "getInputFromOptions" && List.length expr_list
+                 >= 1 then
                      let _ = List.map(
                          fun e -> if not (expr_is_strlit e) then raise (Failure("getInputFromOptions expects 
                       one or more string arguments"))) expr_list in
