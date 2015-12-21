@@ -18,8 +18,9 @@
 	public static void promptForInput(String[] acceptableInputs) {
 		System.out.println("Choose from one of the following options:");
 		for (String option : acceptableInputs) {
-			System.out.println(option);
+			System.out.print(option + "    ");
 		}
+		System.out.println();
 		// loop until player enters valid input
 
 		input = scanner.nextLine();
@@ -47,8 +48,9 @@
 
 		System.out.println("Choose from one of the following options:");
 		for (String option : acceptableInputs) {
-				System.out.println(option);
+			System.out.print(option + "    ");
 		}
+		System.out.println();
 
 		// loop until player enters valid input
 		input = scanner.nextLine();

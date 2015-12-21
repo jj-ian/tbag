@@ -1,62 +1,70 @@
+int guesses = 0;
+int wrongGuesses = 0;
+int guessesAllowed = 6;
+
 boolean started = false;
-string[3] answer;
-int[26] guessed;
-int numberOfGuesses = 0;
+string[10] answer;
+boolean[26] guessed;
+
+
+boolean updateAndDisplay = false;
+boolean foundAll;
 
 NOT started {
-	
-	answer[0] = "C";
-	answer[1] = "A";
+	answer[0] = "H";
+	answer[1] = "I";
 	answer[2] = "T";
+	answer[3] = "C";
+	answer[4] = "H";
+	answer[5] = "H";
+	answer[6] = "I";
+	answer[7] = "K";
+	answer[8] = "E";
+	answer[9] = "R";
+
 
 	started = true;
 }
 
-numberOfGuesses > arrLen(answer) {
-	strPrintLine("ur out of guesses");
+true {
+
+	print("Guess a letter. ");
+	getInputFromOptions("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+
+ 
+}
+
+letterIsInAnswer(input) {
+	updateAndDisplay = true;
+}
+
+NOT letterIsInAnswer(input) {
+	wrongGuesses = wrongGuesses + 1;
+	updateAndDisplay = true;
+}
+
+updateAndDisplay {
+	guessed[intFromLetter(input)] = true;
+	guesses = guesses + 1;
+	printHangMan(wrongGuesses);
+	foundAll = checkAndPrintStatus();
+	updateAndDisplay = false;
+}
+
+foundAll {
+	strPrintLine("WOO!!!! YOU WON!!!!!!!!");
 	endgame;
 }
 
-true {
-
-
-	int i = 0;
-	while (i < arrLen(guessed)) {
-		print(guessed[i]);
-		print(" ");
-		i = i + 1;
-	}
-
-	print("Guess a letter.");
-	getInputFromOptions("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
-
-
-		if (isLetterInAnswer(input)) {
-			strPrintLine("letter is in answer");
-		} else {
-			strPrintLine("u fucked up lol");
-		}
- 
-	guessed[intFromLetter(input)] = 1;
-	numberOfGuesses = numberOfGuesses + 1;
-
-
+wrongGuesses >= guessesAllowed {
+	strPrintLine("You lost, how embarrassing!!!");
+	endgame;
 }
-
 
 
 #import stdlib
 
-func boolean hasLetterBeenGuessedBefore(string letter) {
-	if (guessed[intFromLetter(letter)] == 1) {
-		return true;
-	} else {
-		return false;
-	}
-
-}
-
-func boolean isLetterInAnswer(string letter) {
+func boolean letterIsInAnswer(string letter) {
 	int i = 0;
 	boolean found = false;
 	while (i < arrLen(answer) AND found == false) {
@@ -67,3 +75,128 @@ func boolean isLetterInAnswer(string letter) {
 	}
 	return found;
 }
+
+func void printHangMan(int wrongGuesses) {
+		print("\n");
+		print("\n");
+		print("\n");
+
+	if (wrongGuesses == 0) {
+		print( " _________     \n");
+		print( "|         |    \n");
+		print( "|             \n");
+		print( "|           \n");
+		print( "|              \n");
+		print( "|              \n");
+		print( "|              \n");
+
+	} else {}
+	if (wrongGuesses == 1) {
+		print( " _________     \n");
+		print( "|         |    \n");
+		print( "|         O    \n");
+		print( "|           \n");
+		print( "|              \n");
+		print( "|              \n");
+		print( "|              \n");
+
+	} else {}
+	if (wrongGuesses == 2) {
+		print( " _________     \n");
+		print( "|         |    \n");
+		print( "|         O    \n");
+		print( "|        /   \n");
+		print( "|              \n");
+		print( "|              \n");
+		print( "|              \n");
+
+	} else {}
+	if (wrongGuesses == 3) {
+		print( " _________     \n");
+		print( "|         |    \n");
+		print( "|         O    \n");
+		print( "|        /|   \n");
+		print( "|              \n");
+		print( "|              \n");
+		print( "|              \n");
+
+	} else {}
+	if (wrongGuesses == 4) {
+		print( " _________     \n");
+		print( "|         |    \n");
+		print( "|         O    \n");
+		print( "|        /|\\  \n");
+		print( "|              \n");
+		print( "|              \n");
+		print( "|              \n");
+
+	} else {}
+	if (wrongGuesses == 5) {
+		print( " _________     \n");
+		print( "|         |    \n");
+		print( "|         O    \n");
+		print( "|        /|\\  \n");
+		print( "|        /     \n");
+		print( "|              \n");
+		print( "|              \n");
+
+	} else {}
+	if (wrongGuesses == 6) {
+		print( " _________     \n");
+		print( "|         |    \n");
+		print( "|         O    \n");
+		print( "|        /|\\  \n");
+		print( "|        / \\  \n");
+		print( "|              \n");
+		print( "|              \n");
+
+	} else {}
+			print("\n");
+		print("\n");
+		print("\n");
+
+}
+
+func void printGuessedLetters() {
+		int i = 0;
+
+	print("Already Guessed : ");
+
+		while (i < arrLen(guessed)) {
+			if (guessed[i] == true) {
+				print(letterFromInt(i));
+				print(" ");
+			} else {}
+			i = i + 1;
+		}
+}
+
+func boolean checkAndPrintStatus() {
+	int i = 0;
+	boolean foundall = true;
+	while (i < arrLen(answer)) {
+		if (guessed[intFromLetter(answer[i])]) {
+			print(answer[i]);
+			print(" ");
+		} else {
+			foundall = false;
+			print("_");
+			print(" ");
+		}
+		i = i + 1;
+	}
+
+	print("\n");
+	print("\n");
+
+	printGuessedLetters();
+
+	print("\n");
+	print("\n");
+	print("\n");
+
+	return foundall;
+}
+
+
+
