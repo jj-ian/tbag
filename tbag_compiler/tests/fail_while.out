@@ -1,2 +1,2 @@
-Fatal error: exception Failure("While statement must have a boolean expression
-            conditional")
+Fatal error: exception Failure("Expression in while statement conditional must be
+    of type Boolean")

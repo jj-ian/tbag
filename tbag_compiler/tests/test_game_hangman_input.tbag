@@ -76,12 +76,12 @@ func boolean letterIsInAnswer(string letter) {
 	return found;
 }
 
-func void printHangMan(int wrongGuesses) {
+func void printHangMan(int wg) {
 		print("\n");
 		print("\n");
 		print("\n");
 
-	if (wrongGuesses == 0) {
+	if (wg == 0) {
 		print( " _________     \n");
 		print( "|         |    \n");
 		print( "|             \n");
@@ -91,7 +91,7 @@ func void printHangMan(int wrongGuesses) {
 		print( "|              \n");
 
 	} else {}
-	if (wrongGuesses == 1) {
+	if (wg == 1) {
 		print( " _________     \n");
 		print( "|         |    \n");
 		print( "|         O    \n");
@@ -101,7 +101,7 @@ func void printHangMan(int wrongGuesses) {
 		print( "|              \n");
 
 	} else {}
-	if (wrongGuesses == 2) {
+	if (wg == 2) {
 		print( " _________     \n");
 		print( "|         |    \n");
 		print( "|         O    \n");
@@ -111,7 +111,7 @@ func void printHangMan(int wrongGuesses) {
 		print( "|              \n");
 
 	} else {}
-	if (wrongGuesses == 3) {
+	if (wg == 3) {
 		print( " _________     \n");
 		print( "|         |    \n");
 		print( "|         O    \n");
@@ -121,7 +121,7 @@ func void printHangMan(int wrongGuesses) {
 		print( "|              \n");
 
 	} else {}
-	if (wrongGuesses == 4) {
+	if (wg == 4) {
 		print( " _________     \n");
 		print( "|         |    \n");
 		print( "|         O    \n");
@@ -131,7 +131,7 @@ func void printHangMan(int wrongGuesses) {
 		print( "|              \n");
 
 	} else {}
-	if (wrongGuesses == 5) {
+	if (wg == 5) {
 		print( " _________     \n");
 		print( "|         |    \n");
 		print( "|         O    \n");
@@ -141,7 +141,7 @@ func void printHangMan(int wrongGuesses) {
 		print( "|              \n");
 
 	} else {}
-	if (wrongGuesses == 6) {
+	if (wg == 6) {
 		print( " _________     \n");
 		print( "|         |    \n");
 		print( "|         O    \n");

@@ -13,7 +13,7 @@ globalerror=0
 keep=0
 
 Usage() {
-    echo "Usage: testall.sh [options] [.tbag files]"
+    echo "Usage: run_tests.sh [options] [.tbag files]"
     echo "-k    Keep intermediate files"
     echo "-h    Print this help"
     exit 1
