@@ -26,25 +26,31 @@ for line in tbagFile:
     matches = linePattern.findall(line)
     for libName in matches:
     	libraries.append(libName)
-        print libName
+        #print libName
 
-print libraries
+#print libraries
 
 if len(libraries) > 0:
 	lineToReplace = "#import " + libraries[0]
-	print lineToReplace
+	#print lineToReplace
 
 	libTxtToPasteIn = ""
 
 	for libName in libraries:
 		libFileName = "lib/" + libName + ".tbag"
-		print libFileName
+		#print libFileName
 		with open(libFileName, 'r') as myfile:
 			data=myfile.read()
 		libTxtToPasteIn += data
+		#print data
 
 
 	for line in fileinput.input(tempFileName, inplace=True):
 		line = line.replace(lineToReplace, libTxtToPasteIn)
+		#if not re.search(linePattern, line):
+		print line
+
+	for line in fileinput.input(tempFileName, inplace=True):
+		#line = line.replace(lineToReplace, libTxtToPasteIn)
 		if not re.search(linePattern, line):
 			print line

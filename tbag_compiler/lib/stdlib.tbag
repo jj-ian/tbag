@@ -44,3 +44,4 @@ func int intFromLetter(string letter) {
 	return neg 1;
 }
 
+#import stdlib
