@@ -2,8 +2,7 @@ boolean started = false;
 boolean lol = false;
 string[3] answer;
 int[26] guessed;
-
-string letter;
+int numberOfGuesses = 0;
 
 NOT started {
 	
@@ -11,16 +10,27 @@ NOT started {
 	answer[1] = "A";
 	answer[2] = "T";
 
-
-	strPrintLine("You're a mouse.");
-
 	started = true;
-	letter = "C";
 }
 
 true {
+
+
+	int i = 0;
+	while (i < arrLen(guessed)) {
+		print(guessed[i]);
+		print(" ");
+		i = i + 1;
+	}
+/*
+		strPrintLine(answer[0]);
+	strPrintLine(answer[1]);
+	strPrintLine(answer[2]);*/
+
 	print("Guess a letter.");
 	getInputFromOptions("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+	numberOfGuesses = numberOfGuesses + 1;
+
 
 	/*
 	intPrintLine(intFromLetter(input));
@@ -29,23 +39,16 @@ true {
 	} else {
 		strPrintLine("not already guessed");
 	}*/
-/*
-	while (i < arrLen(guessed)) {
-		print(guessed[i]);
-		print(" ");
-		i = i + 1;
-	}*/
 
+	/*strPrintLine("intfromletter ");
+	intPrintLine(intFromLetter(input));*/
 	boolPrintLine(hasLetterBeenGuessedBefore(input));
-	guessed[intFromLetter(letter)] = 1;
-
-
+	guessed[intFromLetter(input)] = 1;
 
 }
 
 lol {
 	endgame;
-
 }
 
 #import stdlib
@@ -57,4 +60,16 @@ func boolean hasLetterBeenGuessedBefore(string letter) {
 		return false;
 	}
 
+}
+
+func boolean isLetterInAnswer(string letter) {
+	int i = 0;
+	boolean found = false;
+	while (i < arrLen(answer) AND found == false) {
+		if (answer[i] ~~ letter) {
+			found = true;
+		} else {}
+		i = i + 1;
+	}
+	return found;
 }

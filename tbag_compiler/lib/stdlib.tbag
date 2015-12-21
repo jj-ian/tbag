@@ -37,7 +37,7 @@ func int intFromLetter(string letter) {
 	if (letter ~~ "U") { return 20; } else {}
 	if (letter ~~ "V") { return 21; } else {}
 	if (letter ~~ "W") { return 22; } else {}
-	if (letter ~~ "X") { return 22; } else {}
+	if (letter ~~ "X") { return 23; } else {}
 	if (letter ~~ "Y") { return 24; } else {}
 	if (letter ~~ "Z") { return 25; } else {}
 	

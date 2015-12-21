@@ -15,7 +15,7 @@ python scripts/importLibrary.py $1
 
 #./tbag < $1 > ${basename}_compiler_output.txt 2>&1
 ./tbag < prog_w_stdlib.tbag > ${basename}_compiler_output.txt 2>&1
-#rm prog_w_stdlib.tbag
+rm prog_w_stdlib.tbag
 
 if [ -f $driverfile ]; then
 
