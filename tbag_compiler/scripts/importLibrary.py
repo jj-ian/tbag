@@ -1,51 +1,50 @@
 #!/usr/bin/env python
 
+# looks for instances of "#import libraryName.tbag" in command line arg and copies library files into another file called prog_w_stdlib.tbag
+# Author: Julie Chien
+# 11/20/2015
+
 import re
-import os
 import fileinput
 import shutil
+import sys
 
-shutil.copyfile('test.tbag', 'prog_w_stdlib.tbag')
+tbagFileName = sys.argv[1]
+tempFileName = 'prog_w_stdlib.tbag'
 
+#copy file to temp file
+shutil.copyfile(tbagFileName, tempFileName)
+
+# search for lines starting with #import
 linePattern = re.compile(r'#import (\w+)')
-#libNamePattern = re.compile(r'#import (\w+);')
 
-path = '../lib/'
-files = os.listdir(path)
+tbagFile = open(tbagFileName, 'r')
 
-for filed in files:
-	print filed
-
-coolstring = "asjfal;sjfa;ejofiawefw"
-
-tbagFile = open('test.tbag', 'r')
-'''
-for i, line in enumerate(open('test.tbag')):
-    for match in re.finditer(pattern, line):
-        print 'Found on line %s: %s' % (i+1, match.groups())
-        print "lolol"
-        print match
-'''
 libraries = []
 
 for line in tbagFile:
     matches = linePattern.findall(line)
     for libName in matches:
-    	#matchinglib = libNamePattern.match(word)
-    	#print matchinglib.group()
-    	#line = re.sub(libName, 'fuckkkkk', line.rstrip())
     	libraries.append(libName)
         print libName
 
-
 print libraries
 
+if len(libraries) > 0:
+	lineToReplace = "#import " + libraries[0]
+	print lineToReplace
 
-'''
-for line in fileinput.input(inplace=1, backup='.bak'):
-	matches = linePattern.findall(line)
-	for libName in matches:
-		line = re.sub(libName,'rofl', line.rstrip())
-		print(line)
-'''
-#re.findall(r'#import (\d+);',open('test.tbag'))
+	libTxtToPasteIn = ""
+
+	for libName in libraries:
+		libFileName = "lib/" + libName + ".tbag"
+		print libFileName
+		with open(libFileName, 'r') as myfile:
+			data=myfile.read()
+		libTxtToPasteIn += data
+
+
+	for line in fileinput.input(tempFileName, inplace=True):
+		line = line.replace(lineToReplace, libTxtToPasteIn)
+		if not re.search(linePattern, line):
+			print line

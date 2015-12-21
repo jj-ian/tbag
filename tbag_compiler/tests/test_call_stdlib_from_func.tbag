@@ -3,7 +3,9 @@ true {
 	endgame;
 }
 
-func int test() {
+#import stdlib
+
+func void test() {
 	strPrintLine("hi");
 }
 
