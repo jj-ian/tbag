@@ -29,7 +29,6 @@ true {
 	} else {
 		strPrintLine("not already guessed");
 	}*/
-	int b = 5;
 /*
 	while (i < arrLen(guessed)) {
 		print(guessed[i]);
@@ -39,6 +38,7 @@ true {
 
 	boolPrintLine(hasLetterBeenGuessedBefore(input));
 	guessed[intFromLetter(letter)] = 1;
+
 
 
 }
@@ -58,6 +58,3 @@ func boolean hasLetterBeenGuessedBefore(string letter) {
 	}
 
 }
-
-
-
