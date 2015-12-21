@@ -48,9 +48,9 @@ if len(libraries) > 0:
 	for line in fileinput.input(tempFileName, inplace=True):
 		line = line.replace(lineToReplace, libTxtToPasteIn)
 		#if not re.search(linePattern, line):
-		print line
+		print(line)
 
 	for line in fileinput.input(tempFileName, inplace=True):
 		#line = line.replace(lineToReplace, libTxtToPasteIn)
 		if not re.search(linePattern, line):
-			print line
+			print(line)

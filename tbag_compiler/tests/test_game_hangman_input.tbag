@@ -1,5 +1,4 @@
 boolean started = false;
-boolean lol = false;
 string[3] answer;
 int[26] guessed;
 int numberOfGuesses = 0;
@@ -13,6 +12,11 @@ NOT started {
 	started = true;
 }
 
+numberOfGuesses > arrLen(answer) {
+	strPrintLine("ur out of guesses");
+	endgame;
+}
+
 true {
 
 
@@ -22,34 +26,24 @@ true {
 		print(" ");
 		i = i + 1;
 	}
-/*
-		strPrintLine(answer[0]);
-	strPrintLine(answer[1]);
-	strPrintLine(answer[2]);*/
 
 	print("Guess a letter.");
 	getInputFromOptions("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+
+
+		if (isLetterInAnswer(input)) {
+			strPrintLine("letter is in answer");
+		} else {
+			strPrintLine("u fucked up lol");
+		}
+ 
+	guessed[intFromLetter(input)] = 1;
 	numberOfGuesses = numberOfGuesses + 1;
 
 
-	/*
-	intPrintLine(intFromLetter(input));
-	if (guessed[intFromLetter(input)] == 1) {
-		strPrintLine("already guessed");
-	} else {
-		strPrintLine("not already guessed");
-	}*/
-
-	/*strPrintLine("intfromletter ");
-	intPrintLine(intFromLetter(input));*/
-	boolPrintLine(hasLetterBeenGuessedBefore(input));
-	guessed[intFromLetter(input)] = 1;
-
 }
 
-lol {
-	endgame;
-}
+
 
 #import stdlib
 
