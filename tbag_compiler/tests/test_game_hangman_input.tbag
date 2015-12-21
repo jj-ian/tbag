@@ -63,6 +63,7 @@ wrongGuesses >= guessesAllowed {
 
 
 #import stdlib
+#import typeConversionLib
 
 func boolean letterIsInAnswer(string letter) {
 	int i = 0;

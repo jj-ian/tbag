@@ -1,0 +1,165 @@
+room {}
+
+room Great_Hall { 
+	name = "Great_Hall";
+}
+
+room Throne_Room {
+	name = "Throne_Room";
+}
+
+room East_Chamber {
+	name = "East_Chamber";
+}
+
+room West_Chamber {
+	name = "West_Chamber";
+}
+
+room Kitchen {
+	name = "Kitchen";
+}
+
+room Private_Bedroom {
+	name = "Private_Bedroom";
+}
+
+room Stairs {
+	name = "Stairs";
+}
+
+room Library {
+	name = "Library";
+}
+
+Throne_Room <-> Great_Hall;
+West_Chamber <-> Great_Hall;
+East_Chamber <-> Great_Hall;
+Great_Hall <-> Stairs;
+Stairs <-> Private_Bedroom;
+West_Chamber <-> Kitchen;
+Library <-> East_Chamber;
+
+start { Great_Hall }
+
+npc {
+	string name;
+	string roomName;
+	string message;
+}
+
+npc Tubbs {
+	name = "King Tubbs";
+	roomName = "East_Chamber";
+	message = "hi";
+}
+
+npc Pickles {
+	name = "Duke Pickles";
+	roomName = "West_Chamber";
+	message = "i'm pickin\n";
+}
+
+npc Marshmallow {
+	name = "Lady Marshmallow";
+	roomName = "East_Chamber";
+	message = "rmm marsh\n";
+}
+
+item {
+	string name;
+	string roomName;
+}
+
+item Key {
+	name = "Key";
+	roomName = "East_Chamber";
+}
+
+boolean started = false;
+int week = 1;
+boolean spokeToMarshmallow = false;
+boolean spokeToPickles = false;
+boolean spokeToSubjects = false;
+boolean rollOverWeek = false;
+int cheeseCubeSupply = 100;
+int stateOfKingdom = 5;
+int lengthSabbatical = 3;
+
+NOT started {
+	strPrintLine("King Tubbs, the great monarch of the Cat Kingdom, has recently discovered a sunbeam of sensational quality!");
+	print("He has, understandably, requested a ");
+	print(lengthSabbatical);
+	strPrintLine(" week sabbatical.");
+	strPrintLine("It is up to you (as an Official Visiting Noblecat) to lead the kingdom during that time.");
+	strPrintLine("Speak to your advisors and then make some important decisions!");
+	strPrintLine("At the end of seven weeks you can see exactly what sort of ruler you have been.");
+	strPrintLine("THE CAT MONARCHY AWAITS YOUR STEADY LEADERSHIP!");
+	started = true;
+}
+
+
+
+currentRoom.name ~~ Pickles.roomName {
+	print("Ah, here is your gluttonous advisor ");
+	print(Pickles.name);
+	strPrintLine("!");
+	strPrintLine("Do you want to talk to him?");
+	getInputFromOptions("Yes", "No");
+	
+}
+
+currentRoom.name ~~ Pickles.roomName AND input ~~ "Yes" {
+	print(Pickles.message);
+	spokeToPickles = true;
+}
+
+currentRoom.name ~~ Marshmallow.roomName {
+	print("In this room is your inconspicuous advisor ");
+	print(Marshmallow.name);
+	strPrintLine("!");
+	strPrintLine("Do you want to talk to her?");
+	getInputFromOptions("Yes", "No");
+
+}
+
+currentRoom.name ~~ Marshmallow.roomName AND input ~~ "Yes" {
+	print(Marshmallow.message);
+	spokeToMarshmallow = true;
+}
+
+currentRoom != Stairs {
+	printCurrentRoomInfo();
+	getInputAdjacentRooms(currentRoom);
+}
+
+NOT (input ~~ Throne_Room.name) {
+	strPrintLine("1");
+	->input
+}
+
+(input ~~ Throne_Room.name) AND (spokeToMarshmallow AND spokeToPickles) {
+		strPrintLine("2");
+
+	-> input
+}
+
+(input ~~ Throne_Room.name) AND (NOT spokeToMarshmallow OR NOT spokeToPickles) {
+		strPrintLine("3");
+
+	strPrintLine("Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!");
+
+}
+
+
+NOT started {
+	endgame;
+}
+
+#import stdlib
+
+func void printCurrentRoomInfo() {
+	print("You're in the ");
+	print(currentRoom.name);
+	strPrintLine(".\n");
+}
