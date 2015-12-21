@@ -3,6 +3,8 @@ true {
   endgame;
 }
 
+#import stdlib
+
 func int printLine(string b) {
   print(b);
   print("\n");

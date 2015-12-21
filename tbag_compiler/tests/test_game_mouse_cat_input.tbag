@@ -53,6 +53,8 @@ currentRoom.name ~~ Cat.roomName {
 	endgame;
 }
 
+#import stdlib
+
 func void printCurrentRoomInfo() {
 	print("Currently in: ");
 	print(currentRoom.name);
