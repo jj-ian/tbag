@@ -1,3 +1,6 @@
+#import stdlib
+#import typeConversionLib
+
 int guesses = 0;
 int wrongGuesses = 0;
 int guessesAllowed = 6;
@@ -60,9 +63,6 @@ wrongGuesses >= guessesAllowed {
 	strPrintLine("You lost, how embarrassing!!!");
 	endgame;
 }
-
-
-#import stdlib
 
 func boolean letterIsInAnswer(string letter) {
 	int i = 0;

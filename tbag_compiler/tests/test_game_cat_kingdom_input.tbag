@@ -1,0 +1,406 @@
+#import stdlib
+
+room {}
+
+room Great_Hall {  name = "Great_Hall"; }
+room Throne_Room { name = "Throne_Room"; }
+room East_Chamber { name = "East_Chamber"; }
+room West_Chamber {	name = "West_Chamber"; }
+room Kitchen { name = "Kitchen"; }
+
+Throne_Room <-> Great_Hall;   West_Chamber <-> Great_Hall;
+East_Chamber <-> Great_Hall;   West_Chamber <-> Kitchen;
+
+start { Great_Hall }
+
+npc {   int id; string name; string roomName; string message; 
+		string goodResponse; string evilResponse;
+		string goodResult; string badResult;
+}
+
+npc Tubbs {
+	id = 0;
+	name = "King Tubbs";
+	roomName = "East_Chamber";
+	message = "hi";
+	goodResponse = ""; evilResponse = ""; goodResult = ""; badResult = "";
+}
+
+npc Pickles {
+	id = 1;
+	name = "Duke Pickles";
+	roomName = "West_Chamber";
+	message = "Your greatness, welcome to the treasury. I am your financial advisor.\n I stand here amongst our hoard of cheese chunks to determine the general \"cheesiness\" of our monarchy.\n Feel free to drop in any time and ask how things are going, yes.\n";
+	goodResponse = ""; evilResponse = ""; goodResult = ""; badResult = "";
+}
+
+npc Marshmallow {
+	id = 2;
+	name = "Lady Marshmallow";
+	roomName = "East_Chamber";
+	message = "Hello, my new and temporary liege. I am your kingdom advisor.\n It is my job to advise you on the health and happiness of your kingdom.\n My own health and happiness is irrelevant.\n Please, see me again some time.\n";
+	goodResponse = ""; evilResponse = ""; goodResult = ""; badResult = "";
+
+}
+
+npc Pumpkin {
+	id = 3;
+	name = "Pumpkin";
+	roomName = "Throne_Room";
+	message = "A cat baby is lost in the spooky forest!\nI know because it sent me this baby note, via forest squirrel!\n";
+	goodResponse = "I will organize a search party!\n";
+	evilResponse = "I will organize a snake party!\n";
+	goodResult = "They find a baby, and a dozen or so other babies.\n";
+	badResult = "You party with some snakes. What a night! The baby is never heard from again.\n";
+
+}
+
+npc Snowball {
+	id = 4;
+	name = "Snowball";
+	roomName = "Throne_Room";
+	message = "Hel... hello monarch!\nI'm...\nI'm very lonely.\nWould you mind if I just stood in here for a few minutes?\nI'm sorry. I can leave.\n";
+	goodResponse = "Please, stay!\n";
+	evilResponse = "LEAVE AT ONCE.\n";
+	goodResult = "The cat leaves. You eat a royal pizza bagel.\n";
+	badResult = "You both have pizza bagels for lunch.\n";
+
+
+}
+
+npc Patches {
+	id = 5;
+	name = "Patches";
+	roomName = "Throne_Room";
+	message = "Help! It's my son!\nHe is very sick!\nAnd stuck in a huge bear mouth!\n";
+	goodResponse = "Guards, help this cat's son!\n";
+	evilResponse = "Guards, help the bear eat this cat's son!\n";
+	goodResult = "Your guards manage to save most of the son.\n";
+	badResult = "Your guards lose a little bit more of themselves.\n";
+
+}
+
+item {
+	int initialAmount;
+}
+
+item BowlX {
+	initialAmount = 5;
+}
+
+item BowlY {
+	initialAmount = 7;
+}
+
+item BowlZ {
+	initialAmount = 8;
+}
+
+/* to easily access the db */
+
+string[10] catNames;
+string[10] catRoomNames;
+string[10] catMessages;
+string[10] goodResponses;
+string[10] evilResponses;
+string[10] goodResults;
+string[10] badResults;
+
+string[5] requestTitleCard;
+
+
+boolean started = false;
+int week = 1;
+boolean spokeToMarshmallow = false;
+boolean spokeToPickles = false;
+boolean rollOverWeek = true;
+int stateOfKingdom = 5;
+int cheeseCubeCount = 5;
+int lengthSabbatical = 3;
+
+boolean handleSubjects = false;
+
+boolean dataInitialized = false;
+
+boolean xyzPuzzleInProgress = false;
+int bowlXAmount;   
+int bowlYAmount;   
+int bowlZAmount;
+
+
+int xyzState = 1;
+
+NOT dataInitialized {
+	
+	catNames[0] = Tubbs.name; catNames[1] = Pickles.name; catNames[2] = Marshmallow.name; 
+	catNames[3] = Pumpkin.name; catNames[4] = Snowball.name; catNames[5] = Patches.name;
+
+
+	catRoomNames[0] = Tubbs.roomName; catRoomNames[1] = Pickles.roomName; 
+	catRoomNames[2] = Marshmallow.roomName; catRoomNames[3] = Pumpkin.roomName; 
+	catRoomNames[4] = Snowball.roomName; catRoomNames[5] = Patches.roomName;
+
+
+	catMessages[0] = Tubbs.message; catMessages[1] = Pickles.message; 
+	catMessages[2] = Marshmallow.message; catMessages[3] = Pumpkin.message; 
+	catMessages[4] = Snowball.message; catMessages[5] = Patches.message;
+
+goodResponses[0] = Tubbs.goodResponse; goodResponses[1] = Pickles.goodResponse; 
+goodResponses[2] = Marshmallow.goodResponse; goodResponses[3] = Pumpkin.goodResponse; 
+goodResponses[4] = Snowball.goodResponse; goodResponses[5] = Patches.goodResponse; 
+
+evilResponses[0] = Tubbs.evilResponse; evilResponses[1] = Pickles.evilResponse; 
+evilResponses[2] = Marshmallow.evilResponse; evilResponses[3] = Pumpkin.evilResponse; 
+evilResponses[4] = Snowball.evilResponse; evilResponses[5] = Patches.evilResponse; 
+
+goodResults[0] = Tubbs.goodResult; goodResults[1] = Pickles.goodResult; 
+goodResults[2] = Marshmallow.goodResult; goodResults[3] = Pumpkin.goodResult; 
+goodResults[4] = Snowball.goodResult; goodResults[5] = Patches.goodResult; 
+
+badResults[0] = Tubbs.badResult; badResults[1] = Pickles.badResult; 
+badResults[2] = Marshmallow.badResult; badResults[3] = Pumpkin.badResult; 
+badResults[4] = Snowball.badResult; badResults[5] = Patches.badResult; 
+
+requestTitleCard[1] = "YOUR CAT SUBJECTS HAVE SOME IMPORTANT REQUESTS!\n\n"; 
+requestTitleCard[2] = "GET READY FOR EVEN MORE REQUESTS FROM CAT SUBJECTS!\n\n";
+requestTitleCard[3] = "THE FINAL REQUESTS BEFORE YOUR REIGN IS AT AN END!\n\n";
+
+bowlXAmount = BowlX.initialAmount;  
+bowlYAmount = BowlY.initialAmount;  
+bowlZAmount = BowlZ.initialAmount;
+
+dataInitialized = true;
+
+}
+
+NOT started {
+	strPrintLine("King Tubbs, the great monarch of the Cat Kingdom, has recently discovered a sunbeam of sensational quality!");
+	print("He has, understandably, requested a ");
+	print(lengthSabbatical);
+	strPrintLine(" week sabbatical.");
+	strPrintLine("It is up to you (as an Official Visiting Noblecat) to lead the kingdom during that time.");
+	strPrintLine("Speak to your advisors and then make some important decisions!");
+	strPrintLine("At the end of seven weeks you can see exactly what sort of ruler you have been.");
+	strPrintLine("THE CAT MONARCHY AWAITS YOUR STEADY LEADERSHIP!\n\n");
+	started = true;
+}
+
+rollOverWeek {
+	print("----------------------  WEEK ");   print(week);  
+	strPrintLine(" ----------------------\n\n");
+	rollOverWeek = false;
+}
+
+currentRoom.name ~~ Pickles.roomName {
+	print("Ah, here is your financial advisor ");
+	print(Pickles.name);
+	strPrintLine("!");
+	strPrintLine("Do you want to talk to him?");
+	getInputFromOptions("Yes", "No");
+	
+	
+}
+
+currentRoom.name ~~ Pickles.roomName AND input ~~ "Yes" {
+	print(Pickles.name);
+	strPrintLine(" says: ");
+	if (NOT spokeToPickles) {
+		strPrintLine(Pickles.message);	
+		spokeToPickles = true;
+	} else {
+		print("We have ");
+		print(cheeseCubeCount);
+		print(" cheese cubes!\n\n");
+	}
+
+}
+
+currentRoom.name ~~ Marshmallow.roomName {
+	print("In this room is your kingdom advisor ");
+	print(Marshmallow.name);
+	strPrintLine("!");
+	strPrintLine("Do you want to talk to her?");
+	getInputFromOptions("Yes", "No");
+	
+}
+
+currentRoom.name ~~ Marshmallow.roomName AND input ~~ "Yes" {
+	print(Marshmallow.name);
+	strPrintLine(" says: ");
+	if (NOT spokeToMarshmallow) {
+		strPrintLine(Marshmallow.message);
+		spokeToMarshmallow = true;
+	} else {
+		if (stateOfKingdom < 5) {
+			strPrintLine("There is 10% more crying in the kingdom today. An acceptable amount, I suppose.\n");
+		} else {
+			strPrintLine("I think things are... fine?\n");
+		}
+	}
+}
+NOT xyzPuzzleInProgress {
+	printCurrentRoomInfo();
+		getInputAdjacentRooms(currentRoom);
+
+}
+
+NOT xyzPuzzleInProgress AND NOT (input ~~ Throne_Room.name) {
+	->input	
+}
+
+input ~~ Throne_Room.name {
+	if (spokeToMarshmallow AND spokeToPickles) {
+		-> input
+	} else {
+		strPrintLine("Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!");
+	}	
+}
+
+currentRoom == Throne_Room {
+	print(requestTitleCard[week]);
+	handleSubjects = true;
+
+}
+
+handleSubjects {
+	int subjectID = arbitrarySubjectID();
+	print(catNames[subjectID]);
+	strPrintLine(" says: ");
+	strPrintLine(catMessages[subjectID]);
+	print("1.  ");
+	print(goodResponses[subjectID]);
+	print("2.  ");
+	strPrintLine(evilResponses[subjectID]);
+
+	getInputFromOptions("1", "2");
+
+	if (input ~~ "1") {
+		strPrintLine(goodResults[subjectID]);
+		stateOfKingdom = stateOfKingdom + 1;
+		cheeseCubeCount = cheeseCubeCount - 1;
+	} else {
+		strPrintLine(badResults[subjectID]);
+		stateOfKingdom = stateOfKingdom - 1;
+		cheeseCubeCount = cheeseCubeCount + 1;
+	}
+
+	->Great_Hall
+
+	week = week + 1;
+	handleSubjects = false;
+	rollOverWeek = true;
+}
+
+currentRoom == Kitchen AND NOT xyzPuzzleInProgress {
+	strPrintLine("You see three bowls of cat food, one labeled \"X\", one labeled \"Y\", and one labeled \"Z\".");
+	xyzPuzzleInProgress = true;
+}
+
+xyzPuzzleInProgress {
+	strPrintLine("Which bowl do you want to eat from?");
+		getInputFromOptions("X", "Y", "Z", "None");
+}
+
+currentRoom == Kitchen AND xyzPuzzleInProgress AND input ~~ "None" {
+	xyzState = 1;
+	xyzPuzzleInProgress = false;
+}
+
+
+xyzPuzzleInProgress AND input ~~ "X" {
+	if (bowlXAmount > 0) {
+		bowlXAmount = bowlXAmount - 1;
+		print("Bowl X has ");   print(bowlXAmount);   print(" foods left.\n\n");
+			xyzState = 2;
+	} else {
+		strPrintLine("There's no food left in this bowl.");
+	}
+}
+
+xyzPuzzleInProgress AND input ~~ "Y" {
+	if (bowlYAmount > 0 ) {
+		bowlYAmount = bowlYAmount - 1;
+		print("Bowl Y has ");   print(bowlYAmount);   print(" foods left.\n\n");
+
+		if (xyzState == 2) { 
+			xyzState = 3;
+		} else { 
+			if (xyzState == 5) {
+				xyzState = 6;
+			} else { 	
+				xyzState = 1;}
+			}
+		} else {
+			strPrintLine("There's no food left in this bowl.");
+
+		}
+
+
+	}
+
+	xyzPuzzleInProgress AND input ~~ "Z" {
+		if (bowlZAmount > 0) {
+			bowlZAmount = bowlZAmount - 1;
+			print("Bowl Z has ");   print(bowlZAmount);   print(" foods left.\n\n");
+
+			if (xyzState == 3) { 
+				xyzState = 4;
+			} else { 
+				if (xyzState == 4) {
+					xyzState = 5;
+				} else {
+					xyzState = 1;
+				}
+			}
+		} else {
+			strPrintLine("There's no food left in this bowl.");
+
+		}
+
+}
+xyzPuzzleInProgress AND xyzState == 6 {
+	strPrintLine("YOU FOUND A SECRET TRAP DOOR!!! In it you find a stash of 9,999 cheese cubes!!");
+	cheeseCubeCount = cheeseCubeCount + 9999;
+	xyzState = 1;
+}
+
+
+week > lengthSabbatical {
+	strPrintLine("THE TRUE MONARCH HAS RETURNED FROM THE DIVINE SUNBEAM!\nYour three weeks are complete, and the rightful ruler has returned!\nLet us see how you did!\nProcessing... BEEP... BEEP BOP...");
+	if (stateOfKingdom < 5) {
+		strPrintLine("Everyone is dead or dying! What a complete terror world you've made!");
+	} else {}
+	if (stateOfKingdom >= 5) {
+		strPrintLine("Everyone seems super happy, for now!");
+	} else {}
+
+	if (cheeseCubeCount < 5) {
+		strPrintLine("Wow, you also gave away all of the monarch's cheese money! The monarchy is done with, I guess!");
+	} else {}
+	if (cheeseCubeCount >= 5) {
+		strPrintLine("You've also made an unspendably huge fortune!");
+	} else {}
+	strPrintLine("I think that about wraps it up!");
+	strPrintLine("Take care of yourself today!");
+	strPrintLine("Thank you for playing, goodbye forever!");
+
+	endgame;
+}
+
+
+func void printCurrentRoomInfo() {
+	print("You're in the ");
+	print(currentRoom.name);
+	strPrintLine(".\n");
+}
+
+func int arbitrarySubjectID() {
+	if (week == 1) { return 3; } else {}
+	if (week == 2) { return 4; } else {}
+	if (week == 3) { return 5; } else {}
+	return neg 1;
+
+}
+
+
+

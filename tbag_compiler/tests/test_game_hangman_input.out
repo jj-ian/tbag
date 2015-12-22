@@ -4,6 +4,8 @@ Input: M
 
 
 
+
+
  _________     
 |         |    
 |         O    
@@ -22,6 +24,8 @@ Already Guessed : M
 Guess a letter. Choose from one of the following options:
 A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
 Input: D
+
+
 
 
 
@@ -46,6 +50,8 @@ Input: T
 
 
 
+
+
  _________     
 |         |    
 |         O    
@@ -64,6 +70,8 @@ Already Guessed : D M T
 Guess a letter. Choose from one of the following options:
 A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
 Input: I
+
+
 
 
 
@@ -88,6 +96,8 @@ Input: E
 
 
 
+
+
  _________     
 |         |    
 |         O    
@@ -106,6 +116,8 @@ Already Guessed : D E I M T
 Guess a letter. Choose from one of the following options:
 A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
 Input: H
+
+
 
 
 
@@ -130,6 +142,8 @@ Input: B
 
 
 
+
+
  _________     
 |         |    
 |         O    
@@ -148,6 +162,8 @@ Already Guessed : B D E H I M T
 Guess a letter. Choose from one of the following options:
 A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
 Input: C
+
+
 
 
 
@@ -172,6 +188,8 @@ Input: R
 
 
 
+
+
  _________     
 |         |    
 |         O    
@@ -190,6 +208,8 @@ Already Guessed : B C D E H I M R T
 Guess a letter. Choose from one of the following options:
 A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
 Input: F
+
+
 
 
 
@@ -214,6 +234,8 @@ Input: G
 
 
 
+
+
  _________     
 |         |    
 |         O    
@@ -232,6 +254,8 @@ Already Guessed : B C D E F G H I M R T
 Guess a letter. Choose from one of the following options:
 A    B    C    D    E    F    G    H    I    J    K    L    M    N    O    P    Q    R    S    T    U    V    W    X    Y    Z    
 Input: K
+
+
 
 
 
