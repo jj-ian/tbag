@@ -30,7 +30,9 @@
 			input = scanner.nextLine();
 			System.out.println("Input: " + input);
 
-		}				
+		}
+		System.out.println();
+		System.out.println();				
 
 	}
 
@@ -60,5 +62,7 @@
 			input = scanner.nextLine();
 			System.out.println("Input: " + input);
 
-		}	
+		}
+		System.out.println();
+		System.out.println();		
 	}

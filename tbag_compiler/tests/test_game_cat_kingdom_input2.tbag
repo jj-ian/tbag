@@ -6,11 +6,9 @@ room East_Chamber { name = "East_Chamber"; }
 room West_Chamber {	name = "West_Chamber"; }
 room Kitchen { name = "Kitchen"; }
 room Private_Bedroom { name = "Private_Bedroom"; }
-room Stairs { name = "Stairs"; }
 
 Throne_Room <-> Great_Hall;   West_Chamber <-> Great_Hall;
-East_Chamber <-> Great_Hall;   Great_Hall <-> Stairs;
-Stairs <-> Private_Bedroom;   West_Chamber <-> Kitchen;
+East_Chamber <-> Great_Hall;   West_Chamber <-> Kitchen;
 
 start { Great_Hall }
 
@@ -98,33 +96,19 @@ npc Ginger {
 /*look at this hoard! this delicious cheesy hoard!*/
 
 item {
-	string name;
-	string roomName;
-	int amount;
-}
-
-item Key {
-	name = "Key";
-	roomName = "East_Chamber";
-	amount = neg 1;
+	int initialAmount;
 }
 
 item BowlX {
-	name = "Bowl X";
-	roomName = "Kitchen";
-	amount = 5;
+	initialAmount = 5;
 }
 
 item BowlY {
-	name = "Bowl Y";
-	roomName = "Kitchen";
-	amount = 5;
+	initialAmount = 7;
 }
 
 item BowlZ {
-	name = "Bowl Z";
-	roomName = "Kitchen";
-	amount = 5;
+	initialAmount = 8;
 }
 
 /* to easily access the db */
@@ -146,40 +130,62 @@ boolean spokeToMarshmallow = false;
 boolean spokeToPickles = false;
 boolean rollOverWeek = true;
 int stateOfKingdom = 5;
+int cheeseCubeCount = 5;
 int lengthSabbatical = 3;
-int curSubjectID = neg 1;
-
 
 boolean handleSubjects = false;
 
-boolean catArraysInitialized = false;
+boolean dataInitialized = false;
 
 boolean xyzPuzzleInProgress = false;
+int bowlXAmount;   
+int bowlYAmount;   
+int bowlZAmount;
 
-boolean stairsUnlocked = false;
 
-int xyzState = neg 1;
+int xyzState = 1;
 
-NOT catArraysInitialized {
+NOT dataInitialized {
 	
-	catNames[0] = Tubbs.name; catNames[1] = Pickles.name; catNames[2] = Marshmallow.name; catNames[3] = Pumpkin.name; catNames[4] = Snowball.name; catNames[5] = Patches.name;
+	catNames[0] = Tubbs.name; catNames[1] = Pickles.name; catNames[2] = Marshmallow.name; 
+	catNames[3] = Pumpkin.name; catNames[4] = Snowball.name; catNames[5] = Patches.name;
 
 
-	catRoomNames[0] = Tubbs.roomName; catRoomNames[1] = Pickles.roomName; catRoomNames[2] = Marshmallow.roomName; catRoomNames[3] = Pumpkin.roomName; catRoomNames[4] = Snowball.roomName; catRoomNames[5] = Patches.roomName;
+	catRoomNames[0] = Tubbs.roomName; catRoomNames[1] = Pickles.roomName; 
+	catRoomNames[2] = Marshmallow.roomName; catRoomNames[3] = Pumpkin.roomName; 
+	catRoomNames[4] = Snowball.roomName; catRoomNames[5] = Patches.roomName;
 
 
-	catMessages[0] = Tubbs.message; catMessages[1] = Pickles.message; catMessages[2] = Marshmallow.message; catMessages[3] = Pumpkin.message; catMessages[4] = Snowball.message; catMessages[5] = Patches.message;
+	catMessages[0] = Tubbs.message; catMessages[1] = Pickles.message; 
+	catMessages[2] = Marshmallow.message; catMessages[3] = Pumpkin.message; 
+	catMessages[4] = Snowball.message; catMessages[5] = Patches.message;
 
-goodResponses[0] = Tubbs.goodResponse; goodResponses[1] = Pickles.goodResponse; goodResponses[2] = Marshmallow.goodResponse; goodResponses[3] = Pumpkin.goodResponse; goodResponses[4] = Snowball.goodResponse; goodResponses[5] = Patches.goodResponse; 
-evilResponses[0] = Tubbs.evilResponse; evilResponses[1] = Pickles.evilResponse; evilResponses[2] = Marshmallow.evilResponse; evilResponses[3] = Pumpkin.evilResponse; evilResponses[4] = Snowball.evilResponse; evilResponses[5] = Patches.evilResponse; 
-goodResults[0] = Tubbs.goodResult; goodResults[1] = Pickles.goodResult; goodResults[2] = Marshmallow.goodResult; goodResults[3] = Pumpkin.goodResult; goodResults[4] = Snowball.goodResult; goodResults[5] = Patches.goodResult; 
+goodResponses[0] = Tubbs.goodResponse; goodResponses[1] = Pickles.goodResponse; 
+goodResponses[2] = Marshmallow.goodResponse; goodResponses[3] = Pumpkin.goodResponse; 
+goodResponses[4] = Snowball.goodResponse; goodResponses[5] = Patches.goodResponse; 
 
-badResults[0] = Tubbs.badResult; badResults[1] = Pickles.badResult; badResults[2] = Marshmallow.badResult; badResults[3] = Pumpkin.badResult; badResults[4] = Snowball.badResult; badResults[5] = Patches.badResult; 
+evilResponses[0] = Tubbs.evilResponse; evilResponses[1] = Pickles.evilResponse; 
+evilResponses[2] = Marshmallow.evilResponse; evilResponses[3] = Pumpkin.evilResponse; 
+evilResponses[4] = Snowball.evilResponse; evilResponses[5] = Patches.evilResponse; 
+
+goodResults[0] = Tubbs.goodResult; goodResults[1] = Pickles.goodResult; 
+goodResults[2] = Marshmallow.goodResult; goodResults[3] = Pumpkin.goodResult; 
+goodResults[4] = Snowball.goodResult; goodResults[5] = Patches.goodResult; 
+
+badResults[0] = Tubbs.badResult; badResults[1] = Pickles.badResult; 
+badResults[2] = Marshmallow.badResult; badResults[3] = Pumpkin.badResult; 
+badResults[4] = Snowball.badResult; badResults[5] = Patches.badResult; 
 
 requestTitleCard[1] = "YOUR CAT SUBJECTS HAVE SOME IMPORTANT REQUESTS!\n\n"; 
 requestTitleCard[2] = "YOUR CAT SUBJECTS HAVE EVEN MORE REQUESTS!\n\n";
 requestTitleCard[3] = "BIG DECISIONS ON BIG REQUESTS, HERE THEY COME, GET READY!\n\n";
-catArraysInitialized = true;
+
+bowlXAmount = BowlX.initialAmount;  
+bowlYAmount = BowlY.initialAmount;  
+bowlZAmount = BowlZ.initialAmount;
+
+dataInitialized = true;
+
 }
 
 NOT started {
@@ -241,16 +247,14 @@ currentRoom.name ~~ Marshmallow.roomName AND input ~~ "Yes" {
 	strPrintLine(Marshmallow.message);
 	spokeToMarshmallow = true;
 }
-
-currentRoom != Stairs {
+NOT xyzPuzzleInProgress {
 	printCurrentRoomInfo();
-	getInputAdjacentRooms(currentRoom);
-	
+		getInputAdjacentRooms(currentRoom);
+
 }
 
-NOT (input ~~ Throne_Room.name) {
-	->input
-	
+NOT xyzPuzzleInProgress AND NOT (input ~~ Throne_Room.name) {
+	->input	
 }
 
 input ~~ Throne_Room.name {
@@ -268,21 +272,23 @@ currentRoom == Throne_Room {
 }
 
 handleSubjects {
-	curSubjectID = arbitrarySubjectID();
-	strPrintLine(catMessages[curSubjectID]);
+	int subjectID = arbitrarySubjectID();
+	strPrintLine(catMessages[subjectID]);
 	print("1.  ");
-	print(goodResponses[curSubjectID]);
+	print(goodResponses[subjectID]);
 	print("2.  ");
-	strPrintLine(evilResponses[curSubjectID]);
+	strPrintLine(evilResponses[subjectID]);
 
 	getInputFromOptions("1", "2");
 
 	if (input ~~ "1") {
-		strPrintLine(goodResults[curSubjectID]);
+		strPrintLine(goodResults[subjectID]);
 		stateOfKingdom = stateOfKingdom + 1;
+		cheeseCubeCount = cheeseCubeCount - 1;
 	} else {
-		strPrintLine(badResults[curSubjectID]);
+		strPrintLine(badResults[subjectID]);
 		stateOfKingdom = stateOfKingdom - 1;
+		cheeseCubeCount = cheeseCubeCount + 1;
 	}
 
 	print("stateOfKingdom ");
@@ -295,25 +301,123 @@ handleSubjects {
 	rollOverWeek = true;
 }
 
-currentRoom == Kitchen AND xyzState == neg 1 {
+currentRoom == Kitchen AND NOT xyzPuzzleInProgress {
 	strPrintLine("You see three bowls of cat food, one labeled \"X\", one labeled \"Y\", and one labeled \"Z\".");
-	/*xyzPuzzleInProgress = true;*/
+	xyzPuzzleInProgress = true;
+}
+
+xyzPuzzleInProgress {
+	strPrintLine("Which bowl do you want to eat from?");
+		getInputFromOptions("X", "Y", "Z", "None");
+}
+
+currentRoom == Kitchen AND xyzPuzzleInProgress AND input ~~ "None" {
+	strPrintLine("exxited puzzle");
+	xyzState = 1;
+	xyzPuzzleInProgress = false;
+}
+/*
+xyzPuzzleInProgress AND xyzState == 1 AND input ~~ "X" {
+	strPrintLine("going to state 2");
+	xyzState = 2;
+}
+
+xyzPuzzleInProgress AND xyzState == 2 AND input ~~ "Y" {
+		strPrintLine("going to state 3");
+
+	xyzState = 3;
+}
+
+xyzPuzzleInProgress AND xyzState == 3 AND input ~~ "Z" {
+		strPrintLine("going to state 4");
+
+	xyzState = 4;
+}
+
+xyzPuzzleInProgress AND xyzState == 4 AND input ~~ "Z" {
+		strPrintLine("going to state 5");
+
+	xyzState = 5;
+}
+
+xyzPuzzleInProgress AND xyzState == 5 AND input ~~ "Y" {
+		strPrintLine("going to state 6");
+
+	xyzState = 6;
+}*/
+
+
+xyzPuzzleInProgress AND input ~~ "X" {
+	if (bowlXAmount > 0) {
+		bowlXAmount = bowlXAmount - 1;
+		print("Bowl X has ");   print(bowlXAmount);   print(" foods left.\n\n");
+		if (xyzState == 1) { 
+			strPrintLine("going to state 2");
+			xyzState = 2;
+		} else { 
+			strPrintLine("going to state 1");
+
+			xyzState = 1;
+		}
+	} else {
+		strPrintLine("There's no food left in this bowl.")
+	}
+}
+
+xyzPuzzleInProgress AND input ~~ "Y" {
+	if (bowlYAmount > 0 ) {
+		bowlYAmount = bowlYAmount - 1;
+		print("Bowl Y has ");   print(bowlYAmount);   print(" foods left.\n\n");
+
+		if (xyzState == 2) { 
+			strPrintLine("going to state 3");
+			xyzState = 3;
+		} else { 
+			if (xyzState == 5) {
+				strPrintLine("going to state 5");
+				xyzState = 6;
+			} else { 	
+				strPrintLine("going to state 1");
+				xyzState = 1;}
+			}
+		} else {
+			strPrintLine("There's no food left in this bowl.")
+
+		}
+
+
+	}
+
+	xyzPuzzleInProgress AND input ~~ "Z" {
+		if (bowlZAmount > 0) {
+			bowlZAmount = bowlZAmount - 1;
+			print("Bowl Z has ");   print(bowlZAmount);   print(" foods left.");
+
+			if (xyzState == 3) { 
+				strPrintLine("going to state 4");
+				xyzState = 4;
+			} else { 
+				if (xyzState == 4) {
+					strPrintLine("going to state 5");
+					xyzState = 5;
+				} else {
+					strPrintLine("going to state 1");
+
+					xyzState = 1;
+				}
+			}
+		} else {
+			strPrintLine("There's no food left in this bowl.")
+
+		}
+
+}
+xyzPuzzleInProgress AND xyzState == 6 {
+	strPrintLine("You found a secret trap door!! In it you find a stash of 9,999 cheese cubes!!");
+	cheeseCubeCount = cheeseCubeCount + 9999;
 	xyzState = 1;
 }
 
-xyzState == 1 {
-	strPrintLine("Which bowl do you want to eat from?");
-	getInputFromOptions("X", "Y", "Z", "None");
-}
-
-currentRoom == Kitchen AND input ~~ "None" {
-	xyzState = neg 1;
-	/*xyzPuzzleInProgress = false;*/
-}
-
-xyzPuzzleInProgress AND input ~~ "X" {
-	
-}
 
 week > lengthSabbatical {
 	print("todo endgame stuff\n");
