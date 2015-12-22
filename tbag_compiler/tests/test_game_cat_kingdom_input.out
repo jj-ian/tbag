@@ -4,58 +4,169 @@ It is up to you (as an Official Visiting Noblecat) to lead the kingdom during th
 Speak to your advisors and then make some important decisions!
 At the end of seven weeks you can see exactly what sort of ruler you have been.
 THE CAT MONARCHY AWAITS YOUR STEADY LEADERSHIP!
+
+
+----------------------  WEEK 1 ----------------------
+
+
 You're in the Great_Hall.
 
 Choose from one of the following options:
 Stairs    East_Chamber    West_Chamber    Throne_Room    
-Input: Throne_Room
-3
-Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!You're in the Great_Hall.
-
-Choose from one of the following options:
-Stairs    East_Chamber    West_Chamber    Throne_Room    
 Input: East_Chamber
-1
-3
-Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!In this room is your inconspicuous advisor Lady Marshmallow!
+
+
+In this room is your kingdom advisor Lady Marshmallow!
 Do you want to talk to her?
 Choose from one of the following options:
 Yes    No    
-Input: Yes
-rmm marsh
+Input: No
+
+
 You're in the East_Chamber.
 
 Choose from one of the following options:
 Library    Great_Hall    
 Input: Great_Hall
-1
-3
-Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!You're in the Great_Hall.
+
+
+You're in the Great_Hall.
 
 Choose from one of the following options:
 Stairs    East_Chamber    West_Chamber    Throne_Room    
-Input: West_Chamber
-1
-3
-Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!Ah, here is your gluttonous advisor Duke Pickles!
-Do you want to talk to him?
+Input: East_Chamber
+
+
+In this room is your kingdom advisor Lady Marshmallow!
+Do you want to talk to her?
 Choose from one of the following options:
 Yes    No    
 Input: Yes
-i'm pickin
-You're in the West_Chamber.
+
+
+Lady Marshmallow says: 
+Hello, my new and temporary liege. I am your kingdom advisor.
+ It is my job to advise you on the health and happiness of your kingdom.
+ My own health and happiness is irrelevant.
+ Please, see me again some time.
+
+You're in the East_Chamber.
 
 Choose from one of the following options:
-Kitchen    Great_Hall    
+Library    Great_Hall    
 Input: Great_Hall
-1
+
+
 You're in the Great_Hall.
 
 Choose from one of the following options:
 Stairs    East_Chamber    West_Chamber    Throne_Room    
 Input: Throne_Room
-2
-You're in the Throne_Room.
+
+
+Before heading to the throne room to make today's BIG DECISIONS, you should consider talking to your advisors to the east and west!
+You're in the Great_Hall.
 
 Choose from one of the following options:
-Great_Hall    
+Stairs    East_Chamber    West_Chamber    Throne_Room    
+Input: West_Chamber
+
+
+Ah, here is your financial advisor Duke Pickles!
+Do you want to talk to him?
+Choose from one of the following options:
+Yes    No    
+Input: Yes
+
+
+Duke Pickles says: 
+Your greatness, welcome to the treasury. I am your financial advisor.
+ I stand here amongst our hoard of cheese chunks to determine the general "cheesiness" of our monarchy.
+ Feel free to drop in any time and ask how things are going, yes.
+
+You're in the West_Chamber.
+
+Choose from one of the following options:
+Kitchen    Great_Hall    
+Input: Great_Hall
+
+
+You're in the Great_Hall.
+
+Choose from one of the following options:
+Stairs    East_Chamber    West_Chamber    Throne_Room    
+Input: Throne_Room
+
+
+YOUR CAT SUBJECTS HAVE SOME IMPORTANT REQUESTS!
+
+Excuse me, monarch, leader...
+I have a humble request...
+Would you be willing...
+To sing to my stupid cat baby?
+
+1.  Sure?
+2.  IT'S MY BABY NOW!
+
+Choose from one of the following options:
+1    2    
+Input: 2
+
+
+You eventually get bored of the baby and give it to someone else.
+
+stateOfKingdom 4
+----------------------  WEEK 2 ----------------------
+
+
+You're in the Great_Hall.
+
+Choose from one of the following options:
+Stairs    East_Chamber    West_Chamber    Throne_Room    
+Input: Great_Hall
+Invalid Input. Try again.
+Input: Throne_Room
+
+
+YOUR CAT SUBJECTS HAVE EVEN MORE REQUESTS!
+
+The library is underfunded and at risk of closing down.
+Might your royal-ness be willing to sponsor us?
+
+1.  Yes, I LOVE BOOKS!
+2.  PSH, READING?! PSHHH!!
+Choose from one of the following options:
+1    2    
+Input: 1
+
+
+The library was saved! Also, it's haunted by dark spirits.
+
+stateOfKingdom 5
+----------------------  WEEK 3 ----------------------
+
+
+You're in the Great_Hall.
+
+Choose from one of the following options:
+Stairs    East_Chamber    West_Chamber    Throne_Room    
+Input: Throne_Room
+
+
+BIG DECISIONS ON BIG REQUESTS, HERE THEY COME, GET READY!
+
+A cat baby is lost in the spooky forest!
+I know because it sent me this baby note, via forest squirrel!
+
+1.  I will organize a search party!
+2.  I will organize a snake party!
+
+Choose from one of the following options:
+1    2    
+Input: 1
+
+
+They find a baby, and a dozen or so other babies.
+
+stateOfKingdom 6
+todo endgame stuff
