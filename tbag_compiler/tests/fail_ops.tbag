@@ -1,9 +1,9 @@
+#import stdlib
+
 true {
   printLine("hello" + 2);
   endgame;
 }
-
-#import stdlib
 
 func int printLine(string b) {
   print(b);

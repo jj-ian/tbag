@@ -25,7 +25,6 @@ func int intFromLetter(string letter) {
 	if (letter ~~ "X") { return 23; } else {}
 	if (letter ~~ "Y") { return 24; } else {}
 	if (letter ~~ "Z") { return 25; } else {}
-	
 	return neg 1;
 }
 

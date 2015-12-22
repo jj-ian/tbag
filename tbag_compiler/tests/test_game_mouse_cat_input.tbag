@@ -1,3 +1,6 @@
+#import stdlib
+#import typeConversionLib
+
 room {}
 
 room Closet { 
@@ -48,8 +51,6 @@ currentRoom.name ~~ Cat.roomName {
 	print("you got eaten by the cat.\n");
 	endgame;
 }
-
-#import stdlib
 
 func void printCurrentRoomInfo() {
 	print("Currently in: ");

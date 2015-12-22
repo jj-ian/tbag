@@ -1,3 +1,5 @@
+#import stdlib
+
 room {}
 
 room Great_Hall {  name = "Great_Hall"; }
@@ -77,7 +79,6 @@ npc Patches {
 	badResult = "Your guards lose a little bit more of themselves.\n";
 
 }
-/* son, lonely, forest baby*/
 
 item {
 	int initialAmount;
@@ -386,7 +387,6 @@ week > lengthSabbatical {
 	endgame;
 }
 
-#import stdlib
 
 func void printCurrentRoomInfo() {
 	print("You're in the ");
