@@ -5,7 +5,6 @@ room Throne_Room { name = "Throne_Room"; }
 room East_Chamber { name = "East_Chamber"; }
 room West_Chamber {	name = "West_Chamber"; }
 room Kitchen { name = "Kitchen"; }
-room Private_Bedroom { name = "Private_Bedroom"; }
 
 Throne_Room <-> Great_Hall;   West_Chamber <-> Great_Hall;
 East_Chamber <-> Great_Hall;   West_Chamber <-> Kitchen;
@@ -46,11 +45,11 @@ npc Pumpkin {
 	id = 3;
 	name = "Pumpkin";
 	roomName = "Throne_Room";
-	message = "Excuse me, monarch, leader...\nI have a humble request...\nWould you be willing...\nTo sing to my stupid cat baby?\n";
-	goodResponse = "Sure?\n"; 
-	evilResponse = "IT'S MY BABY NOW!\n"; 
-	goodResult = "You sing to the baby. It doesn't seem to care all that much.\n"; 
-	badResult = "You eventually get bored of the baby and give it to someone else.\n";
+	message = "A cat baby is lost in the spooky forest!\nI know because it sent me this baby note, via forest squirrel!\n";
+	goodResponse = "I will organize a search party!\n";
+	evilResponse = "I will organize a snake party!\n";
+	goodResult = "They find a baby, and a dozen or so other babies.\n";
+	badResult = "You party with some snakes. What a night! The baby is never heard from again.\n";
 
 }
 
@@ -58,42 +57,27 @@ npc Snowball {
 	id = 4;
 	name = "Snowball";
 	roomName = "Throne_Room";
-	message = "A cat baby is lost in the spooky forest!\nI know because it sent me this baby note, via forest squirrel!\n";
-	goodResponse = "I will organize a search party!\n";
-	evilResponse = "I will organize a snake party!\n";
-	goodResult = "They find a baby, and a dozen or so other babies.\n";
-	badResult = "You party with some snakes. What a night! The baby is never heard from again.\n";
+	message = "Hel... hello monarch!\nI'm...\nI'm very lonely.\nWould you mind if I just stood in here for a few minutes?\nI'm sorry. I can leave.\n";
+	goodResponse = "Please, stay!\n";
+	evilResponse = "LEAVE AT ONCE.\n";
+	goodResult = "The cat leaves. You eat a royal pizza bagel.\n";
+	badResult = "You both have pizza bagels for lunch.\n";
+
+
 }
 
 npc Patches {
 	id = 5;
 	name = "Patches";
 	roomName = "Throne_Room";
-	message = "The library is underfunded and at risk of closing down.\nMight your royal-ness be willing to sponsor us?\n";
-	goodResponse = "Yes, I LOVE BOOKS!\n";
-	evilResponse = "PSH, READING?! PSHHH!!";
-	goodResult = "The library was saved! Also, it's haunted by dark spirits.\n";
-	badResult = "Every book was burned. The librarians cried for days.\n";
+	message = "Help! It's my son!\nHe is very sick!\nAnd stuck in a huge bear mouth!\n";
+	goodResponse = "Guards, help this cat's son!\n";
+	evilResponse = "Guards, help the bear eat this cat's son!\n";
+	goodResult = "Your guards manage to save most of the son.\n";
+	badResult = "Your guards lose a little bit more of themselves.\n";
 
 }
 /* son, lonely, forest baby*/
-/*
-npc Smokey {
-	id = 6;
-	name = "Smokey";
-	roomName = "Throne_Room";
-	message = "Please, my house is ?\n";
-	goodResponse = "Yes, I LOVE BOOKS!\n";
-	evilResponse = "PSH, READING?! PSHHH!!";
-	goodResult = "The library was saved! Also, it's haunted by dark spirits.\n";
-	badResult = "Every book was burned. The librarians cried for days.\n";
-}
-
-npc Ginger {
-
-}*/
-/* the peasants are miserable. but most of them aren't dead, so at least thats something*/
-/*look at this hoard! this delicious cheesy hoard!*/
 
 item {
 	int initialAmount;
@@ -177,8 +161,8 @@ badResults[2] = Marshmallow.badResult; badResults[3] = Pumpkin.badResult;
 badResults[4] = Snowball.badResult; badResults[5] = Patches.badResult; 
 
 requestTitleCard[1] = "YOUR CAT SUBJECTS HAVE SOME IMPORTANT REQUESTS!\n\n"; 
-requestTitleCard[2] = "YOUR CAT SUBJECTS HAVE EVEN MORE REQUESTS!\n\n";
-requestTitleCard[3] = "BIG DECISIONS ON BIG REQUESTS, HERE THEY COME, GET READY!\n\n";
+requestTitleCard[2] = "GET READY FOR EVEN MORE REQUESTS FROM CAT SUBJECTS!\n\n";
+requestTitleCard[3] = "THE FINAL REQUESTS BEFORE YOUR REIGN IS AT AN END!\n\n";
 
 bowlXAmount = BowlX.initialAmount;  
 bowlYAmount = BowlY.initialAmount;  
@@ -189,7 +173,7 @@ dataInitialized = true;
 }
 
 NOT started {
-	strPrintLine("King Tubbs, the great monarch of the Cat Kingdom, has recently discovered a sunbeam of sensational quality!");
+	strPrintLine("King Tubbs, the great monarch of the Cat Kingdom, \nhas recently discovered a sunbeam of sensational quality!");
 	print("He has, understandably, requested a ");
 	print(lengthSabbatical);
 	strPrintLine(" week sabbatical.");
@@ -201,18 +185,9 @@ NOT started {
 }
 
 rollOverWeek {
-	/*
-		print("stateOfKingdom ");
-	intPrintLine(stateOfKingdom);
-
-	week = week + 1;
-	handleSubjects = false;
-	->Great_Hall*/
-
 	print("----------------------  WEEK ");   print(week);  
 	strPrintLine(" ----------------------\n\n");
 	rollOverWeek = false;
-
 }
 
 currentRoom.name ~~ Pickles.roomName {
@@ -228,8 +203,15 @@ currentRoom.name ~~ Pickles.roomName {
 currentRoom.name ~~ Pickles.roomName AND input ~~ "Yes" {
 	print(Pickles.name);
 	strPrintLine(" says: ");
-	strPrintLine(Pickles.message);	
-	spokeToPickles = true;
+	if (NOT spokeToPickles) {
+		strPrintLine(Pickles.message);	
+		spokeToPickles = true;
+	} else {
+		print("We have ");
+		print(cheeseCubeCount);
+		print(" cheese cubes!\n\n");
+	}
+
 }
 
 currentRoom.name ~~ Marshmallow.roomName {
@@ -244,8 +226,16 @@ currentRoom.name ~~ Marshmallow.roomName {
 currentRoom.name ~~ Marshmallow.roomName AND input ~~ "Yes" {
 	print(Marshmallow.name);
 	strPrintLine(" says: ");
-	strPrintLine(Marshmallow.message);
-	spokeToMarshmallow = true;
+	if (NOT spokeToMarshmallow) {
+		strPrintLine(Marshmallow.message);
+		spokeToMarshmallow = true;
+	} else {
+		if (stateOfKingdom < 5) {
+			strPrintLine("There is 10% more crying in the kingdom today. An acceptable amount, I suppose.\n");
+		} else {
+			strPrintLine("I think things are... fine?\n");
+		}
+	}
 }
 NOT xyzPuzzleInProgress {
 	printCurrentRoomInfo();
@@ -273,6 +263,8 @@ currentRoom == Throne_Room {
 
 handleSubjects {
 	int subjectID = arbitrarySubjectID();
+	print(catNames[subjectID]);
+	strPrintLine(" says: ");
 	strPrintLine(catMessages[subjectID]);
 	print("1.  ");
 	print(goodResponses[subjectID]);
@@ -290,9 +282,6 @@ handleSubjects {
 		stateOfKingdom = stateOfKingdom - 1;
 		cheeseCubeCount = cheeseCubeCount + 1;
 	}
-
-	print("stateOfKingdom ");
-	intPrintLine(stateOfKingdom);
 
 	->Great_Hall
 
@@ -312,55 +301,18 @@ xyzPuzzleInProgress {
 }
 
 currentRoom == Kitchen AND xyzPuzzleInProgress AND input ~~ "None" {
-	strPrintLine("exxited puzzle");
 	xyzState = 1;
 	xyzPuzzleInProgress = false;
 }
-/*
-xyzPuzzleInProgress AND xyzState == 1 AND input ~~ "X" {
-	strPrintLine("going to state 2");
-	xyzState = 2;
-}
-
-xyzPuzzleInProgress AND xyzState == 2 AND input ~~ "Y" {
-		strPrintLine("going to state 3");
-
-	xyzState = 3;
-}
-
-xyzPuzzleInProgress AND xyzState == 3 AND input ~~ "Z" {
-		strPrintLine("going to state 4");
-
-	xyzState = 4;
-}
-
-xyzPuzzleInProgress AND xyzState == 4 AND input ~~ "Z" {
-		strPrintLine("going to state 5");
-
-	xyzState = 5;
-}
-
-xyzPuzzleInProgress AND xyzState == 5 AND input ~~ "Y" {
-		strPrintLine("going to state 6");
-
-	xyzState = 6;
-}*/
 
 
 xyzPuzzleInProgress AND input ~~ "X" {
 	if (bowlXAmount > 0) {
 		bowlXAmount = bowlXAmount - 1;
 		print("Bowl X has ");   print(bowlXAmount);   print(" foods left.\n\n");
-		if (xyzState == 1) { 
-			strPrintLine("going to state 2");
 			xyzState = 2;
-		} else { 
-			strPrintLine("going to state 1");
-
-			xyzState = 1;
-		}
 	} else {
-		strPrintLine("There's no food left in this bowl.")
+		strPrintLine("There's no food left in this bowl.");
 	}
 }
 
@@ -370,57 +322,63 @@ xyzPuzzleInProgress AND input ~~ "Y" {
 		print("Bowl Y has ");   print(bowlYAmount);   print(" foods left.\n\n");
 
 		if (xyzState == 2) { 
-			strPrintLine("going to state 3");
 			xyzState = 3;
 		} else { 
 			if (xyzState == 5) {
-				strPrintLine("going to state 5");
 				xyzState = 6;
 			} else { 	
-				strPrintLine("going to state 1");
 				xyzState = 1;}
 			}
 		} else {
-			strPrintLine("There's no food left in this bowl.")
-
+			strPrintLine("There's no food left in this bowl.");
 		}
-
-
 	}
 
 	xyzPuzzleInProgress AND input ~~ "Z" {
 		if (bowlZAmount > 0) {
 			bowlZAmount = bowlZAmount - 1;
-			print("Bowl Z has ");   print(bowlZAmount);   print(" foods left.");
+			print("Bowl Z has ");   print(bowlZAmount);   print(" foods left.\n\n");
 
 			if (xyzState == 3) { 
-				strPrintLine("going to state 4");
 				xyzState = 4;
 			} else { 
 				if (xyzState == 4) {
-					strPrintLine("going to state 5");
 					xyzState = 5;
 				} else {
-					strPrintLine("going to state 1");
-
 					xyzState = 1;
 				}
 			}
 		} else {
-			strPrintLine("There's no food left in this bowl.")
+			strPrintLine("There's no food left in this bowl.");
 
 		}
 
 }
 xyzPuzzleInProgress AND xyzState == 6 {
-	strPrintLine("You found a secret trap door!! In it you find a stash of 9,999 cheese cubes!!");
+	strPrintLine("YOU FOUND A SECRET TRAP DOOR!!! In it you find a stash of 9,999 cheese cubes!!\n");
 	cheeseCubeCount = cheeseCubeCount + 9999;
 	xyzState = 1;
 }
 
 
 week > lengthSabbatical {
-	print("todo endgame stuff\n");
+	strPrintLine("THE TRUE MONARCH HAS RETURNED FROM THE DIVINE SUNBEAM!\nYour three weeks are complete, and the rightful ruler has returned!\nLet us see how you did!\nProcessing... BEEP... BEEP BOP...");
+	if (stateOfKingdom < 5) {
+		strPrintLine("Everyone is dead or dying! What a complete terror world you've made!");
+	} else {}
+	if (stateOfKingdom >= 5) {
+		strPrintLine("Everyone seems super happy, for now!");
+	} else {}
+
+	if (cheeseCubeCount < 5) {
+		strPrintLine("Wow, you also gave away all of the monarch's cheese money! The monarchy is done with, I guess!");
+	} else {}
+	if (cheeseCubeCount >= 5) {
+		strPrintLine("You've also made an unspendably huge fortune!");
+	} else {}
+	strPrintLine("I think that about wraps it up!");
+	strPrintLine("Take care of yourself today!");
+	strPrintLine("Thank you for playing, goodbye forever!");
 
 	endgame;
 }
@@ -433,30 +391,11 @@ func void printCurrentRoomInfo() {
 	strPrintLine(".\n");
 }
 
-func string picklesMessages(int cheeseCubes) {
-	if (cheeseCubes < 2) {
-		return "";
-	} else {}
-	return "";
-}
-
-
 func int arbitrarySubjectID() {
-	/*
-	int a = stateOfKingdom * 7;
-	int b = a/11;
-	int result = a -b;
-		print("stateofkingdom ");
-	intPrintLine(stateOfKingdom);
-	print("random number ");
-	intPrintLine(result);
-	return result;*/
 	if (week == 1) { return 3; } else {}
-	if (week == 2) { return 5; } else {}
-	if (week == 3) { return 4; } else {}
+	if (week == 2) { return 4; } else {}
+	if (week == 3) { return 5; } else {}
 	return neg 1;
-
-
 
 }
 
