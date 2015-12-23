@@ -1,3 +1,4 @@
+/* Authors: Julie */
 	// this is what happens when u do player->room
 	public static void movePlayerToRoom(Object room) {
 		if (room instanceof Room) {

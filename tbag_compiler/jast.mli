@@ -1,3 +1,4 @@
+(* Authors: Brian, Greg *)
 open Ast
 
 type main_method = 

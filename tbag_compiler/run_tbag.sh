@@ -1,6 +1,5 @@
 #!/bin/bash
-#cat $1 >> full.txt
-#cat lib/stdlib.tbag >> full.txt
+# Authors: Brian
 python scripts/importLibrary.py $1
 
 ./tbag < prog_w_stdlib.tbag

@@ -1,3 +1,4 @@
+(* Authors: Brian *)
 open Printf
 
 let _ = 

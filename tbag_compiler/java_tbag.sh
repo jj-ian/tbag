@@ -1,4 +1,5 @@
 #!/bin/sh
+# Contributions from Maria, Julie
 
 basename=`echo $1 | sed 's/.*\\///
                          s/.tbag//'`
@@ -9,11 +10,8 @@ driverfile="Driver.java"
 rm -f Driver.java Item.java Npc.java Room.java *.class
 
 # add tbag standard library to the end of the file
-#cat $1 > prog_w_stdlib.tbag
-#cat lib/stdlib.tbag >> prog_w_stdlib.tbag
 python scripts/importLibrary.py $1
 
-#./tbag < $1 > ${basename}_compiler_output.txt 2>&1
 ./tbag < prog_w_stdlib.tbag > ${basename}_compiler_output.txt 2>&1
 rm prog_w_stdlib.tbag
 
