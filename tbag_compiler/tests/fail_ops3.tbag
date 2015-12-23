@@ -1,3 +1,4 @@
+/* Authors: Maria */
 true {
   printLine(true == "hello");
   endgame;

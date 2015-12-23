@@ -1,3 +1,4 @@
+/* Authors: Julie */
 true {
 	testvar();
 	endgame;

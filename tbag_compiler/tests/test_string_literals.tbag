@@ -1,3 +1,4 @@
+/* Authors: Julie */
 true {
 	string a = "single quo'te";
 	string newline = "\n";

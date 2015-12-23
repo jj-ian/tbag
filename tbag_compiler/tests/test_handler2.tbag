@@ -1,3 +1,4 @@
+/* Authors: Julie */
 boolean pred1 = false;
 boolean pred2 = true;
 int int3 = 4;

@@ -1,3 +1,4 @@
+/* Authors: Julie */
 int fibTerm = 6;
 int currentTerm = 0;
 int fib1 = 0;

@@ -1,3 +1,4 @@
+/* Authors: Julie */
 true {
 	print("hello world\n");
 	endgame;

@@ -1,3 +1,4 @@
+/* Authors: Julie */
 npc {
 	string name;
 	string color;

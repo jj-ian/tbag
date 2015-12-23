@@ -1,3 +1,4 @@
+/* Authors: Maria */
 true {
         int x = gcd(14);
 	endgame;

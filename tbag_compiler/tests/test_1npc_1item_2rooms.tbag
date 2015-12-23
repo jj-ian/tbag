@@ -1,3 +1,4 @@
+/* Authors: Julie */
 room {
 	int temperature;
 }
