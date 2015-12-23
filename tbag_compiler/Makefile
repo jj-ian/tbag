@@ -1,3 +1,5 @@
+# authors: all
+
 default: compiler
  
 compiler: scanner parser semantic_checker java_builder code_gen tbagger 
