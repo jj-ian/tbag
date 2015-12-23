@@ -1,4 +1,7 @@
 /* Authors: Julie */
+/* Based on Seven Weeks of Cat Monarchy, a game created by Fathom and Scuffy for the Ludum Dare 34 game jam. */
+/* http://fathom.itch.io/seven-weeks-of-cat-monarchy */
+
 #import stdlib
 
 room {}
