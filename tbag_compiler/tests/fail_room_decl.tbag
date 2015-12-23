@@ -1,4 +1,4 @@
-/* Authors: Maria */
+/* Authors: Iris */
 room {
         int num_cats;
 }
