@@ -1,4 +1,4 @@
-/* Authors: Julie */
+/* Authors: Greg */
 true {
 	int[1+1+1] a;
 	a[2] = 2;

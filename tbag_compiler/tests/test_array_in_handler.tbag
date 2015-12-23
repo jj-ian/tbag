@@ -1,4 +1,4 @@
-/* Authors: Julie */
+/* Authors: Greg */
 true {
 	int[1] a1;
 	int[2] a2;
