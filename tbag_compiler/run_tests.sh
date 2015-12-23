@@ -1,4 +1,6 @@
 #!/bin/sh
+# Modified version of Professor Edwards's microC script
+# Contributions from Maria, Julie
 
 TBAG="./java_tbag.sh"
 

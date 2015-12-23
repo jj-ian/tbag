@@ -1,3 +1,5 @@
+# authors: all
+
 default: compiler
  
 compiler: scanner parser semantic_checker java_builder code_gen tbagger 
@@ -18,14 +20,11 @@ scanner: parser
 parser: jast
 	ocamlyacc parser.mly; ocamlc -c parser.mli; ocamlc -c parser.ml
 
-jast: sast ast
+jast: ast
 	ocamlc -c jast.mli
 
 semantic_checker: ast scanner
 	ocamlc -c semantic_checker.ml
-
-sast: ast
-	ocamlc -c sast.mli
 
 ast:
 	ocamlc -c ast.mli

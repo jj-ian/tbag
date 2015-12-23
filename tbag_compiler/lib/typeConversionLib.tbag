@@ -1,3 +1,4 @@
+/* Authors: Julie */
 func int intFromLetter(string letter) {
 	if (letter ~~ "A") { return 0; } else {}
 	if (letter ~~ "B") { return 1; } else {}
